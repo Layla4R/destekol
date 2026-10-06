@@ -243,7 +243,7 @@ export default async function NewsPostPage({ params, }: {
         publisher: {
             "@type": "Organization",
             "@id": `${siteUrl}/#organization`,
-            name: ((await getCmsBranding()).siteName || ""),
+            name: ((await getCmsBranding(locale)).siteName || ""),
             ...({}),
             iso6523Code: "",
             url: siteUrl,
@@ -253,7 +253,7 @@ export default async function NewsPostPage({ params, }: {
             },
             contactPoint: {
                 "@type": "ContactPoint",
-                email: officialEmail(true),
+                email: (await getCmsBranding(locale)).contactEmail || "",
                 contactType: "public relations"
             }
         },
@@ -264,7 +264,7 @@ export default async function NewsPostPage({ params, }: {
             return null;
         const hasHtml = /<[a-z][\s\S]*>/i.test(content);
         if (hasHtml) {
-            return (<div className="prose prose-base sm:prose-lg max-w-none text-slate-800 leading-relaxed prose-p:leading-relaxed prose-headings:font-bold" dangerouslySetInnerHTML={{ __html: normalizePublicContact(content, officialEmail(true)) }}/>);
+            return (<div className="prose prose-base sm:prose-lg max-w-none text-slate-800 leading-relaxed prose-p:leading-relaxed prose-headings:font-bold" dangerouslySetInnerHTML={{ __html: content }}/>);
         }
         return (<div className="space-y-4 text-slate-800 text-sm sm:text-base leading-relaxed">
         {content.split("\n").map((paragraph, idx) => paragraph.trim() ? <p key={idx} className="leading-relaxed">{paragraph}</p> : null)}

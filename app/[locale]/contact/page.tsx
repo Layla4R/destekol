@@ -68,7 +68,6 @@ export default async function ContactPage({ params: { locale }, }: {
     const site = getRequestSite();
     const SITE_URL = site.url;
     const isDestekol = true;
-    const copy = normalizePublicContact(launchCopy[locale] || launchCopy.ar, officialEmail(isDestekol));
     const dict = await loadTranslations(locale);
     const supabase = getSupabaseOrNull();
     const t = (ar: string, en: string, fr: string, tr: string) => locale === "ar" ? ar : locale === "fr" ? fr : locale === "tr" ? tr : en;
@@ -202,7 +201,7 @@ export default async function ContactPage({ params: { locale }, }: {
         });
     }
     const safeJsonLd = (data: unknown) => JSON.stringify(data).replace(/</g, "\\u003c");
-    const rendererContext = { isDestekol, isDestekolContactPage: isDestekol, locale, dict, primaryColor, accentColor };
+    const rendererContext = { settings: { contactEmail }, isDestekol, isDestekolContactPage: isDestekol, locale, dict, primaryColor, accentColor };
     const contactBlock = sections.find((section: any) => section.type === "contact_form");
     const directContactTitle = contactBlock?.props?.contactHeading || contactBlock?.data?.contactHeading;
     return (<div className={"destekol-contact-page min-h-screen pb-12"}>
@@ -227,7 +226,7 @@ export default async function ContactPage({ params: { locale }, }: {
                 {directContactTitle || t("تواصل معنا مباشرة", "Get in touch directly", "Contactez-nous directement", "Bizimle doğrudan iletişime geçin")}
               </h2>
               <p className="text-xs text-slate-700">
-                {t("استجابة سريعة واستفسارات شفافة للتبرعات", "Fast response & transparent donation inquiries", "Réponse rapide et demandes de don transparentes", "Hızlı yanıt ve şeffaf bağış soruları")}
+                {contactBlock?.props?.contactSummary || ""}
               </p>
             </div>
           </div>

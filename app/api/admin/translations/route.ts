@@ -46,21 +46,25 @@ export async function PATCH(req: NextRequest) {
             locale: string;
             key: string;
             value: string;
-        }) => supabase.from("Translation").upsert({ locale, key, value }, { onConflict: "locale,key" })));
-        const failed = results.filter(r => r.status === "rejected").length;
+        }) => {
+            if (!VALID_LOCALES.includes(locale) || typeof key !== "string" || typeof value !== "string")
+                throw new Error("Invalid translation");
+            return supabase.from("Translation").upsert({ locale, key, value, namespace: key.split(".")[0] || "common", updatedAt: new Date().toISOString() }, { onConflict: "locale,namespace,key" });
+        }));
+        const failed = results.filter(r => r.status === "rejected" || (r.status === "fulfilled" && r.value.error)).length;
         // Clear translation cache if available
         try {
-            const { clearTranslationCache } = await import("@/lib/translations");
             clearTranslationCache();
         }
         catch { }
-        return NextResponse.json({ ok: true, failed });
+        return NextResponse.json({ ok: failed === 0, failed }, { status: failed ? 500 : 200 });
     }
     const { locale, key, value } = body;
-    if (!locale || !key || value === undefined)
+    if (!VALID_LOCALES.includes(locale) || typeof key !== "string" || !key || typeof value !== "string")
         return NextResponse.json({ error: "Missing fields" }, { status: 400 });
     const supabase = getSupabase();
-    await supabase.from("Translation").upsert({ locale, key, value, updatedAt: new Date().toISOString() }, { onConflict: "locale,key" });
+    const { error } = await supabase.from("Translation").upsert({ locale, key, value, namespace: key.split(".")[0] || "common", updatedAt: new Date().toISOString() }, { onConflict: "locale,namespace,key" });
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
     clearTranslationCache(locale);
     return NextResponse.json({ ok: true });
 }

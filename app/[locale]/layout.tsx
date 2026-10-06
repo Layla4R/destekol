@@ -43,7 +43,7 @@ const LOCALE_METADATA: Record<string, {
     },
 };
 async function getDomainInfo(locale = "en") {
-    const branding = await getCmsBranding();
+    const branding = await getCmsBranding(locale);
     const headerList = await headers();
     const host = headerList.get("host") || "";
     const isDestekol = true;
@@ -64,7 +64,7 @@ export async function generateMetadata({ params, }: {
     const currentUrl = `${siteUrl}/${locale}`;
     const rawTitleText = fullName;
     const titleText = normalizeDestekolBrandText(rawTitleText, locale);
-    const description = (await getCmsBranding()).footerDescription || "";
+    const description = (await getCmsBranding(locale)).footerDescription || "";
     return {
         title: {
             default: titleText,
@@ -266,8 +266,8 @@ export default async function LocaleLayout({ children, params: { locale }, }: {
       </main>
 
       <SiteFooter isDestekol={isDestekol} navItems={pages} settings={settings} locale={locale} dict={dict}/>
-      <WhatsAppButton phone={settings?.whatsappNumber}/>
+      <WhatsAppButton phone={settings?.whatsappNumber} locale={locale}/>
 
-      <SocialSidebar whatsapp={settings?.whatsappNumber} facebook={settings?.facebookUrl} twitter={settings?.twitterUrl} instagram={settings?.instagramUrl} tiktok={settings?.tiktokUrl} youtube={settings?.youtubeUrl} linkedin={settings?.linkedinUrl} position={(settings?.socialPosition as "left" | "right") || "right"}/>
+      <SocialSidebar locale={locale} whatsapp={settings?.whatsappNumber} facebook={settings?.facebookUrl} twitter={settings?.twitterUrl} instagram={settings?.instagramUrl} tiktok={settings?.tiktokUrl} youtube={settings?.youtubeUrl} linkedin={settings?.linkedinUrl} position={(settings?.socialPosition as "left" | "right") || "right"}/>
     </div>);
 }

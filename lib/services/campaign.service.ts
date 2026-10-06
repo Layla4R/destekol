@@ -7,7 +7,7 @@ export async function getActiveCampaigns(locale: string) {
         return [];
     const { data: campaigns } = await supabase
         .from("Campaign")
-        .select("id, slug, title, summary, coverImage, goalAmount, raisedAmount, donorCount, category, isFeatured")
+        .select("id, slug, title, summary, coverImage, goalAmount, raisedAmount, donorCount, defaultAmount, category, isFeatured")
         .eq("isActive", true)
         .order("isFeatured", { ascending: false });
     if (!campaigns || campaigns.length === 0)

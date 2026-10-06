@@ -8,12 +8,12 @@ interface Props {
 export default function AboutOverviewSection({ data, locale = "ar", isDestekol = false }: Props) {
     const isAr = locale === "ar";
 {
-        const heading = isAr ? data?.heading_ar : data?.heading_en || data?.heading_ar;
-        const quote = isAr ? data?.quote_ar : data?.quote_en || data?.quote_ar;
+        const heading = data?.[`heading_${locale}`] || data?.heading || "";
+        const quote = data?.[`quote_${locale}`] || data?.quote || "";
         const cards = Array.isArray(data?.cards)
             ? data.cards.map((card: any) => ({
-                title: (isAr ? card.title_ar : card.title_en) || card.title || "",
-                description: (isAr ? card.desc_ar : card.desc_en) || card.description || "",
+                title: card[`title_${locale}`] || card.title || "",
+                description: card[`desc_${locale}`] || card.description || "",
                 image: card.image || "",
             })).filter((card: any) => card.title || card.description || card.image)
             : [];

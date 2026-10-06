@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 interface Props {
+    locale?: string;
     whatsapp?: string | null;
     facebook?: string | null;
     twitter?: string | null;
@@ -47,7 +48,7 @@ const ITEMS = [
         getHref: (v: string) => v.startsWith("http") ? v : `https://linkedin.com/company/${v}`,
     },
 ];
-export default function SocialSidebar({ whatsapp, facebook, twitter, instagram, tiktok, youtube, linkedin, position = "right" }: Props) {
+export default function SocialSidebar({ whatsapp, facebook, twitter, instagram, tiktok, youtube, linkedin, position = "right", locale = "en" }: Props) {
     const [expanded, setExpanded] = useState(false);
     const values: Record<string, string | null | undefined> = { whatsapp, facebook, twitter, instagram, tiktok, youtube, linkedin };
     const visible = ITEMS.filter(i => values[i.key]);
@@ -67,7 +68,7 @@ export default function SocialSidebar({ whatsapp, facebook, twitter, instagram, 
             </span>
           </a>);
         })}
-      <button onClick={() => setExpanded(e => !e)} className={`mt-1 w-11 h-8 bg-ink/60 hover:bg-ink text-white ${isRight ? "rounded-l-lg" : "rounded-r-lg"} flex items-center justify-center text-xs transition`} title={expanded ? "Close" : "Follow Us"}>
+      <button onClick={() => setExpanded(e => !e)} className={`mt-1 w-11 h-8 bg-ink/60 hover:bg-ink text-white ${isRight ? "rounded-l-lg" : "rounded-r-lg"} flex items-center justify-center text-xs transition`} title={expanded ? ({ar:"إغلاق",en:"Close",fr:"Fermer",tr:"Kapat"} as Record<string,string>)[locale] : ({ar:"تابعنا",en:"Follow Us",fr:"Suivez-nous",tr:"Bizi takip edin"} as Record<string,string>)[locale]}>
         {isRight ? (expanded ? "→" : "←") : (expanded ? "←" : "→")}
       </button>
     </div>);

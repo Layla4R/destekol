@@ -7,7 +7,11 @@ export function storyLink(value: unknown, locale: string): string | null {
         return null;
     if (/^https?:\/\//i.test(url)) {
         try {
-            return new URL(url).href;
+            const parsed = new URL(url);
+            if (["destekol.org", "www.destekol.org", "destekol.netlify.app"].includes(parsed.hostname)) {
+                parsed.pathname = `/${locale}${parsed.pathname.replace(/^\/(ar|en|fr|tr)(?=\/|$)/, "")}`;
+            }
+            return parsed.href;
         }
         catch {
             return null;
@@ -18,7 +22,6 @@ export function storyLink(value: unknown, locale: string): string | null {
     if (url.startsWith("#"))
         return url;
     const path = url.startsWith("/") ? url : `/${url}`;
-    if (/^\/(ar|en|fr|tr)(\/|\?|#|$)/.test(path))
-        return path;
-    return locale === "ar" ? path : `/${locale}${path}`;
+    const destination = path.replace(/^\/(ar|en|fr|tr)(?=\/|\?|#|$)/, "");
+    return `/${locale}${destination}`;
 }

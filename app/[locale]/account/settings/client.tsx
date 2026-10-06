@@ -1,4 +1,6 @@
 "use client";
+import { interfaceCopy } from "@/lib/interface-copy";
+
 import Icon from "@/components/icons";
 import { countries } from "countries-list";
 import Link from "next/link";
@@ -169,7 +171,7 @@ export default function SettingsClient({ locale, dict: D, }: {
                       {selectedCountryObj.name}
                     </span>
                   </>) : form.country ? (<span className="text-ink font-medium">{form.country}</span>) : (<span className="text-muted">
-                    {D["auth.select_country"]}
+                    {D["auth.select_country"] || interfaceCopy(locale).selectCountry}
                   </span>)}
               </span>
               <Icon name="chevron-down" size={16} className={`text-muted transition-transform duration-200 ${countryOpen ? "rotate-180 text-brand" : ""}`}/>
@@ -177,7 +179,7 @@ export default function SettingsClient({ locale, dict: D, }: {
 
             {countryOpen && (<div className="absolute z-50 top-full mt-1.5 w-full bg-white rounded-xl border border-line shadow-2xl overflow-hidden animate-in fade-in duration-150">
                 <div className="p-2 border-b border-line bg-cream/40">
-                  <input type="text" placeholder={D["auth.search_country"]} value={countrySearch} onChange={(e) => setCountrySearch(e.target.value)} className="w-full text-xs px-3 py-2 rounded-lg border border-line bg-white focus:outline-none focus:ring-2 focus:ring-brand/30" autoFocus/>
+                  <input type="text" placeholder={D["auth.search_country"] || interfaceCopy(locale).searchCountry} value={countrySearch} onChange={(e) => setCountrySearch(e.target.value)} className="w-full text-xs px-3 py-2 rounded-lg border border-line bg-white focus:outline-none focus:ring-2 focus:ring-brand/30" autoFocus/>
                 </div>
 
                 <div className="max-h-52 overflow-y-auto divide-y divide-line/30">

@@ -19,10 +19,11 @@ interface Props {
     dict?: Record<string, string>;
     variant?: "default" | "destekol";
     currency?: string;
+    amounts?: number[];
+    defaultAmount?: number;
 }
-const QUICK_AMOUNTS = [5, 10, 25, 50];
-export default function CampaignCard({ id, slug, title, summary, coverImage, goalAmount, raisedAmount, donorCount, category, locale = "ar", dict = {}, variant = "default", currency = "USD", }: Props) {
-    const [amount, setAmount] = useState(10);
+export default function CampaignCard({ id, slug, title, summary, coverImage, goalAmount, raisedAmount, donorCount, category, locale = "ar", dict = {}, variant = "default", currency = "USD", amounts = [], defaultAmount = 0 }: Props) {
+    const [amount, setAmount] = useState(defaultAmount || amounts[0] || 0);
     const [custom, setCustom] = useState("");
     const [frequency, setFrequency] = useState<"one_time" | "monthly">("one_time");
     const [step, setStep] = useState<"widget" | "details">("widget");
@@ -249,8 +250,8 @@ export default function CampaignCard({ id, slug, title, summary, coverImage, goa
         <div className="dc-progress" role="progressbar" aria-label={title} aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100}><span style={{ width: pct + "%" }}/></div>
         <div className="dc-totals"><b>{pct}%</b><span><strong>{money(safeRaised)}</strong> / {money(safeGoal)}</span></div>
         <div className="dc-frequency">{(["one_time", "monthly"] as const).map(value => <button key={value} type="button" aria-pressed={frequency === value} onClick={() => setFrequency(value)}>{locale === "tr" && value === "one_time" ? "Bir Kez" : t(value)}</button>)}</div>
-        <div className="dc-amounts">{QUICK_AMOUNTS.map(value => <button key={value} type="button" aria-pressed={custom === "" && amount === value} onClick={() => { setAmount(value); setCustom(""); }}>{money(value)}</button>)}</div>
-        <label className="dc-custom"><span>{currencySymbol}</span><input type="number" min="1" step="0.01" value={custom} onChange={e => setCustom(e.target.value)} aria-label={locale === "ar" ? "مبلغ آخر" : locale === "tr" ? "Diğer tutar" : "Other amount"} placeholder={locale === "ar" ? "مبلغ آخر" : locale === "tr" ? "Diğer tutar" : "Other amount"}/></label>
+        <div className="dc-amounts">{amounts.map(value => <button key={value} type="button" aria-pressed={custom === "" && amount === value} onClick={() => { setAmount(value); setCustom(""); }}>{money(value)}</button>)}</div>
+        <label className="dc-custom"><span>{currencySymbol}</span><input type="number" min="1" step="0.01" value={custom} onChange={e => setCustom(e.target.value)} aria-label={locale === "ar" ? "مبلغ آخر" : locale === "tr" ? "Diğer tutar" : locale === "fr" ? "Autre montant" : "Other amount"} placeholder={locale === "ar" ? "مبلغ آخر" : locale === "tr" ? "Diğer tutar" : locale === "fr" ? "Autre montant" : "Other amount"}/></label>
         <button type="button" className="dc-donate" disabled={!validAmount} onClick={() => { setStep("details"); setError(""); }}>{t("donate_now")}<span aria-hidden="true">{locale === "ar" ? "←" : "→"}</span></button>
       </div>
     </article>;
@@ -338,7 +339,7 @@ export default function CampaignCard({ id, slug, title, summary, coverImage, goa
               {/* Quick Amounts */}
 
               <div className="grid grid-cols-4 gap-1.5">
-                {QUICK_AMOUNTS.map((value) => (<button key={value} type="button" onClick={() => {
+                {amounts.map((value) => (<button key={value} type="button" onClick={() => {
                     setAmount(value);
                     setCustom("");
                 }} className={`rounded-lg border py-1.5 text-xs font-bold transition-all ${finalAmount ===

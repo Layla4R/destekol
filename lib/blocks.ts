@@ -139,8 +139,12 @@ export const BLOCK_DEFINITIONS: BlockDefinition[] = [
         fields: [
             { key: "heading_ar", label: "Main Heading (Arabic)", type: "text" },
             { key: "heading_en", label: "Main Heading (English)", type: "text" },
+            { key: "heading_fr", label: "Main Heading (French)", type: "text" },
+            { key: "heading_tr", label: "Main Heading (Turkish)", type: "text" },
             { key: "quote_ar", label: "Quote Message (Arabic)", type: "textarea" },
             { key: "quote_en", label: "Quote Message (English)", type: "textarea" },
+            { key: "quote_fr", label: "Quote Message (French)", type: "textarea" },
+            { key: "quote_tr", label: "Quote Message (Turkish)", type: "textarea" },
             {
                 key: "cards",
                 label: "Cards List",
@@ -148,8 +152,12 @@ export const BLOCK_DEFINITIONS: BlockDefinition[] = [
                 itemFields: [
                     { key: "title_ar", label: "Card Title (Arabic)", type: "text" },
                     { key: "title_en", label: "Card Title (English)", type: "text" },
+            { key: "title_fr", label: "Card Title (French)", type: "text" },
+            { key: "title_tr", label: "Card Title (Turkish)", type: "text" },
                     { key: "desc_ar", label: "Description (Arabic)", type: "textarea" },
                     { key: "desc_en", label: "Description (English)", type: "textarea" },
+            { key: "desc_fr", label: "Description (French)", type: "textarea" },
+            { key: "desc_tr", label: "Description (Turkish)", type: "textarea" },
                     { key: "image", label: "Card Photo", type: "image" }
                 ]
             }
@@ -407,7 +415,8 @@ export const BLOCK_DEFINITIONS: BlockDefinition[] = [
         defaultProps: {
             title: "Donate Now",
             subtitle: "Choose an amount or enter a custom one",
-            amounts: [1, 5, 10, 25, 50, 100],
+            amounts: [],
+            defaultAmount: 0,
             campaignId: "",
             allowMonthly: true,
         },
@@ -415,6 +424,9 @@ export const BLOCK_DEFINITIONS: BlockDefinition[] = [
             { key: "title", label: "Title", type: "text" },
             { key: "subtitle", label: "Subtitle", type: "text" },
             { key: "allowMonthly", label: "Allow Monthly Recurring", type: "boolean" },
+            { key: "defaultAmount", label: "Default Donation Amount", type: "number" },
+            { key: "amounts", label: "Suggested Donation Amounts", type: "list", itemFields: [{ key: "value", label: "Amount", type: "number" }] },
+            { key: "trustItems", label: "Information Labels", type: "list", itemFields: [{ key: "icon", label: "Icon", type: "text" }, { key: "title", label: "Label", type: "text" }] },
         ],
     },
     {
@@ -592,6 +604,7 @@ export const BLOCK_DEFINITIONS: BlockDefinition[] = [
             { key: "locality", label: "المدينة", type: "text" },
             { key: "country", label: "الدولة", type: "text" },
             { key: "notice", label: "تنويه صفحة التواصل", type: "textarea" },
+            { key: "contactSummary", label: "وصف بطاقات التواصل", type: "textarea" },
             { key: "image", label: "Destekol — صورة بجانب نموذج التواصل", type: "image" },
             { key: "imageAlt", label: "وصف الصورة", type: "text" },
             { key: "contactHeading", label: "Destekol — عنوان بطاقات التواصل (اختياري)", type: "text" },

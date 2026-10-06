@@ -21,3 +21,16 @@ test('media, links and numeric settings come from the source page, not translate
  const result=out.mergeCmsTranslation(base,{...base,props:{image:'/old.jpg',buttonLink:'/old',amounts:[{value:10}],title:'Localized'}});
  assert.equal(result.props.image,'/current.jpg');assert.equal(result.props.buttonLink,'/current');assert.equal(result.props.amounts[0].value,75);assert.equal(result.props.title,'Localized');
 });
+
+test('story actions, project areas and statuses use translated CMS copy without changing facts',()=>{
+ const base={storyEyebrow:'كن إلى جانب إنسان',readButtonText:'اقرأ القصة',successText:'شكراً',items:[{id:'project',location:'نيجيريا',category:'الأمن الغذائي',status:'قيد التنفيذ',value:15,unitAmount:25,buttonLink:'/ar/donate'}]};
+ for(const locale of ['en','fr','tr']){
+  const copy={storyEyebrow:locale+' kicker',readButtonText:locale+' read',successText:locale+' thanks',items:[{id:'project',location:locale+' area',category:locale+' category',status:locale+' status',value:999,unitAmount:999,buttonLink:'/old'}]};
+  const result=out.mergeCmsTranslation(base,copy);
+  assert.equal(result.storyEyebrow,locale+' kicker');assert.equal(result.readButtonText,locale+' read');assert.equal(result.successText,locale+' thanks');
+  assert.equal(result.items[0].location,locale+' area');assert.equal(result.items[0].status,locale+' status');assert.equal(result.items[0].category,locale+' category');
+  assert.equal(result.items[0].value,15);assert.equal(result.items[0].unitAmount,25);assert.equal(result.items[0].buttonLink,'/ar/donate');
+  assert.deepEqual(out.applyCmsSharedEdits(base,base,copy).location,undefined);
+  const canonical=out.applyCmsSharedEdits(base,base,{...base,storyEyebrow:'changed wording'});assert.equal(canonical.storyEyebrow,base.storyEyebrow);
+ }
+});

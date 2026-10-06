@@ -23,7 +23,7 @@ interface PageProps {
 }
 // دالة مساعدة لجلب معلومات الدومين
 async function getDomainContext(locale = "en") {
-    const branding = await getCmsBranding();
+    const branding = await getCmsBranding(locale);
     const isDestekol = true;
     const siteUrl = "https://destekol.org";
     const brandName = branding.logoText || branding.siteName || "";
@@ -325,7 +325,7 @@ export default async function DynamicPage({ params, }: {
         supabase
             ? supabase
                 .from("SiteSettings")
-                .select("primaryColor, accentColor, facebookUrl, twitterUrl, instagramUrl, linkedinUrl, youtubeUrl")
+                .select("primaryColor, accentColor, contactEmail, logoImage, facebookUrl, twitterUrl, instagramUrl, linkedinUrl, youtubeUrl")
                 .eq("id", "default")
                 .maybeSingle()
             : Promise.resolve({ data: null }),
@@ -390,7 +390,7 @@ export default async function DynamicPage({ params, }: {
         slug === "transparency" ||
         slug === "financial-transparency");
     const showTrustCredentials = isTrustPage && !isDestekolAboutPage;
-    const hasCustomSections = !isLegalPage && sections.length > 0;
+    const hasCustomSections = sections.length > 0;
     const commonTitle = getCommonPageTitle(slug, locale, fullName, brandName);
     const rawDisplayTitle = cleanText(page.title) || fullName;
     const transparencySubtitles: Record<string, string> = {
@@ -435,8 +435,7 @@ export default async function DynamicPage({ params, }: {
                         name: fullName,
                         alternateName: ["Destekol", fullName],
                         url: siteUrl,
-                        logo: `${siteUrl}${"/brand/desekol_logo.png"}`,
-                        foundingDate: "2026",
+                        logo: appearance?.logoImage ? new URL(appearance.logoImage, siteUrl).toString() : undefined,
                         knowsAbout: [
                             "Humanitarian Aid",
                             "Emergency Relief",
@@ -451,7 +450,6 @@ export default async function DynamicPage({ params, }: {
                             appearance?.instagramUrl,
                             appearance?.linkedinUrl,
                             appearance?.youtubeUrl,
-                            "https://find-and-update.company-information.service.gov.uk/",
                         ].filter(Boolean),
                     },
                 ]
@@ -496,13 +494,14 @@ export default async function DynamicPage({ params, }: {
                 isDestekolAboutPage,
                 aboutRowIndex: sections.slice(0, index).filter((item) => item.type === section.type).length,
                 campaigns,
+                settings: appearance,
                 whiteBackground: true,
                 locale,
                 dict,
                 primaryColor,
                 accentColor,
             }}/>))) : (page as any).content ? (<div className="mx-auto max-w-screen-xl px-6 py-8 whitespace-pre-line text-slate-700 leading-relaxed text-base sm:text-lg">
-            {normalizePublicContact((page as any).content, officialEmail(isDestekol))}
+            {(page as any).content}
           </div>) : null}
       </div>
     </article>);

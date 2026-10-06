@@ -19,6 +19,7 @@ export interface CampaignLite {
     goalAmount: number;
     raisedAmount: number;
     donorCount: number;
+    defaultAmount?: number;
     isFeatured?: boolean;
     category?: string;
 }
@@ -78,7 +79,7 @@ export async function getCampaignsLite(locale = "ar"): Promise<CampaignLite[]> {
     try {
         const { data: campaigns } = await supabase
             .from("Campaign")
-            .select("id, slug, title, summary, description, coverImage, goalAmount, raisedAmount, donorCount, category, isFeatured")
+            .select("id, slug, title, summary, description, coverImage, goalAmount, raisedAmount, donorCount, defaultAmount, category, isFeatured")
             .eq("isActive", true)
             .order("isFeatured", { ascending: false })
             .limit(6);

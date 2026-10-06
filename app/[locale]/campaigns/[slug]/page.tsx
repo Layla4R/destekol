@@ -194,7 +194,7 @@ export default async function CampaignDetailPage({ params, }: {
         },
         publisher: {
             "@type": "NGO",
-            name: ((await getCmsBranding()).siteName || ""),
+            name: ((await getCmsBranding(locale)).siteName || ""),
             url: siteUrl,
             logo: {
                 "@type": "ImageObject",
@@ -331,7 +331,7 @@ export default async function CampaignDetailPage({ params, }: {
               <section aria-label="Campaign summary" className="space-y-2 rounded-2xl border border-slate-200/80 bg-slate-50 p-4 text-xs text-slate-700 sm:text-sm">
                 <p>
                   <strong>{(locale === "ar" ? "الجمعية" : locale === "fr" ? "Association" : locale === "tr" ? "Dernek" : "Association")}:</strong>{" "}
-                  {((await getCmsBranding()).siteName || "")}
+                  {((await getCmsBranding(locale)).siteName || "")}
                 </p>
                 <p>
                   <strong>{t("campaigns.category_label", "التصنيف")}:</strong>{" "}

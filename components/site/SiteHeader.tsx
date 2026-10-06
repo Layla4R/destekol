@@ -1,4 +1,6 @@
 "use client";
+import { interfaceCopy } from "@/lib/interface-copy";
+
 import type { PublicSiteSettings } from "@/lib/public-site-settings";
 import Image from "next/image";
 import Link from "next/link";
@@ -54,7 +56,7 @@ export default function SiteHeader({ navItems, settings, locale, dict, transpare
         </Link>
 
         {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-7" aria-label="Main Navigation">
+        <nav className="hidden md:flex items-center gap-7" aria-label={interfaceCopy(locale).mainNavigation}>
           <ul className="flex items-center gap-7">
             {(navItems.filter(item => ["home", "about", "about-us", "projects"].includes(item.slug))).map((item) => {
             const navKey = `nav.${item.slug}`;
@@ -93,7 +95,7 @@ export default function SiteHeader({ navItems, settings, locale, dict, transpare
           <LanguageSwitcher isDestekol={isDestekol} currentLocale={locale} transparent={isTransparent}/>
           <CartIcon prefix={p} transparent={isTransparent}/>
 
-          <Link href={`${p}/account`} aria-label="User Account" className={`flex items-center justify-center gap-1.5 border rounded-xl p-1.5 sm:px-3 sm:py-2 text-xs sm:text-sm font-semibold transition shrink-0 ${isTransparent
+          <Link href={`${p}/account`} aria-label={interfaceCopy(locale).account} className={`flex items-center justify-center gap-1.5 border rounded-xl p-1.5 sm:px-3 sm:py-2 text-xs sm:text-sm font-semibold transition shrink-0 ${isTransparent
             ? "border-white/30 text-white hover:bg-white/15"
             : "border-line text-ink/70 hover:text-brand hover:border-brand"}`}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
@@ -112,7 +114,7 @@ export default function SiteHeader({ navItems, settings, locale, dict, transpare
             {t("nav.donate", "تبرع الآن", "Donate Now", "Faire un Don", "Bağış Yap")}
           </Link>
 
-          <button type="button" onClick={() => setMobileOpen(!mobileOpen)} aria-label="Toggle mobile menu" aria-expanded={mobileOpen} aria-controls="mobile-navigation" className={`md:hidden p-1.5 sm:p-2 rounded-xl transition ${isTransparent ? "text-white hover:bg-white/15" : "text-ink/70 hover:text-brand"}`}>
+          <button type="button" onClick={() => setMobileOpen(!mobileOpen)} aria-label={interfaceCopy(locale).toggleMenu} aria-expanded={mobileOpen} aria-controls="mobile-navigation" className={`md:hidden p-1.5 sm:p-2 rounded-xl transition ${isTransparent ? "text-white hover:bg-white/15" : "text-ink/70 hover:text-brand"}`}>
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               {mobileOpen ? <path d="M18 6 6 18M6 6l12 12"/> : (<>
                   <line x1="3" y1="6" x2="21" y2="6"/>
@@ -123,7 +125,7 @@ export default function SiteHeader({ navItems, settings, locale, dict, transpare
           </button>
         </div>
       </div>
-      {mobileOpen && <nav id="mobile-navigation" className="md:hidden border-t bg-white p-5 grid gap-4" aria-label="Mobile Navigation">
+      {mobileOpen && <nav id="mobile-navigation" className="md:hidden border-t bg-white p-5 grid gap-4" aria-label={interfaceCopy(locale).mobileNavigation}>
         {navItems.map(item => <Link onClick={() => setMobileOpen(false)} key={item.slug} href={item.slug === "home" ? p + "/" : p + "/" + item.slug}>{dict["nav." + item.slug] || item.title}</Link>)}
         <Link href={p + "/campaigns"} onClick={() => setMobileOpen(false)}>{t("nav.campaigns", "الحملات", "Campaigns", "Campagnes", "Kampanyalar")}</Link>
         <Link href={p + "/news"} onClick={() => setMobileOpen(false)}>{t("nav.news", "الأخبار", "News", "Actualités", "Haberler")}</Link>

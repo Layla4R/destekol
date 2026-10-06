@@ -200,7 +200,7 @@ export default function SiteFooter({ isDestekol = false, navItems = [], settings
               Footer Main Content
           ===================================================== */}
 
-      <div className="relative max-w-screen-xl mx-auto px-4 sm:px-6 py-10 sm:py-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10">
+      <div className="destekol-footer-main relative max-w-screen-xl mx-auto px-4 sm:px-6 py-10 sm:py-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10">
         {/* ===================================================
             Brand Column
         =================================================== */}
@@ -462,7 +462,7 @@ export default function SiteFooter({ isDestekol = false, navItems = [], settings
               OFFICIAL REGISTRATION / VERIFICATION BAR
           ===================================================== */}
 
-      {(settings?.registrationNumber || settings?.footerTagline || settings?.copyrightText) && <div className="border-t border-white/10 py-5 px-6 flex flex-wrap items-center justify-between gap-6 text-sm text-white/70">
+      {(settings?.registrationNumber || settings?.footerTagline || settings?.copyrightText) && <div className="destekol-footer-bottom border-t border-white/10 py-5 px-6 flex flex-wrap items-center justify-between gap-6 text-sm text-white/70">
         {settings?.footerTagline && <span>{settings.footerTagline}</span>}
         {settings?.registrationNumber && (settings.verificationUrl
           ? <a href={settings.verificationUrl} target="_blank" rel="noopener noreferrer">{settings.registrationNumber}</a>

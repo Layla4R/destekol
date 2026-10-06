@@ -1,4 +1,7 @@
 "use client";
+import { interfaceCopy } from "@/lib/interface-copy";
+
+import { storyLink } from "@/lib/story-link";
 import Icon from "@/components/icons";
 import Image from "next/image";
 import Link from "next/link";
@@ -242,9 +245,7 @@ export default function HeroSection({ locale, dict, heroImage, heroSlides, accen
     }
     // Each slide uses the campaign URL saved by the admin.
     const enteredUrl = slide?.buttonUrl?.trim() || "";
-    const donationUrl = /^(?:https?:\/\/|\/(?!\/)|#)/i.test(enteredUrl)
-        ? enteredUrl
-        : enteredUrl && !/^[a-z][a-z0-9+.-]*:|^\/\//i.test(enteredUrl) ? "/" + enteredUrl : "";
+    const donationUrl = storyLink(enteredUrl, locale);
     if (!slide) {
         return null;
     }
@@ -318,13 +319,13 @@ export default function HeroSection({ locale, dict, heroImage, heroSlides, accen
   {data?.badgeText && <div className="destekol-hero-badge"><Icon name="heart" size={28}/><span>{data.badgeText}</span></div>}
   {/* Slider Controls */}
   {slides.length > 1 && (<div className="hero-controls absolute right-6 top-1/2 z-20 hidden -translate-y-1/2 flex-col gap-2 md:flex">
-      {<button type="button" aria-label="Previous slide" onClick={() => goTo((current - 1 + slides.length) % slides.length)} className="destekol-slide-arrow">←</button>}
-      {slides.map((_, index) => (<button key={index} type="button" onClick={() => goTo(index)} aria-label={`Go to slide ${index + 1}`} aria-current={index === current
+      {<button type="button" aria-label={interfaceCopy(locale).previousSlide} onClick={() => goTo((current - 1 + slides.length) % slides.length)} className="destekol-slide-arrow">←</button>}
+      {slides.map((_, index) => (<button key={index} type="button" onClick={() => goTo(index)} aria-label={`${interfaceCopy(locale).goToSlide} ${index + 1}`} aria-current={index === current
                         ? "true"
                         : undefined} className={`rounded-full transition-all ${index === current
                         ? "h-6 w-2 bg-white"
                         : "h-2 w-2 bg-white/40 hover:bg-white/70"}`}/>))}
-      {<button type="button" aria-label="Next slide" onClick={next} className="destekol-slide-arrow">→</button>}
+      {<button type="button" aria-label={interfaceCopy(locale).nextSlide} onClick={next} className="destekol-slide-arrow">→</button>}
     </div>)}
 
         </div>}
@@ -391,7 +392,7 @@ export default function HeroSection({ locale, dict, heroImage, heroSlides, accen
                 $
               </span>
 
-              <input type="number" min={1} value={custom} onChange={(e) => setCustom(e.target.value)} aria-label="Custom Donation Amount" placeholder={t("donate.custom", "مبلغ آخر", "Other", "Autre", "Diğer")} className="w-24 rounded-xl border border-white/20 bg-white/15 py-1.5 pl-6 pr-3 text-xs text-white placeholder-white/50 transition focus:border-white/50 focus:outline-none"/>
+              <input type="number" min={1} value={custom} onChange={(e) => setCustom(e.target.value)} aria-label={interfaceCopy(locale).customAmount} placeholder={t("donate.custom", "مبلغ آخر", "Other", "Autre", "Diğer")} className="w-24 rounded-xl border border-white/20 bg-white/15 py-1.5 pl-6 pr-3 text-xs text-white placeholder-white/50 transition focus:border-white/50 focus:outline-none"/>
             </div>
 
             {/* CTA */}

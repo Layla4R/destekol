@@ -15,12 +15,22 @@ export async function getHomeData(locale: string) {
     }
     const [page, settingsRes, campaignsRes, postsRes, statsRes] = await Promise.all([
         getPageBySlug("home", locale),
-        supabase.from("SiteSettings").select("accentColor, primaryColor, siteName, footerDescription, defaultCurrency").eq("id", "default").maybeSingle(),
-        supabase.from("Campaign").select("id, slug, title, summary, coverImage, goalAmount, raisedAmount, donorCount, category, isFeatured").eq("isActive", true).order("isFeatured", { ascending: false }).limit(12),
+        supabase.from("SiteSettings").select("accentColor, primaryColor, siteName, logoImage, contactEmail, footerDescription, defaultCurrency").eq("id", "default").maybeSingle(),
+        supabase.from("Campaign").select("id, slug, title, summary, coverImage, goalAmount, raisedAmount, donorCount, defaultAmount, category, isFeatured").eq("isActive", true).order("isFeatured", { ascending: false }).limit(12),
         supabase.from("NewsPost").select("id, title, excerpt, coverImage, videoUrl, slug, publishedAt").eq("isPublished", true).order("publishedAt", { ascending: false }).limit(3),
         supabase.rpc("get_dashboard_stats"),
     ]);
     let campaigns = campaignsRes.data || [];
+    let posts = postsRes.data || [];
+    if (locale !== "ar" && posts.length) {
+        const translated = await supabase.from("NewsPostTranslation").select("postId,title,excerpt")
+            .eq("locale", locale).in("postId", posts.map(post => post.id));
+        const byId = new Map((translated.data || []).map(row => [row.postId, row]));
+        posts = posts.map(post => {
+            const row = byId.get(post.id);
+            return row ? { ...post, title: row.title || post.title, excerpt: row.excerpt || post.excerpt } : post;
+        });
+    }
     // 🌟 دمج الترجمات للحملات إذا كانت اللغة غير العربية
     if (locale !== "ar" && campaigns.length > 0) {
         const campaignIds = campaigns.map((c: any) => c.id);
@@ -60,7 +70,7 @@ export async function getHomeData(locale: string) {
         pageSections: page?.sections || [],
         settings: settingsRes.data,
         campaigns,
-        posts: postsRes.data || [],
+        posts,
         stats: statsRes.data || { total: 0, families: 0 },
     }, locale);
 }

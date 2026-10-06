@@ -2,6 +2,7 @@ const TEXT_KEYS = new Set([
     "title", "subtitle", "heading", "subheading", "eyebrow", "description", "desc",
     "summary", "excerpt", "body", "body2", "body3", "text", "content", "quote",
     "caption", "alt", "imageAlt", "cartButtonText", "buttonText", "buttonLabel", "headline", "label", "question", "answer", "name", "location", "category", "status", "value", "badgeText", "placeholder",
+    "storyEyebrow", "readButtonText", "successText", "errorText", "notice", "authorName", "authorRole", "contactHeading", "contactSummary",
 ]);
 const arabic = /[\u0621-\u064A\u066E-\u06D3]/;
 // Translate editorial text only; preserve IDs, layout, images, links and markup.

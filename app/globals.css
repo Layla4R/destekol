@@ -686,7 +686,7 @@ body[data-site="destekol"] .home-layout .home-section--stories { margin-top: 14p
 
 .destekol-footer { width: min(calc(100% - 40px), 1440px); margin: 10px auto 24px; overflow: hidden; border: 1px solid #e5eef2; border-radius: 18px; color: #063962; background: #fff !important; box-shadow: 0 8px 28px #0a51710b; }
 .destekol-footer > div:first-child { height: 3px !important; background: linear-gradient(90deg, #d9a750, #098494, #066090) !important; }
-.destekol-footer > div:nth-of-type(2) { grid-template-columns: 1.3fr 1fr .95fr 1fr; gap: 32px; padding: 30px 36px 24px; }
+.destekol-footer .destekol-footer-main { grid-template-columns: 1.3fr 1fr .95fr 1fr; gap: 32px; padding: 30px 36px 24px; }
 .destekol-footer :is(h2, p, a, span, li) { color: #31556d; }
 .destekol-footer h2 { margin-bottom: 12px; color: #063962 !important; font-size: 12px; letter-spacing: .01em; }
 .destekol-footer p { margin-bottom: 14px; color: #5a7486 !important; font-size: 12px; line-height: 1.75; }
@@ -697,11 +697,11 @@ body[data-site="destekol"] .home-layout .home-section--stories { margin-top: 14p
 .destekol-footer nav[aria-label="Social media channels"] { gap: 7px; margin-bottom: 14px; }
 .destekol-footer nav[aria-label="Social media channels"] a { width: 30px; height: 30px; background: #f0f7fa; border: 1px solid #e3edf1; }
 .destekol-footer nav[aria-label="Social media channels"] a svg { color: #0a5171 !important; }
-.destekol-footer > div:nth-of-type(2) > div:first-child > a[aria-label$="Home"] img { height: 38px; margin-bottom: 10px; object-fit: contain; }
-.destekol-footer > div:nth-of-type(2) > div:first-child > a[style] { color: white !important; background: linear-gradient(135deg, #d9a750, #c79239) !important; border-radius: 8px; padding: 8px 13px; font-size: 12px; }
-.destekol-footer > div:last-child { padding: 12px 36px; gap: 14px; color: #597487; background: #f7fafb; border-top: 1px solid #eaf1f4; font-size: 10px; }
-.destekol-footer > div:last-child :is(span, a) { color: #597487 !important; }
-.destekol-footer > div:last-child a { background: #fff !important; border-color: #dbe7ed !important; border-radius: 8px; padding: 6px 9px; color: #0a5171 !important; font-size: 10px !important; }
+.destekol-footer .destekol-footer-main > div:first-child > a[aria-label$="Home"] img { width: 190px; height: auto; max-height: 100px; margin-bottom: 14px; object-fit: contain; }
+.destekol-footer .destekol-footer-main > div:first-child > a[style] { color: white !important; background: linear-gradient(135deg, #d9a750, #c79239) !important; border-radius: 8px; padding: 8px 13px; font-size: 12px; }
+.destekol-footer .destekol-footer-bottom { padding: 12px 36px; gap: 14px; color: #597487; background: #f7fafb; border-top: 1px solid #eaf1f4; font-size: 10px; }
+.destekol-footer .destekol-footer-bottom :is(span, a) { color: #597487 !important; }
+.destekol-footer .destekol-footer-bottom a { background: #fff !important; border-color: #dbe7ed !important; border-radius: 8px; padding: 6px 9px; color: #0a5171 !important; font-size: 10px !important; }
 
 @media(max-width:767px) {
   .destekol-story-section { padding: 48px 18px 52px; }
@@ -725,9 +725,9 @@ body[data-site="destekol"] .home-layout .home-section--stories { margin-top: 14p
   .destekol-newsletter-inner .newsletter-email { padding-inline: 9px; }
   .destekol-newsletter-inner .newsletter-submit { padding-inline: 12px; font-size: 11px; }
   .destekol-footer { width: calc(100% - 24px); margin: 8px auto 14px; border-radius: 14px; }
-  .destekol-footer > div:nth-of-type(2) { grid-template-columns: 1fr 1fr; gap: 20px 14px; padding: 22px 18px 18px; }
-  .destekol-footer > div:nth-of-type(2) > div:first-child { grid-column: 1 / -1; }
-  .destekol-footer > div:last-child { padding: 12px 16px; align-items: flex-start; font-size: 9px; }
+  .destekol-footer .destekol-footer-main { grid-template-columns: 1fr 1fr; gap: 20px 14px; padding: 22px 18px 18px; }
+  .destekol-footer .destekol-footer-main > div:first-child { grid-column: 1 / -1; }
+  .destekol-footer .destekol-footer-bottom { padding: 12px 16px; align-items: flex-start; font-size: 9px; }
 }
 /* Contact content only: the shared Destekol header, page intro and statistics keep their existing styles. */
 .destekol-contact-page { background: linear-gradient(180deg, #fff 25%, #f3fafc 65%, #fff); }

@@ -2,7 +2,7 @@
 import Icon from "@/components/icons";
 import { OFFICIAL_EMAIL } from "@/lib/public-contact";
 import { useState } from "react";
-export default function FaqSection({ email = OFFICIAL_EMAIL, locale, dict, data, }: {
+export default function FaqSection({ email = "", locale, dict, data, }: {
     email?: string;
     locale: string;
     dict: Record<string, string>;

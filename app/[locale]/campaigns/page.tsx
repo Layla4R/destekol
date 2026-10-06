@@ -1,3 +1,4 @@
+import { getDonationOptions } from "@/lib/services/donation-options.service";
 // app/[locale]/campaigns/page.tsx
 import CampaignCard from "@/components/blocks/CampaignCard";
 import DestekolPageIntro from "@/components/site/DestekolPageIntro";
@@ -17,7 +18,7 @@ export async function generateMetadata({ params: { locale } }: {
     const dict = await loadTranslations(locale);
     const isDestekol = true;
     const rawTitle = dict["campaigns.page_title"] || (locale === "ar" ? "الحملات النشطة" : locale === "fr" ? "Campagnes Actives" : locale === "tr" ? "Aktif Kampanyalar" : "Active Campaigns");
-    const rawDescription = dict["campaigns.page_desc"] || (locale === "ar" ? "ادعم حملاتنا الإنسانية وساعد الأسر المحتاجة حول العالم" : "Support our humanitarian campaigns and help families in need around the world");
+    const rawDescription = dict["campaigns.page_desc"] || dict["campaigns.subtitle"] || "";
     const { title, description } = normalizeDestekolBrandCopy({ title: rawTitle, description: rawDescription }, locale);
     return { title, description, openGraph: { title, description } };
 }
@@ -27,10 +28,11 @@ export default async function CampaignsPage({ params: { locale } }: {
     };
 }) {
     // 🌟 جلب البيانات المتوازية (Parallel Data Fetching) بدون كود قواعد بيانات
-    const [campaigns, dict, page] = await Promise.all([
+    const [campaigns, dict, page, options] = await Promise.all([
         getActiveCampaigns(locale),
         loadTranslations(locale),
         getPageBySlug("campaigns", locale),
+        getDonationOptions(locale),
     ]);
     const isDestekol = true;
     const rawTitle = page?.title || dict["campaigns.title"] || "الحملات النشطة";
@@ -44,7 +46,7 @@ export default async function CampaignsPage({ params: { locale } }: {
         {displayCampaigns.length === 0 ? (<p className="text-center text-muted py-20">
             {dict["campaigns.no_campaigns"] || "لا توجد حملات نشطة حالياً."}
           </p>) : (<div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
-            {displayCampaigns.map((c: any) => (<CampaignCard key={c.id} {...c} locale={locale} dict={dict}/>))}
+            {displayCampaigns.map((c: any) => (<CampaignCard key={c.id} {...c} locale={locale} dict={dict} amounts={options.amounts}/>))}
           </div>)}
       </div>
     </div>);

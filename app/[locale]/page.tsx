@@ -1,3 +1,4 @@
+import { donationOptions } from "@/lib/donation-options";
 import BlockRenderer from "@/components/blocks/BlockRenderer"; // استيراد BlockRenderer
 import ChatWidget from "@/components/site/ChatWidget";
 import { getDestekolAnswers } from "@/lib/destekol-answers";
@@ -119,7 +120,7 @@ export default async function HomePage({ params }: PageProps) {
                 ...({}),
                 logo: {
                     "@type": "ImageObject",
-                    url: `${siteUrl}${"/brand/destekol-logo.png"}`,
+                    url: settings?.logoImage ? new URL(settings.logoImage, siteUrl).toString() : undefined,
                 },
                 ...({}),
                 knowsAbout: [
@@ -130,7 +131,7 @@ export default async function HomePage({ params }: PageProps) {
                 ],
                 contactPoint: {
                     "@type": "ContactPoint",
-                    email: officialEmail(isDestekol),
+                    email: settings?.contactEmail || "",
                     contactType: "customer support",
                     availableLanguage: ["Arabic", "English", "French", "Turkish"],
                 },
@@ -141,6 +142,7 @@ export default async function HomePage({ params }: PageProps) {
     // تمرير السياق المطلوب للـ BlockRenderer
     const context = {
         isHomePage: true,
+        donationAmounts: donationOptions(data.page?.sections.find((section: any) => section.type === "quick_donate")?.props).amounts,
         locale,
         dict,
         primaryColor,

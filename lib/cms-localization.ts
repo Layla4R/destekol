@@ -3,6 +3,8 @@ const TEXT_FIELDS = new Set([
     "summary", "excerpt", "body", "body2", "body3", "content", "text", "quote",
     "caption", "alt", "imageAlt", "label", "name", "question", "answer", "eyebrow",
     "buttonText", "buttonLabel", "cartButtonText", "badgeText", "placeholder",
+    "storyEyebrow", "readButtonText", "successText", "errorText", "notice",
+    "category", "location", "status", "authorName", "authorRole", "contactHeading", "contactSummary",
 ]);
 function keyOf(value: unknown): string | undefined {
     if (!value || typeof value !== "object") return undefined;

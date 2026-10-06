@@ -1,7 +1,7 @@
 "use client";
 import Icon from "@/components/icons";
 import { useEffect,useState } from "react";
-const AMOUNTS = [5, 10, 25, 50, 100, 250];
+import { donationOptions } from "@/lib/donation-options";
 export default function DonateWidget({ locale, dict, primaryColor, accentColor, data, isDestekol = false }: {
     locale: string;
     dict: Record<string, string>;
@@ -11,7 +11,8 @@ export default function DonateWidget({ locale, dict, primaryColor, accentColor, 
     isDestekol?: boolean;
 }) {
     const [mounted, setMounted] = useState(false);
-    const [amount, setAmount] = useState(25);
+    const options = donationOptions(data);
+    const [amount, setAmount] = useState(options.defaultAmount);
     const [custom, setCustom] = useState("");
     const [freq, setFreq] = useState<"ONE_TIME" | "MONTHLY">("ONE_TIME");
     const [step, setStep] = useState<"amount" | "details">("amount");
@@ -24,8 +25,8 @@ export default function DonateWidget({ locale, dict, primaryColor, accentColor, 
     }, []);
     const final = custom ? Math.max(1, Number(custom)) : amount;
     const t = (key: string, ar: string, en: string, fr: string, tr: string) => dict[key] || (locale === "ar" ? ar : locale === "fr" ? fr : locale === "tr" ? tr : en);
-    const title = data?.headline || data?.title || t("donate.widget_title", "كل درهم يغير حياة", "Every Dollar Changes a Life", "Chaque Euro Change une Vie", "Her Dolar Bir Hayat Değiştirir");
-    const subtitle = data?.subheading || data?.subtitle || data?.body || data?.description || t("donate.widget_body", "تبرعك يصل مباشرة للمستحقين دون وسيط. نحن نضمن الشفافية الكاملة ونوفر تقارير دورية عن أثر تبرعاتك.", "Your donation reaches beneficiaries directly without intermediaries. We guarantee full transparency and provide regular reports on the impact of your donations.", "Votre don parvient directement aux bénéficiaires sans intermédiaires. Nous garantissons une transparence totale.", "Bağışınız doğrudan yararlanıcılara ulaşır. Tam şeffaflık garantisi ve düzenli etki raporları sunuyoruz.");
+    const title = data?.headline || data?.title || "";
+    const subtitle = data?.subheading || data?.subtitle || data?.body || data?.description || "";
     const eyebrow = data?.eyebrow || t("donate.eyebrow", "تبرع الآن", "Donate Now", "Faire un Don", "Bağış Yap");
     const primary = primaryColor || "var(--color-brand, #0069D2)";
     const accent = accentColor || "var(--color-accent, #F00F5A)";
@@ -79,17 +80,12 @@ export default function DonateWidget({ locale, dict, primaryColor, accentColor, 
               </header>
 
               <ul className="grid sm:grid-cols-2 gap-4 m-0 p-0 list-none">
-                {[
-            { icon: "shield-check" as const, ar: "دفع آمن ومشفر 100%", en: "100% Secure Payment", fr: "Paiement 100% Sécurisé", tr: "100% Güvenli Ödeme" },
-            { icon: "hand-heart" as const, ar: "وصول مباشر للمستحق", en: "Direct Impact", fr: "Impact Direct", tr: "Doğrudan Etki" },
-            { icon: "file-text" as const, ar: "تقارير شفافية دورية", en: "Transparency Reports", fr: "Rapports de transparence", tr: "Şeffaflık Raporları" },
-            { icon: "globe" as const, ar: "بيانات الشركة متاحة للتحقق", en: "Company Registration Available", fr: "Enregistrement de la société consultable", tr: "Şirket kaydı doğrulanabilir" },
-        ].map((item, i) => (<li key={i} className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 border border-slate-100/80">
+                {(Array.isArray(data?.trustItems) ? data.trustItems : []).map((item: any, i: number) => (<li key={i} className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 border border-slate-100/80">
                     <div className="w-9 h-9 rounded-xl bg-white border border-slate-200/60 text-brand flex items-center justify-center shrink-0 shadow-sm">
                       <Icon name={item.icon} size={18}/>
                     </div>
                     <span className="text-slate-700 text-xs font-semibold leading-snug">
-                      {t(`donate.feat${i}`, item.ar, item.en, item.fr, item.tr)}
+                      {item.title || ""}
                     </span>
                   </li>))}
               </ul>
@@ -122,7 +118,7 @@ export default function DonateWidget({ locale, dict, primaryColor, accentColor, 
                     </div>
 
                     <div className="grid grid-cols-3 gap-2">
-                      {AMOUNTS.map(a => (<button key={a} type="button" onClick={() => { setAmount(a); setCustom(""); }} className={`py-2.5 rounded-xl text-xs font-bold transition-all ${final === a && !custom
+                      {options.amounts.map(a => (<button key={a} type="button" onClick={() => { setAmount(a); setCustom(""); }} className={`py-2.5 rounded-xl text-xs font-bold transition-all ${final === a && !custom
                     ? "bg-white text-slate-900 shadow-md"
                     : "bg-white/10 text-white hover:bg-white/20 border border-white/10"}`}>
                           ${a}

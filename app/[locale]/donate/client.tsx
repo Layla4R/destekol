@@ -1,17 +1,18 @@
 "use client";
 import Icon from "@/components/icons";
 import { useState } from "react";
-const AMOUNTS = [5, 10, 25, 50, 100];
-export default function DonateClient({ locale, dict: D, initialAmount, initialFreq, campaignId, storyId, }: {
+export default function DonateClient({ locale, dict: D, initialAmount, initialFreq, campaignId, storyId, amounts = [], defaultAmount = 0 }: {
     locale: string;
     dict: Record<string, string>;
     initialAmount?: number;
     initialFreq?: "ONE_TIME" | "MONTHLY";
     campaignId?: string;
     storyId?: string;
+    amounts?: number[];
+    defaultAmount?: number;
 }) {
-    const [amount, setAmount] = useState(initialAmount || 25);
-    const [custom, setCustom] = useState(initialAmount && ![5, 10, 25, 50, 100].includes(initialAmount) ? String(initialAmount) : "");
+    const [amount, setAmount] = useState(Number.isFinite(initialAmount) && Number(initialAmount) >= 1 ? Number(initialAmount) : defaultAmount);
+    const [custom, setCustom] = useState(initialAmount && Number.isFinite(initialAmount) && initialAmount >= 1 && !amounts.includes(initialAmount) ? String(initialAmount) : "");
     const [freq, setFreq] = useState<"ONE_TIME" | "MONTHLY">(initialFreq || "ONE_TIME");
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
@@ -22,7 +23,7 @@ export default function DonateClient({ locale, dict: D, initialAmount, initialFr
     const final = custom ? Number(custom) : amount;
     async function pay(provider: "stripe" | "paypal") {
         if (!name.trim() || !email.trim()) {
-            setError(`${D["donate.name"]} & ${D["donate.email"]} required`);
+            setError(D["cart.name_email_required"] || D["common.error"]);
             return;
         }
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
@@ -68,7 +69,7 @@ export default function DonateClient({ locale, dict: D, initialAmount, initialFr
           <div>
             <label className="block text-sm font-semibold text-muted mb-2">{D["donate.amount"]}</label>
             <div className="grid grid-cols-5 gap-2 mb-3">
-              {AMOUNTS.map(a => (<button key={a} onClick={() => { setAmount(a); setCustom(""); }} className={`py-2.5 rounded-xl text-sm font-bold border transition ${final === a && !custom ? "bg-brand border-brand text-white" : "border-line bg-white text-ink hover:border-brand"}`}>
+              {amounts.map(a => (<button key={a} onClick={() => { setAmount(a); setCustom(""); }} className={`py-2.5 rounded-xl text-sm font-bold border transition ${final === a && !custom ? "bg-brand border-brand text-white" : "border-line bg-white text-ink hover:border-brand"}`}>
                   ${a}
                 </button>))}
             </div>

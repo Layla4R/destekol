@@ -1,4 +1,6 @@
 "use client";
+import { interfaceCopy } from "@/lib/interface-copy";
+
 import Icon from "@/components/icons";
 import { storyLink } from "@/lib/story-link";
 import Image from "next/image";
@@ -54,7 +56,8 @@ function CardMedia({ videoUrl, image, title }: {
       <Icon name="file-text" size={32}/>
     </div>);
 }
-function FeaturedMedia({ videoUrl, image, title }: {
+function FeaturedMedia({ videoUrl, image, title, locale }: {
+    locale: string;
     videoUrl?: string;
     image?: string;
     title: string;
@@ -71,7 +74,7 @@ function FeaturedMedia({ videoUrl, image, title }: {
     }
     if (isYoutube && !playing) {
         const poster = image || (videoId ? `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg` : "");
-        return (<button type="button" className="destekol-story-poster" style={poster ? { backgroundImage: `linear-gradient(0deg, #001b2f40, #001b2f12), url("${poster}")` } : undefined} onClick={() => setPlaying(true)} aria-label={`${title} — play video`}>
+        return (<button type="button" className="destekol-story-poster" style={poster ? { backgroundImage: `linear-gradient(0deg, #001b2f40, #001b2f12), url("${poster}")` } : undefined} onClick={() => setPlaying(true)} aria-label={`${title} — ${interfaceCopy(locale).playVideo}`}>
         <span aria-hidden="true">▶</span>
       </button>);
     }
@@ -131,7 +134,7 @@ export default function NewsSection({ posts, locale, dict, data, compact = false
           </header>
           <div className="destekol-story-feature">
             <div className="destekol-story-media">
-              <FeaturedMedia videoUrl={item.videoUrl} image={image} title={title}/>
+              <FeaturedMedia locale={locale} videoUrl={item.videoUrl} image={image} title={title}/>
               {item.duration && <span className="destekol-story-duration">{item.duration}</span>}
             </div>
             <article className="destekol-story-copy">

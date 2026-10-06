@@ -1,4 +1,6 @@
 "use client";
+import { interfaceCopy } from "@/lib/interface-copy";
+
 import Icon from "@/components/icons";
 import { countries } from "countries-list";
 import Image from "next/image";
@@ -212,9 +214,7 @@ export default function LoginClient({ locale, dict: D, }: {
                           {selectedCountryObj.name}
                         </span>
                       </>) : (<span className="text-muted">
-                        {locale === "ar"
-                    ? "اختر الدولة..."
-                    : "Select Country..."}
+                        {interfaceCopy(locale).selectCountry}
                       </span>)}
                   </span>
                   <Icon name="chevron-down" size={16} className={`text-muted transition-transform duration-200 ${countryOpen ? "rotate-180 text-brand" : ""}`}/>
@@ -223,9 +223,7 @@ export default function LoginClient({ locale, dict: D, }: {
                 {/* القائمة المنبثقة */}
                 {countryOpen && (<div className="absolute z-50 top-full mt-1.5 w-full bg-white rounded-xl border border-line shadow-2xl overflow-hidden animate-in fade-in duration-150">
                     <div className="p-2 border-b border-line bg-cream/40">
-                      <input type="text" placeholder={locale === "ar"
-                    ? "ابحث عن الدولة..."
-                    : "Search country..."} value={countrySearch} onChange={(e) => setCountrySearch(e.target.value)} className="w-full text-xs px-3 py-2 rounded-lg border border-line bg-white focus:outline-none focus:ring-2 focus:ring-brand/30" autoFocus/>
+                      <input type="text" placeholder={interfaceCopy(locale).searchCountry} value={countrySearch} onChange={(e) => setCountrySearch(e.target.value)} className="w-full text-xs px-3 py-2 rounded-lg border border-line bg-white focus:outline-none focus:ring-2 focus:ring-brand/30" autoFocus/>
                     </div>
 
                     <div className="max-h-52 overflow-y-auto divide-y divide-line/30">

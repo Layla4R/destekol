@@ -1,3 +1,4 @@
+import { storyLink } from "@/lib/story-link";
 import CampaignCard from "@/components/blocks/CampaignCard";
 import ContactForm from "@/components/blocks/ContactForm";
 import CountUp from "@/components/blocks/CountUp";
@@ -23,6 +24,7 @@ import FaqSection from "../site/FaqSection";
 import AboutOverviewSection from "./AboutOverviewSection";
 interface RendererContext {
     isHomePage?: boolean;
+    donationAmounts?: number[];
     campaigns?: CampaignLite[];
     kindnessCampaigns?: CampaignLite[];
     whiteBackground?: boolean;
@@ -51,33 +53,20 @@ export default function BlockRenderer({ section, context = {}, }: {
     section: PageSection;
     context?: RendererContext;
 }) {
-    const email = officialEmail(!!context?.isDestekol);
+    const email = context.settings?.contactEmail || section.props?.email || "";
     const rawProps = section.props || (section as any).data || {};
     const brandedProps = normalizeDestekolBrandCopy(rawProps, context.locale || "ar");
     const dict = context?.dict
         ? normalizeDestekolBrandCopy(context.dict, context.locale || "ar")
         : {};
     // FAQ questions and answers belong to the site's admin, including their wording and links.
-    const p = section.type === "faq" ? brandedProps : normalizePublicContact(brandedProps, email);
+    const p = brandedProps;
     const primary = context?.primaryColor || "var(--color-brand, #0069D2)";
     const accent = context?.accentColor || "var(--color-accent, #F00F5A)";
     const siteUrl = "https://destekol.org";
     const isRTL = context?.locale === "ar";
     const locale = context?.locale || "ar";
-    const getLocalizedLink = (url?: string, defaultFallback = "/") => {
-        if (!url)
-            return locale === "ar" ? defaultFallback : `/${locale}${defaultFallback}`;
-        if (url.startsWith("http://") || url.startsWith("https://"))
-            return url;
-        const cleanUrl = url.startsWith("/") ? url : `/${url}`;
-        const langPrefix = `/${locale}`;
-        if (locale === "ar")
-            return cleanUrl;
-        if (cleanUrl.startsWith(`${langPrefix}/`) || cleanUrl === langPrefix) {
-            return cleanUrl;
-        }
-        return `${langPrefix}${cleanUrl}`;
-    };
+    const getLocalizedLink = (url?: string, defaultFallback = "/") => storyLink(url || defaultFallback, locale) || `/${locale}`;
     switch (section.type) {
         case "kindness_box": {
             ;
@@ -514,7 +503,7 @@ export default function BlockRenderer({ section, context = {}, }: {
               {p.subtitle && <p className="text-slate-500 text-sm sm:text-base">{p.subtitle}</p>}
             </div>
             <CardCarousel enabled={context?.isHomePage === true} locale={locale} href={getLocalizedLink("/campaigns")} className={context?.isHomePage ? "campaign-carousel-one-up items-stretch" : "grid sm:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch"}>
-              {campaigns.map((c) => (<CampaignCard variant={context?.isHomePage ? "destekol" : "default"} currency={(context?.settings?.defaultCurrency || "USD").toUpperCase()} key={c.id} id={c.id} slug={c.slug} title={c.title} summary={c.summary} coverImage={c.coverImage} goalAmount={c.goalAmount} raisedAmount={c.raisedAmount} donorCount={c.donorCount} category={c.category} locale={locale} dict={dict}/>))}
+              {campaigns.map((c) => (<CampaignCard variant={context?.isHomePage ? "destekol" : "default"} currency={(context?.settings?.defaultCurrency || "USD").toUpperCase()} key={c.id} id={c.id} amounts={context.donationAmounts || []} defaultAmount={c.defaultAmount} slug={c.slug} title={c.title} summary={c.summary} coverImage={c.coverImage} goalAmount={c.goalAmount} raisedAmount={c.raisedAmount} donorCount={c.donorCount} category={c.category} locale={locale} dict={dict}/>))}
               {campaigns.length === 0 && (<p className="text-slate-500 col-span-full text-center py-10">{noCampaignsText}</p>)}
             </CardCarousel>
             {!context?.isHomePage && campaigns.length > 0 && (<div className="text-center mt-12">
