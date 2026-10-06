@@ -93,16 +93,6 @@ const LEGAL_SLUGS: Array<{
             tr: "Bağışları Nasıl Kullanıyoruz",
         },
     },
-    {
-        slug: "license",
-        key: "legal.license",
-        fallbacks: {
-            ar: "التسجيل والترخيص",
-            en: "Registration & Licensing",
-            fr: "Enregistrement et agrément",
-            tr: "Kayıt ve Ruhsat Bilgileri",
-        },
-    },
 ];
 const SOCIAL_ICONS: Record<string, {
     icon: string;
