@@ -8,7 +8,10 @@ export const PUBLIC_SITE_SETTINGS_FIELDS = [
     'socialPosition', 'gaMeasurementId', 'facebookPixelId',
 ] as const;
 export type PublicSiteSettings = Partial<Record<typeof PUBLIC_SITE_SETTINGS_FIELDS[number] | 'contactAddress' | 'registrationNumber' | 'verificationUrl', string | null>>;
-export const PUBLIC_SITE_SETTINGS_SELECT = PUBLIC_SITE_SETTINGS_FIELDS.join(',');
+// This older CMS schema has no socialPosition column. Keep the optional public
+// property for callers, but do not let it invalidate the whole settings query.
+export const PUBLIC_SITE_SETTINGS_SELECT = PUBLIC_SITE_SETTINGS_FIELDS
+    .filter(field => field !== 'socialPosition').join(',');
 // Reconstruct the object instead of trusting database types or spreading a row.
 // This also discards newly added private columns and unexpected nested values.
 export function pickPublicSiteSettings(value: unknown): PublicSiteSettings | null {
