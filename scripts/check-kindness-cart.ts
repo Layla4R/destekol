@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';
+import { addKindnessChoices } from '../lib/kindness-cart';
+const base = [{ slug: 'a', title: 'A monthly', campaignId: 'a-id', amount: 10, frequency: 'monthly' }, { slug: 'b', title: 'B', campaignId: 'b-id', amount: 20, frequency: 'one_time' }];
+const choices = [{ slug: 'a', title: 'A', campaignId: 'a-id', unitAmount: 25, quantity: 2 }, { slug: 'b', title: 'B', campaignId: 'b-id', unitAmount: 10, quantity: 3 }];
+const result = addKindnessChoices(base, choices);
+assert.equal(result.length, 3);
+assert.equal(result[0].amount, 10);
+assert.equal(result[1].amount, 50);
+assert.equal(result[2].amount, 50);
+assert.equal(result[2].campaignId, 'a-id');
+assert.equal(base[1].amount, 20);
+assert.deepEqual(addKindnessChoices([], choices.map(c => ({ ...c, quantity: -1 }))), []);
+assert.deepEqual(addKindnessChoices([], choices.map(c => ({ ...c, unitAmount: Infinity }))), []);
+assert.equal(addKindnessChoices(result, [choices[0]])[2].amount, 100);
+console.log('PASS: campaign IDs, quantity totals, additive merge, monthly isolation, invalid values, immutable source.');

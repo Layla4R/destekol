@@ -1,0 +1,12 @@
+node_modules
+.next
+.next-tenant-review/
+.next-*/
+.env
+.env.local
+*.log
+.DS_Store
+/out
+
+.npm-cache/
+tsconfig.tsbuildinfo
