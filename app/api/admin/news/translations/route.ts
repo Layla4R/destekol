@@ -1,13 +1,11 @@
-import { requireAdmin } from "@/lib/auth";
+import { requireRoutePermission, accessErrorResponse } from "@/lib/admin-access";
 import { getSupabase } from "@/lib/supabase";
 import { NextRequest,NextResponse } from "next/server";
 export async function GET(req: NextRequest) {
     try {
-        await requireAdmin(req);
+        await requireRoutePermission(req);
     }
-    catch {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    catch(error) { return accessErrorResponse(error); }
     const url = new URL(req.url);
     const postId = url.searchParams.get("postId");
     const locale = url.searchParams.get("locale");
@@ -19,11 +17,9 @@ export async function GET(req: NextRequest) {
 }
 export async function POST(req: NextRequest) {
     try {
-        await requireAdmin(req);
+        await requireRoutePermission(req);
     }
-    catch {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    catch(error) { return accessErrorResponse(error); }
     const { postId, locale, title, excerpt, body, body2, videoUrl } = await req.json();
     if (!postId || !locale || !title)
         return NextResponse.json({ error: "Missing fields" }, { status: 400 });
@@ -44,11 +40,9 @@ export async function POST(req: NextRequest) {
 }
 export async function DELETE(req: NextRequest) {
     try {
-        await requireAdmin(req);
+        await requireRoutePermission(req);
     }
-    catch {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    catch(error) { return accessErrorResponse(error); }
     const { postId, locale } = await req.json();
     const supabase = getSupabase();
     await supabase.from("NewsPostTranslation").delete().eq("postId", postId).eq("locale", locale);

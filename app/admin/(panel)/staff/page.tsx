@@ -10,11 +10,16 @@ interface StaffMember {
     role: string;
     permissions: string[];
     isStaff: boolean;
+    isEvaluation?: boolean;
+    accessExpiresAt?: string;
     lastLoginAt?: string;
     createdAt: string;
     invitedBy?: string;
 }
+const ROLE_LABELS: Record<string,string> = {ADMIN:"Admin",EDITOR:"Content Editor",VIEWER:"Viewer",FINANCE:"Finance Manager",COMPLAINTS:"Complaints Officer"};
+const PRESET_ROLE: Record<string,string> = {viewer:"VIEWER",finance_manager:"FINANCE",complaints_officer:"COMPLAINTS"};
 interface Invite {
+    role: string;
     id: string;
     email: string;
     name: string;
@@ -55,6 +60,7 @@ export default function StaffPage() {
     const [invEmail, setInvEmail] = useState("");
     const [invName, setInvName] = useState("");
     const [invPreset, setInvPreset] = useState<keyof typeof PRESET_ROLES>("editor");
+    const [invRole, setInvRole] = useState("EDITOR");
     const [invPerms, setInvPerms] = useState<PermissionId[]>([...PRESET_ROLES.editor.permissions]);
     const [invLoading, setInvLoading] = useState(false);
     const [invError, setInvError] = useState("");
@@ -71,6 +77,7 @@ export default function StaffPage() {
     useEffect(() => { load(); }, []);
     function applyPreset(preset: keyof typeof PRESET_ROLES) {
         setInvPreset(preset);
+        setInvRole(PRESET_ROLE[preset] || "EDITOR");
         if (preset !== "custom")
             setInvPerms([...PRESET_ROLES[preset].permissions as PermissionId[]]);
     }
@@ -103,7 +110,7 @@ export default function StaffPage() {
         try {
             const res = await adminFetch("/api/admin/invites", {
                 method: "POST",
-                body: JSON.stringify({ email: invEmail, name: invName, permissions: invPerms }),
+                body: JSON.stringify({ email: invEmail, name: invName, permissions: invPerms, role: invRole }),
             });
             const d = await res.json();
             if (!res.ok) {
@@ -129,7 +136,7 @@ export default function StaffPage() {
         await adminFetch(`/api/admin/invites/${id}`, { method: "DELETE" });
         load();
     }
-    async function resendInvite(inviteId: string, email: string, name: string, permissions: string[]) {
+    async function resendInvite(inviteId: string, email: string, name: string, permissions: string[], role: string) {
         try {
             // Delete old invite first to avoid ALREADY_INVITED error
             const delRes = await adminFetch(`/api/admin/invites/${inviteId}`, { method: "DELETE" });
@@ -140,7 +147,7 @@ export default function StaffPage() {
             // Create new invite — if this fails, old invite is gone (no fallback needed, user can reinvite)
             const res = await adminFetch("/api/admin/invites", {
                 method: "POST",
-                body: JSON.stringify({ email, name, permissions }),
+                body: JSON.stringify({ email, name, permissions, role }),
             });
             if (res.ok) {
                 alert(`Invitation resent to ${email}`);
@@ -157,13 +164,14 @@ export default function StaffPage() {
         load();
     }
     async function updateUserPerms(userId: string, permissions: string[], role: string) {
-        if (!confirm(`Update permissions for this staff member? They will need to re-login to see changes.`))
+        if (!confirm(`Update permissions for this staff member? Changes take effect immediately.`))
             return;
         // Keep isStaff=true — staff members always retain staff status even if role changes
-        await adminFetch(`/api/admin/users/${userId}`, {
+        const result = await adminFetch(`/api/admin/users/${userId}`, {
             method: "PATCH",
             body: JSON.stringify({ role, permissions }), // isStaff stays true from original invite
         });
+        if (!result.ok) { alert('Permissions could not be updated.'); return; }
         setEditUser(null);
         load();
     }
@@ -210,6 +218,7 @@ export default function StaffPage() {
                 </div>
               </div>
 
+              <div><label className="block text-xs text-muted font-semibold mb-2">Account Role</label><select className={inp} value={invRole} onChange={e => setInvRole(e.target.value)}>{["EDITOR","VIEWER","FINANCE","COMPLAINTS"].map(r => <option key={r} value={r}>{ROLE_LABELS[r]}</option>)}</select></div>
               {/* Granular permissions */}
               <div>
                 <label className="block text-xs text-muted font-semibold uppercase tracking-wider mb-3">
@@ -270,13 +279,15 @@ export default function StaffPage() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="font-bold text-ink">{u.name}</span>
+                    {u.isStaff && <span className="text-xs bg-brand/10 text-brand font-bold px-2 py-0.5 rounded-md">{ROLE_LABELS[u.role] || u.role}</span>}
+                    {u.isEvaluation && <span className="text-xs text-muted">Evaluation · Expires {u.accessExpiresAt ? new Date(u.accessExpiresAt).toLocaleString("en-GB") : "—"}</span>}
                     {u.role === "ADMIN" && !u.isStaff && <span className="text-xs bg-danger/10 text-danger font-bold px-2 py-0.5 rounded-md">Super Admin</span>}
                   </div>
                   <div className="text-xs text-muted mt-0.5">{u.email}</div>
                   <div className="flex flex-wrap gap-1 mt-2">
                     {u.isStaff && u.permissions?.length > 0
                     ? u.permissions.slice(0, 6).map(p => <PermissionBadge key={p} perm={p}/>)
-                    : <span className="text-xs bg-brand/10 text-brand font-bold px-2 py-0.5 rounded-md">All Permissions</span>}
+                    : <span className="text-xs bg-brand/10 text-brand font-bold px-2 py-0.5 rounded-md">{u.role === "ADMIN" && !u.isStaff ? "All Permissions" : "No Permissions"}</span>}
                     {u.isStaff && u.permissions?.length > 6 && (<span className="text-xs bg-line text-muted font-semibold px-2 py-0.5 rounded-md">+{u.permissions.length - 6} more</span>)}
                   </div>
                   {u.invitedBy && <div className="text-xs text-muted mt-1">Invited by {u.invitedBy} · Joined {new Date(u.createdAt).toLocaleDateString("en-GB")}</div>}
@@ -304,7 +315,7 @@ export default function StaffPage() {
                 </div>
                 <span className="text-xs bg-warning/10 text-warning font-bold px-2.5 py-1 rounded-full shrink-0">Pending</span>
                 <span className="text-xs text-muted">Expires {new Date(inv.expiresAt).toLocaleDateString("en-GB")}</span>
-                <button onClick={() => resendInvite(inv.id, inv.email, inv.name, inv.permissions)} className="text-xs border border-brand text-brand font-semibold rounded-lg px-2.5 py-1.5 hover:bg-brand hover:text-white transition shrink-0">
+                <button onClick={() => resendInvite(inv.id, inv.email, inv.name, inv.permissions, inv.role)} className="text-xs border border-brand text-brand font-semibold rounded-lg px-2.5 py-1.5 hover:bg-brand hover:text-white transition shrink-0">
                   Resend
                 </button>
                 <button onClick={() => revokeInvite(inv.id)} aria-label="اسم الزر" className="text-danger hover:text-danger/70 transition shrink-0">
@@ -338,12 +349,16 @@ function EditPermissionsModal({ user, onClose, onSave }: {
         <div className="p-6 space-y-5">
           <div>
             <label className="block text-xs text-muted font-semibold uppercase tracking-wider mb-2">Role</label>
-            <select value={role} onChange={e => setRole(e.target.value)} className="w-full rounded-xl border border-line bg-dashbg py-2.5 px-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand/30">
+            <select value={role} onChange={e => { const value=e.target.value; setRole(value); const preset=({EDITOR:"editor",VIEWER:"viewer",FINANCE:"finance_manager",COMPLAINTS:"complaints_officer"} as Record<string,string>)[value]; if(preset)setPerms([...PRESET_ROLES[preset].permissions]); }} className="w-full rounded-xl border border-line bg-dashbg py-2.5 px-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand/30">
               <option value="ADMIN">Admin (Staff)</option>
+              <option value="EDITOR">Content Editor</option>
+              <option value="FINANCE">Finance Manager</option>
+              <option value="COMPLAINTS">Complaints Officer</option>
+              <option value="VIEWER">Viewer (Read Only)</option>
               <option value="DONOR">Revoke Staff Access</option>
             </select>
           </div>
-          {role === "ADMIN" && (<div className="space-y-4">
+          {role !== "DONOR" && (<div className="space-y-4">
               <label className="block text-xs text-muted font-semibold uppercase tracking-wider">Permissions ({perms.length} selected)</label>
               {PERMISSION_GROUPS.map(group => (<div key={group} className="bg-dashbg rounded-xl p-4">
                   <div className="font-bold text-sm text-ink mb-3">{group}</div>

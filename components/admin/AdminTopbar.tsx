@@ -84,7 +84,7 @@ export default function AdminTopbar() {
             </div>
             <div className="hidden sm:block">
               <div className="text-xs font-semibold text-ink leading-none">{admin.name || admin.email.split("@")[0]}</div>
-              <div className="text-[10px] text-muted leading-none mt-0.5">{admin.isStaff ? "Staff" : admin.role}</div>
+              <div className="text-[10px] text-muted leading-none mt-0.5">{admin.isStaff ? ({EDITOR:"Content Editor",VIEWER:"Viewer",FINANCE:"Finance Manager",COMPLAINTS:"Complaints Officer",ADMIN:"Administrative Staff"} as Record<string,string>)[admin.role] || admin.role : "Owner"}</div>
             </div>
           </div>)}
 

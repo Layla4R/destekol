@@ -19,7 +19,6 @@ export async function registerDonor(opts: {
     password: string;
     country?: string;
 }) {
-    console.log("👉 [Register] بدء إنشاء حساب جديد لـ:", opts.email);
     const supabase = getSupabase();
     const { data: existing } = await supabase
         .from("User")
@@ -46,10 +45,9 @@ export async function registerDonor(opts: {
         .select("id, name, email")
         .single();
     if (error) {
-        console.error("❌ خطأ Supabase:", error.message);
+        console.error('[donor-auth] Database operation failed');
         throw new Error(error.message);
     }
-    console.log("👉 [Register] تم الحفظ بـ Supabase. جاري تجهيز رابط التفعيل...");
     const siteUrl = getRequestSite().url;
     const verifyUrl = `${siteUrl}/verify-email?token=${verifyToken}`;
     // 🌟 إرسال بريد التفعيل وانتظار النتيجة
@@ -58,12 +56,10 @@ export async function registerDonor(opts: {
         donorName: user.name,
         verifyUrl,
     });
-    console.log("👉 [Register] نتيجة إرسال الإيميل:", sent ? "نجح ✅" : "فشل ❌");
     return { id: user.id, name: user.name, email: user.email };
 }
 //  Verify Email Token ──────────────────────────────────────────
 export async function verifyEmail(token: string) {
-    console.log("👉 [VerifyEmail] جاري التفعيل بالرمز:", token);
     const supabase = getSupabase();
     const { data: user, error } = await supabase
         .from("User")
@@ -71,15 +67,13 @@ export async function verifyEmail(token: string) {
         .eq("verifyToken", token)
         .maybeSingle();
     if (error) {
-        console.error("❌ [VerifyEmail] خطأ استعلام Supabase:", error.message);
+        console.error('[donor-auth] Database operation failed');
         throw new Error("INVALID_TOKEN");
     }
     if (!user) {
-        console.warn("⚠️ [VerifyEmail] التوكن غير موجود (غالباً تم التفعيل مسبقاً وتصفير التوكن).");
         throw new Error("INVALID_TOKEN");
     }
     if (user.emailVerified) {
-        console.log("ℹ️ [VerifyEmail] الحساب مفعل مسبقاً.");
         return true;
     }
     if (user.verifyExpiry && new Date(user.verifyExpiry) < new Date()) {
@@ -94,10 +88,9 @@ export async function verifyEmail(token: string) {
     })
         .eq("id", user.id);
     if (updateError) {
-        console.error("❌ [VerifyEmail] فشل التحديث:", updateError.message);
+        console.error('[donor-auth] Database operation failed');
         throw new Error(updateError.message);
     }
-    console.log("🎉 [VerifyEmail] تم تفعيل الحساب بنجاح!");
     return true;
 }
 // ── Login ─────────────────────────────────────────────────────

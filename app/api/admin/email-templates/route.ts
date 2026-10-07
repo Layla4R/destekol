@@ -1,13 +1,11 @@
-import { requireAdmin } from "@/lib/auth";
+import { requireRoutePermission, accessErrorResponse } from "@/lib/admin-access";
 import { getSupabase } from "@/lib/supabase";
 import { NextRequest,NextResponse } from "next/server";
 export async function GET(req: NextRequest) {
     try {
-        await requireAdmin(req);
+        await requireRoutePermission(req);
     }
-    catch {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    catch(error) { return accessErrorResponse(error); }
     const id = new URL(req.url).searchParams.get("id");
     if (!id)
         return NextResponse.json({ error: "Missing id" }, { status: 400 });
@@ -17,11 +15,9 @@ export async function GET(req: NextRequest) {
 }
 export async function POST(req: NextRequest) {
     try {
-        await requireAdmin(req);
+        await requireRoutePermission(req);
     }
-    catch {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    catch(error) { return accessErrorResponse(error); }
     const body = await req.json();
     const { id, subject, html, blocks, gs } = body;
     if (!id || !subject || !html)

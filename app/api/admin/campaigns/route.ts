@@ -1,13 +1,11 @@
-import { requireAdmin } from "@/lib/auth";
+import { requireRoutePermission, accessErrorResponse } from "@/lib/admin-access";
 import { getSupabase } from "@/lib/supabase";
 import { NextRequest,NextResponse } from "next/server";
 export async function GET(req: Request) {
     try {
-        await requireAdmin(req);
+        await requireRoutePermission(req);
     }
-    catch {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    catch(error) { return accessErrorResponse(error); }
     const supabase = getSupabase();
     const { data: campaigns, error } = await supabase
         .from("Campaign")
@@ -20,11 +18,9 @@ export async function GET(req: Request) {
 }
 export async function POST(req: NextRequest) {
     try {
-        await requireAdmin(req);
+        await requireRoutePermission(req);
     }
-    catch {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    catch(error) { return accessErrorResponse(error); }
     const body = await req.json();
     const { title, slug, summary, description, category, coverImage, goalAmount, defaultAmount, country, isActive, isFeatured, isZakatable } = body;
     if (!title || !slug || !goalAmount) {

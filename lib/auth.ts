@@ -1,5 +1,5 @@
 import { SignJWT,jwtVerify } from "jose";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { getRequestSite } from "./request-site";
 import { getSessionSecret } from "./session-secret";
 import { getSupabase } from "./supabase";
@@ -43,10 +43,11 @@ export async function getAdminSession(req?: {
             return null;
         // Membership and role are rechecked in this site's schema, so removal takes effect immediately.
         const { data: user, error } = await getSupabase().from("User")
-            .select("email, role, isStaff").eq("email", payload.email).maybeSingle();
-        if (error || !user || !(user.role === "ADMIN" || user.isStaff === true) || !["ADMIN", "EDITOR", "VIEWER"].includes(user.role))
+            .select("id, email, role, isStaff, permissions, accessExpiresAt").eq("email", payload.email).maybeSingle();
+        if (error || !user || !(user.role === "ADMIN" || user.isStaff === true) || !["ADMIN", "EDITOR", "VIEWER", "FINANCE", "COMPLAINTS"].includes(user.role))
             return null;
-        return { email: user.email as string, role: user.role as string, site: getRequestSite().id };
+        if (user.accessExpiresAt && Date.parse(user.accessExpiresAt) <= Date.now()) return null;
+        return { id: user.id as string, email: user.email as string, role: user.role as string, isStaff: user.isStaff === true, permissions: Array.isArray(user.permissions) ? user.permissions as string[] : [], site: getRequestSite().id };
     }
     catch {
         return null;
@@ -57,9 +58,11 @@ export async function requireAdmin(req?: {
         get: (k: string) => string | null;
     };
 }) {
+    const route = headers().get("x-admin-path");
+    if (!req && route?.startsWith("/admin") && !["/admin/login","/admin/accept-invite"].includes(route)) return (await import("./admin-access")).requirePagePermission(route);
     const session = await getAdminSession(req);
     // Allow ADMIN role OR any authenticated session (staff with EDITOR/VIEWER checked separately via permissions)
-    if (!session || (session.role !== "ADMIN" && session.role !== "EDITOR" && session.role !== "VIEWER")) {
+    if (!session || !["ADMIN", "EDITOR", "VIEWER", "FINANCE", "COMPLAINTS"].includes(session.role)) {
         throw new Error("UNAUTHORIZED");
     }
     return session;
@@ -70,7 +73,7 @@ export async function requireSuperAdmin(req?: {
     };
 }) {
     const session = await getAdminSession(req);
-    if (!session || session.role !== "ADMIN") {
+    if (!session || session.role !== "ADMIN" || session.isStaff) {
         throw new Error("UNAUTHORIZED");
     }
     return session;

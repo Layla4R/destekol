@@ -1,5 +1,6 @@
 import Icon from "@/components/icons";
-import { requireAdmin } from "@/lib/auth";
+import { requirePermission } from "@/lib/admin-access";
+import { hasPermission } from "@/lib/permissions";
 import { formatCurrency } from "@/lib/format";
 import { getSupabase } from "@/lib/supabase";
 import Link from "next/link";
@@ -10,14 +11,16 @@ export default async function DonorProfilePage({ params }: {
         id: string;
     };
 }) {
+    let session;
     try {
-        await requireAdmin();
+        session = await requirePermission("users.view", undefined, params.id);
     }
     catch {
-        redirect("/admin/login");
+        redirect("/admin/forbidden");
     }
     const supabase = getSupabase();
-    const { data: user } = await supabase.from("User").select("*").eq("id", params.id).maybeSingle();
+    const { data: user } = await supabase.from("User").select("id,name,email,createdAt,emailVerified,totalDonated,donationCount,lastLoginAt").eq("role", "DONOR").eq("isStaff", false).eq("id", params.id).maybeSingle();
+    await requirePermission("donations.view", undefined, params.id);
     // Fetch donations by userId OR donorEmail (guest donations may not have userId)
     const [byUserId, byEmail] = await Promise.all([
         supabase.from("Donation")

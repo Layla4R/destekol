@@ -1,28 +1,16 @@
-import { requireAdmin } from "@/lib/auth";
-import { getSupabase } from "@/lib/supabase";
-import { NextResponse } from "next/server";
-const LIMIT = 2000;
+import { requirePermission, accessErrorResponse } from '@/lib/admin-access';
+import { getSupabase } from '@/lib/supabase';
+import { NextResponse } from 'next/server';
 export async function GET(req: Request) {
-    try {
-        await requireAdmin(req);
-    }
-    catch {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-    const url = new URL((req as any).url || "http://localhost");
-    const role = url.searchParams.get("role");
-    const isStaff = url.searchParams.get("isStaff");
-    const supabase = getSupabase();
-    let query = supabase
-        .from("User")
-        .select("id, name, email, role, emailVerified, totalDonated, donationCount, createdAt, lastLoginAt, isStaff")
-        .order("createdAt", { ascending: false })
-        .limit(LIMIT);
-    if (role)
-        query = query.eq("role", role);
-    if (isStaff === "true")
-        query = query.eq("isStaff", true);
-    const { data: users } = await query;
-    const truncated = (users?.length || 0) >= LIMIT;
-    return NextResponse.json({ users: users || [], truncated });
+ const url = new URL(req.url);
+ const donors = url.searchParams.get('role') === 'DONOR';
+ try {
+  const session = await requirePermission(donors ? 'users.view' : 'staff.manage', req);
+  if (!donors && (session.role !== 'ADMIN' || session.isStaff)) return NextResponse.json({error:'Forbidden'},{status:403});
+  let query = getSupabase().from('User').select('id,name,email,role,emailVerified,totalDonated,donationCount,createdAt,isStaff,permissions,isEvaluation,accessExpiresAt').order('createdAt',{ascending:false}).limit(2000);
+  if (donors) query = query.eq('role','DONOR').eq('isStaff',false);
+  const { data, error } = await query;
+  if (error) return NextResponse.json({error:'User lookup failed'},{status:503});
+  return NextResponse.json({users:data || [],truncated:(data?.length || 0)>=2000},{headers:{'Cache-Control':'no-store'}});
+ } catch(error) { return accessErrorResponse(error); }
 }

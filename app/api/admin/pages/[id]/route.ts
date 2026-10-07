@@ -1,4 +1,4 @@
-import { requireAdmin } from "@/lib/auth";
+import { requireRoutePermission, accessErrorResponse } from "@/lib/admin-access";
 import { getSupabase } from "@/lib/supabase";
 import { NextRequest,NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
@@ -9,11 +9,9 @@ export async function GET(req: NextRequest, { params }: {
     };
 }) {
     try {
-        await requireAdmin(req);
+        await requireRoutePermission(req);
     }
-    catch {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    catch(error) { return accessErrorResponse(error); }
     const supabase = getSupabase();
     const { data: page, error } = await supabase.from("Page").select("*").eq("id", params.id).maybeSingle();
     if (error)
@@ -28,11 +26,9 @@ export async function PATCH(req: NextRequest, { params }: {
     };
 }) {
     try {
-        await requireAdmin(req);
+        await requireRoutePermission(req);
     }
-    catch {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    catch(error) { return accessErrorResponse(error); }
     const body = await req.json();
     const data: any = {};
     if (body.title !== undefined)
@@ -106,11 +102,9 @@ export async function DELETE(req: NextRequest, { params }: {
     };
 }) {
     try {
-        await requireAdmin(req);
+        await requireRoutePermission(req);
     }
-    catch {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    catch(error) { return accessErrorResponse(error); }
     const supabase = getSupabase();
     const { data: page } = await supabase.from("Page").select("isSystem").eq("id", params.id).maybeSingle();
     if (!page)

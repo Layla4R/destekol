@@ -1,4 +1,4 @@
-import { requireAdmin } from "@/lib/auth";
+import { requireRoutePermission, accessErrorResponse } from "@/lib/admin-access";
 import { planTranslation } from "@/lib/translation-content";
 import { NextRequest,NextResponse } from "next/server";
 export const maxDuration = 60;
@@ -41,11 +41,9 @@ async function translateText(text: string, targetLang: string, signal: AbortSign
 }
 export async function POST(req: NextRequest) {
     try {
-        await requireAdmin(req);
+        await requireRoutePermission(req);
     }
-    catch {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    catch(error) { return accessErrorResponse(error); }
     let input;
     try {
         input = await req.json();

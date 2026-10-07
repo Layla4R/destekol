@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname,useRouter } from "next/navigation";
 import { useAdminBranding } from "./AdminBranding";
+import { adminPagePolicy, policyAllows } from '@/lib/admin-policy';
 const NAV: {
     href: string;
     label: string;
@@ -25,6 +26,7 @@ const NAV: {
     { href: "/admin/reports", label: "Reports", icon: "target", group: "Operations" },
     // Admin
     { href: "/admin/staff", label: "Staff & Roles", icon: "shield-check", group: "Admin" },
+    { href: "/admin/audit", label: "Access & Activity Log", icon: "list-checks", group: "Admin" },
     { href: "/admin/staff#invite", label: "Invite Staff", icon: "plus", group: "Admin" },
     { href: "/admin/users", label: "All Users", icon: "eye", group: "Admin" },
     { href: "/admin/translations", label: "Translations", icon: "globe", group: "Admin" },
@@ -32,7 +34,7 @@ const NAV: {
     { href: "/admin/emails", label: "Email Templates", icon: "send", group: "Admin" },
     { href: "/admin/settings", label: "Settings", icon: "settings", group: "Admin" },
 ];
-export default function AdminSidebar() {
+export default function AdminSidebar({ access }: { access: { role: string; isStaff: boolean; permissions: string[] } }) {
     const brand = useAdminBranding();
     const pathname = usePathname();
     const router = useRouter();
@@ -54,7 +56,7 @@ export default function AdminSidebar() {
       {/* Nav */}
       <nav className="flex-1 px-3 py-4 overflow-y-auto [scrollbar-width:thin] [scrollbar-color:#475569_transparent] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-white/20 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb:hover]:bg-white/30">
         {groups.map((group) => {
-            const items = NAV.filter((n) => (n.group || "") === group);
+            const items = NAV.filter((n) => (n.group || "") === group && policyAllows(access, adminPagePolicy(n.href.split('#')[0])));
             if (!items.length)
                 return null;
             return (<div key={group} className="mb-4">

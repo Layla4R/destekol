@@ -1,14 +1,12 @@
 const SETTINGS_FIELDS = ["siteName","logoText","logoImage","primaryColor","accentColor","contactEmail","contactPhone","whatsappNumber","facebookUrl","twitterUrl","instagramUrl","youtubeUrl","linkedinUrl","tiktokUrl","footerTagline","footerDescription","copyrightText","defaultCurrency","smtpHost","smtpPort","smtpUser","smtpPassword","smtpFrom","smtpFromName","smtpSecure","socialPosition","id","updatedAt"];
-import { requireAdmin } from "@/lib/auth";
+import { requirePermission, accessErrorResponse } from "@/lib/admin-access";
 import { getSupabase } from "@/lib/supabase";
 import { NextRequest,NextResponse } from "next/server";
 export async function GET(req: Request) {
     try {
-        await requireAdmin(req);
+        await requirePermission('settings.view', req);
     }
-    catch {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    catch(error) { return accessErrorResponse(error); }
     const supabase = getSupabase();
     let { data: settings } = await supabase.from("SiteSettings").select("*").eq("id", "default").maybeSingle();
     if (!settings) {
@@ -30,11 +28,9 @@ export async function GET(req: Request) {
 }
 export async function PATCH(req: NextRequest) {
     try {
-        await requireAdmin(req);
+        await requirePermission('settings.edit', req);
     }
-    catch {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    catch(error) { return accessErrorResponse(error); }
     const body = await req.json();
     const data: any = {};
     // Skip masked values — if a secret field contains "***" it was masked in GET response

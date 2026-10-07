@@ -1,20 +1,20 @@
 import { createAdminInvite } from "@/lib/adminInvite";
-import { requireAdmin } from "@/lib/auth";
-import { PermissionId } from "@/lib/permissions";
+import { requireSuperAdmin } from "@/lib/auth";
+import { requirePermission, accessErrorResponse, auditAccess } from "@/lib/admin-access";
+import { ALL_PERMISSIONS, PermissionId } from "@/lib/permissions";
 import { getSupabase } from "@/lib/supabase";
 import { NextRequest,NextResponse } from "next/server";
 export async function GET(req: Request) {
     try {
-        await requireAdmin(req);
+        await requirePermission("staff.manage", req);
+        await requireSuperAdmin(req);
     }
-    catch {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    catch (error) { return accessErrorResponse(error); }
     const supabase = getSupabase();
     const now = new Date().toISOString();
     const { data: allInvites } = await supabase
         .from("AdminInvite")
-        .select("*")
+        .select("id,email,name,role,permissions,invitedBy,expiresAt,acceptedAt,createdAt")
         .order("createdAt", { ascending: false })
         .limit(200);
     // Filter in JS: show accepted invites OR invites that haven't expired yet
@@ -24,23 +24,24 @@ export async function GET(req: Request) {
 export async function POST(req: NextRequest) {
     let session: any;
     try {
-        session = await requireAdmin(req);
+        session = await requirePermission("staff.manage", req);
+        await requireSuperAdmin(req);
     }
-    catch {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    catch (error) { return accessErrorResponse(error); }
     const body = await req.json();
-    const { email, name, permissions } = body;
+    const { email, name, permissions, role = "EDITOR" } = body;
+    if (!["EDITOR","VIEWER","FINANCE","COMPLAINTS"].includes(role)) return NextResponse.json({error:"Invalid role"},{status:400});
     if (!email || !name)
         return NextResponse.json({ error: "Email and name are required" }, { status: 400 });
-    if (!permissions?.length)
+    if (!Array.isArray(permissions) || !permissions.length || permissions.some((p: unknown) => typeof p !== "string" || !ALL_PERMISSIONS.some(x => x.id === p)))
         return NextResponse.json({ error: "At least one permission is required" }, { status: 400 });
     try {
         const invite = await createAdminInvite({
-            email, name,
+            email, name, role,
             permissions: permissions as PermissionId[],
             invitedBy: session?.email || "Admin",
         });
+        await auditAccess(session, "staff.invite.create", "SUCCESS", invite.id);
         return NextResponse.json({ invite });
     }
     catch (e: any) {

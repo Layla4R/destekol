@@ -1,5 +1,6 @@
 import Icon from "@/components/icons";
-import { requireAdmin } from "@/lib/auth";
+import { requirePermission } from "@/lib/admin-access";
+import { hasPermission } from "@/lib/permissions";
 import { getSupabase } from "@/lib/supabase";
 import { redirect } from "next/navigation";
 import MarkAllReadButton from "./MarkAllReadButton";
@@ -12,11 +13,12 @@ export default async function MessagesPage({ searchParams }: {
         sort?: string;
     };
 }) {
+    let session;
     try {
-        await requireAdmin();
+        session = await requirePermission("messages.view");
     }
     catch {
-        redirect("/admin/login");
+        redirect("/admin/forbidden");
     }
     const supabase = getSupabase();
     const page = Math.max(1, parseInt(searchParams?.page || "1"));
@@ -28,11 +30,15 @@ export default async function MessagesPage({ searchParams }: {
         .from("ContactMessage")
         .select("*", { count: "exact" })
         .order("createdAt", { ascending: sort === "oldest" });
+    if (!hasPermission(session, "messages.sensitive.view")) query = query.eq("isSensitive", false);
+    else await requirePermission("messages.sensitive.view");
     if (unreadOnly)
         query = query.eq("isRead", false);
     const { data: messages, count } = await query.range(from, from + PAGE_SIZE - 1);
     // Separate count query — needed because main query may be filtered/paginated
-    const { count: unreadCount } = await supabase.from("ContactMessage").select("*", { count: "exact", head: true }).eq("isRead", false);
+    let unreadQuery = supabase.from("ContactMessage").select("id", { count: "exact", head: true }).eq("isRead", false);
+    if (!hasPermission(session, "messages.sensitive.view")) unreadQuery = unreadQuery.eq("isSensitive", false);
+    const { count: unreadCount } = await unreadQuery;
     const totalPages = Math.ceil((count || 0) / PAGE_SIZE);
     return (<div className="p-6 sm:p-8">
       <div className="flex flex-wrap items-end justify-between gap-4 mb-6">
@@ -47,7 +53,7 @@ export default async function MessagesPage({ searchParams }: {
           <a href={`?${sort !== "newest" ? `sort=${sort}&` : ""}`} className={`px-4 py-2 rounded-xl text-sm font-bold border transition ${!unreadOnly ? "bg-brand text-white border-brand" : "border-line text-muted hover:border-brand"}`}>All</a>
           <a href={`?unread=1${sort !== "newest" ? `&sort=${sort}` : ""}`} className={`px-4 py-2 rounded-xl text-sm font-bold border transition ${unreadOnly ? "bg-brand text-white border-brand" : "border-line text-muted hover:border-brand"}`}>Unread</a>
           <a href={`?${unreadOnly ? "unread=1&" : ""}${sort === "oldest" ? "" : "sort=oldest"}`} className={`px-4 py-2 rounded-xl text-sm font-bold border transition ${sort === "oldest" ? "bg-ink text-white border-ink" : "border-line text-muted hover:border-brand"}`}>{sort === "oldest" ? "↑ Oldest" : "↓ Newest"}</a>
-          {(unreadCount || 0) > 0 && <MarkAllReadButton />}
+          {hasPermission(session, "messages.edit") && (unreadCount || 0) > 0 && <MarkAllReadButton />}
         </div>
       </div>
 
@@ -79,7 +85,7 @@ export default async function MessagesPage({ searchParams }: {
                   <span className="text-xs text-muted">
                     {new Date(m.createdAt).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}
                   </span>
-                  <MessageActions id={m.id} isRead={m.isRead} email={m.email}/>
+                  <MessageActions canEdit={hasPermission(session,"messages.edit")} canDelete={hasPermission(session,"messages.delete")} id={m.id} isRead={m.isRead} email={m.email}/>
                 </div>
               </div>
             </div>))}

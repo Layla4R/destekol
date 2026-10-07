@@ -3,7 +3,9 @@ import Icon from "@/components/icons";
 import { adminFetch } from "@/lib/admin-fetch";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-export default function MessageActions({ id, isRead, email }: {
+export default function MessageActions({ id, isRead, email, canEdit = false, canDelete = false }: {
+    canEdit?: boolean;
+    canDelete?: boolean;
     id: string;
     isRead: boolean;
     email: string;
@@ -31,12 +33,12 @@ export default function MessageActions({ id, isRead, email }: {
       <a href={`mailto:${email}`} className="flex items-center gap-1 text-xs border border-line text-muted rounded-lg px-2.5 py-1.5 hover:border-brand hover:text-brand transition">
         <Icon name="mail" size={12}/> Reply
       </a>
-      <button onClick={toggleRead} disabled={loading} title={isRead ? "Mark as unread" : "Mark as read"} className="flex items-center gap-1 text-xs border border-line text-muted rounded-lg px-2.5 py-1.5 hover:border-brand hover:text-brand transition">
+      {canEdit && <button onClick={toggleRead} disabled={loading} title={isRead ? "Mark as unread" : "Mark as read"} className="flex items-center gap-1 text-xs border border-line text-muted rounded-lg px-2.5 py-1.5 hover:border-brand hover:text-brand transition">
         <Icon name={isRead ? "help-circle" : "check"} size={12}/>
         {isRead ? "Unread" : "Read"}
-      </button>
-      <button onClick={deleteMsg} disabled={loading} className="flex items-center gap-1 text-xs border border-line text-muted rounded-lg px-2.5 py-1.5 hover:border-danger hover:text-danger transition">
+      </button>}
+      {canDelete && <button onClick={deleteMsg} disabled={loading} className="flex items-center gap-1 text-xs border border-line text-muted rounded-lg px-2.5 py-1.5 hover:border-danger hover:text-danger transition">
         <Icon name="trash" size={12}/>
-      </button>
+      </button>}
     </div>);
 }

@@ -1,25 +1,21 @@
-import { requireAdmin } from "@/lib/auth";
+import { requireRoutePermission, accessErrorResponse } from "@/lib/admin-access";
 import { getNewsCategories } from "@/lib/news-categories-server";
 import { getSupabase } from "@/lib/supabase";
 import { NextRequest,NextResponse } from "next/server";
 export async function GET(req: NextRequest) {
     try {
-        await requireAdmin(req);
+        await requireRoutePermission(req);
     }
-    catch {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    catch(error) { return accessErrorResponse(error); }
     return NextResponse.json({ categories: await getNewsCategories() });
 }
 export async function PATCH(req: NextRequest) {
     try {
-        const session = await requireAdmin(req);
+        const session = await requireRoutePermission(req);
         if (session.role === "VIEWER")
             return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
-    catch {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    catch(error) { return accessErrorResponse(error); }
     ;
     const body = await req.json().catch(() => null);
     if (!body || typeof body.slug !== "string")

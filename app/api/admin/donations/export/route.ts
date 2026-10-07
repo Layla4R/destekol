@@ -1,4 +1,4 @@
-import { getAdminSession,requireAdmin } from "@/lib/auth";
+import { requirePermission, accessErrorResponse, auditAccess } from "@/lib/admin-access";
 import { getSupabase } from "@/lib/supabase";
 import { NextResponse } from "next/server";
 function csvEscape(value: any): string {
@@ -6,19 +6,8 @@ function csvEscape(value: any): string {
     return /[",\n]/.test(str) ? `"${str.replace(/"/g, '""')}"` : str;
 }
 export async function GET(req: Request) {
-    let authed = false;
-    try {
-        await requireAdmin(req);
-        authed = true;
-    }
-    catch { }
-    if (!authed) {
-        const s = await getAdminSession();
-        if (s?.role === "ADMIN")
-            authed = true;
-    }
-    if (!authed)
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    let session;
+    try { session = await requirePermission('donations.export', req); } catch (error) { return accessErrorResponse(error); }
     const url = new URL((req as any).url || "http://localhost");
     const statusFilter = url.searchParams.get("status") || "";
     const campaignFilter = url.searchParams.get("campaign") || "";
@@ -51,8 +40,10 @@ export async function GET(req: Request) {
         d.subscriptionStatus || '', d.refundStatus || 'NONE', d.refundedAmount || 0,
     ]);
     const csv = [headers, ...rows].map(row => row.map(csvEscape).join(",")).join("\n");
+    try { await auditAccess(session, 'donations.export', 'SUCCESS'); } catch(error) { return accessErrorResponse(error); }
     return new NextResponse("\uFEFF" + csv, {
         headers: {
+            "Cache-Control": "no-store",
             "Content-Type": "text/csv; charset=utf-8",
             "Content-Disposition": `attachment; filename="donations-${new Date().toISOString().slice(0, 10)}.csv"`,
         },

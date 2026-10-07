@@ -10,3 +10,4 @@ node_modules
 
 .npm-cache/
 tsconfig.tsbuildinfo
+/private/

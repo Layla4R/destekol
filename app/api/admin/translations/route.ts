@@ -1,15 +1,13 @@
-import { requireAdmin } from "@/lib/auth";
+import { requireRoutePermission, accessErrorResponse } from "@/lib/admin-access";
 import { clearTranslationCache } from "@/lib/i18n";
 import { getSupabase } from "@/lib/supabase";
 import { NextRequest,NextResponse } from "next/server";
 const VALID_LOCALES = ["ar", "en", "fr", "tr"];
 export async function GET(req: NextRequest) {
     try {
-        await requireAdmin(req);
+        await requireRoutePermission(req);
     }
-    catch {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    catch(error) { return accessErrorResponse(error); }
     const rawLocale = new URL(req.url).searchParams.get("locale") || "ar";
     const locale = VALID_LOCALES.includes(rawLocale) ? rawLocale : "ar";
     const supabase = getSupabase();
@@ -33,11 +31,9 @@ export async function GET(req: NextRequest) {
 }
 export async function PATCH(req: NextRequest) {
     try {
-        await requireAdmin(req);
+        await requireRoutePermission(req);
     }
-    catch {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    catch(error) { return accessErrorResponse(error); }
     const body = await req.json();
     // Batch save support
     if (body.batch && Array.isArray(body.batch)) {

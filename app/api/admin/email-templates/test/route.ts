@@ -1,14 +1,12 @@
-import { requireAdmin } from "@/lib/auth";
+import { requireRoutePermission, accessErrorResponse } from "@/lib/admin-access";
 import { sendMail } from "@/lib/mailer";
 import { getRequestSite } from "@/lib/request-site";
 import { NextRequest,NextResponse } from "next/server";
 export async function POST(req: NextRequest) {
     try {
-        await requireAdmin(req);
+        await requireRoutePermission(req);
     }
-    catch {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    catch(error) { return accessErrorResponse(error); }
     const { email, subject, html } = await req.json();
     if (!email || !html)
         return NextResponse.json({ error: "Missing fields" }, { status: 400 });

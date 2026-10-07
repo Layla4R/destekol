@@ -1,4 +1,4 @@
-import { requireAdmin } from "@/lib/auth";
+import { requireRoutePermission, accessErrorResponse } from "@/lib/admin-access";
 import { getSupabase } from "@/lib/supabase";
 import { NextRequest,NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
@@ -6,11 +6,9 @@ import { applyCmsSharedEdits, mergeCmsTranslation } from "@/lib/cms-localization
 // GET /api/admin/pages/translations?pageId=xxx&locale=en
 export async function GET(req: NextRequest) {
     try {
-        await requireAdmin(req);
+        await requireRoutePermission(req);
     }
-    catch {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    catch(error) { return accessErrorResponse(error); }
     const url = new URL(req.url);
     const pageId = url.searchParams.get("pageId");
     const locale = url.searchParams.get("locale");
@@ -23,11 +21,9 @@ export async function GET(req: NextRequest) {
 // POST/PATCH — upsert a page translation
 export async function POST(req: NextRequest) {
     try {
-        await requireAdmin(req);
+        await requireRoutePermission(req);
     }
-    catch {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    catch(error) { return accessErrorResponse(error); }
     const { pageId, locale, title, description, sections, ...extra } = await req.json();
     if (!pageId || !["en", "fr", "tr"].includes(locale) || !title)
         return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
@@ -66,11 +62,9 @@ export async function POST(req: NextRequest) {
 }
 export async function DELETE(req: NextRequest) {
     try {
-        await requireAdmin(req);
+        await requireRoutePermission(req);
     }
-    catch {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    catch(error) { return accessErrorResponse(error); }
     const { pageId, locale } = await req.json();
     const supabase = getSupabase();
     await supabase.from("PageTranslation").delete().eq("pageId", pageId).eq("locale", locale);

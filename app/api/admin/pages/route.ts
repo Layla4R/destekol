@@ -1,13 +1,11 @@
-import { requireAdmin } from "@/lib/auth";
+import { requireRoutePermission, accessErrorResponse } from "@/lib/admin-access";
 import { getSupabase } from "@/lib/supabase";
 import { NextRequest,NextResponse } from "next/server";
 export async function GET(req: Request) {
     try {
-        await requireAdmin(req);
+        await requireRoutePermission(req);
     }
-    catch {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    catch(error) { return accessErrorResponse(error); }
     const supabase = getSupabase();
     // Get pages + their translation status in parallel (not N×3 requests)
     const [pagesRes, transRes] = await Promise.all([
@@ -36,11 +34,9 @@ export async function GET(req: Request) {
 }
 export async function POST(req: NextRequest) {
     try {
-        await requireAdmin(req);
+        await requireRoutePermission(req);
     }
-    catch {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    catch(error) { return accessErrorResponse(error); }
     const body = await req.json();
     const { title, slug, description } = body;
     if (!title || !slug) {
@@ -71,11 +67,9 @@ export async function POST(req: NextRequest) {
 // PATCH /api/admin/pages — bulk reorder
 export async function PATCH(req: NextRequest) {
     try {
-        await requireAdmin(req);
+        await requireRoutePermission(req);
     }
-    catch {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    catch(error) { return accessErrorResponse(error); }
     const { orders } = await req.json(); // [{ id, order }]
     if (!Array.isArray(orders))
         return NextResponse.json({ error: "orders must be an array" }, { status: 400 });

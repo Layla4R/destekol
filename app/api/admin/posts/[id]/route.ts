@@ -1,4 +1,4 @@
-import { requireAdmin } from "@/lib/auth";
+import { requireRoutePermission, accessErrorResponse } from "@/lib/admin-access";
 import { validNewsCategory } from "@/lib/news-categories-server";
 import { getSupabase } from "@/lib/supabase";
 import { NextRequest,NextResponse } from "next/server";
@@ -8,11 +8,9 @@ export async function GET(req: NextRequest, { params }: {
     };
 }) {
     try {
-        await requireAdmin(req);
+        await requireRoutePermission(req);
     }
-    catch {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    catch(error) { return accessErrorResponse(error); }
     const supabase = getSupabase();
     const { data: post } = await supabase.from("NewsPost").select("*").eq("id", params.id).maybeSingle();
     if (!post)
@@ -25,11 +23,9 @@ export async function PATCH(req: NextRequest, { params }: {
     };
 }) {
     try {
-        await requireAdmin(req);
+        await requireRoutePermission(req);
     }
-    catch {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    catch(error) { return accessErrorResponse(error); }
     const body = await req.json();
     const data: any = {};
     if (body.categorySlug !== undefined) {
@@ -71,11 +67,9 @@ export async function DELETE(req: NextRequest, { params }: {
     };
 }) {
     try {
-        await requireAdmin(req);
+        await requireRoutePermission(req);
     }
-    catch {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    catch(error) { return accessErrorResponse(error); }
     const supabase = getSupabase();
     const { error } = await supabase.from("NewsPost").delete().eq("id", params.id);
     if (error)

@@ -1,4 +1,4 @@
-import { requireAdmin } from "@/lib/auth";
+import { requirePermission, accessErrorResponse } from "@/lib/admin-access";
 import { generateDonationReceiptPDF } from "@/lib/pdfReceipt";
 import { getRequestSite } from "@/lib/request-site";
 import { getSupabase } from "@/lib/supabase";
@@ -9,11 +9,9 @@ export async function GET(req: NextRequest, { params }: {
     };
 }) {
     try {
-        await requireAdmin(req);
+        await requirePermission('donations.view',req);
     }
-    catch {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    catch (error) { return accessErrorResponse(error); }
     const format = new URL(req.url).searchParams.get("format") || "pdf";
     const supabase = getSupabase();
     const { data: d } = await supabase.from("Donation").select("*, campaign:Campaign(title)").eq("id", params.id).maybeSingle();

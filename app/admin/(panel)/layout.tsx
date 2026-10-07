@@ -5,16 +5,22 @@ import { ToastProvider } from "@/components/admin/Toast";
 import { getAdminSession } from "@/lib/auth";
 import { getRequestSite } from "@/lib/request-site";
 import { redirect } from "next/navigation";
+import { headers } from 'next/headers';
+import { adminLanding } from '@/lib/admin-policy';
+import { requirePagePermission } from '@/lib/admin-access';
 export default async function AdminPanelLayout({ children }: {
     children: React.ReactNode;
 }) {
     const session = await getAdminSession();
-    const allowedRoles = ["ADMIN", "EDITOR", "VIEWER"];
+    const allowedRoles = ["ADMIN", "EDITOR", "VIEWER", "FINANCE", "COMPLAINTS"];
     if (!session || !allowedRoles.includes(session.role))
         redirect("/admin/login");
+    const path = headers().get('x-admin-path') || '/admin';
+    if ((path === '/admin' || path === '/admin/') && (session.role !== 'ADMIN' || session.isStaff)) redirect(adminLanding(session));
+    try { await requirePagePermission(path); } catch { redirect('/admin/forbidden'); }
     return (<ToastProvider>
       <div className="flex h-screen overflow-hidden bg-dashbg">
-        <AdminSidebar />
+        <AdminSidebar access={{ role: session.role, isStaff: session.isStaff, permissions: session.permissions }}/>
         <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
           <div className="bg-slate-900 text-white px-6 py-2 text-sm" dir="ltr">{getRequestSite().name} · Admin</div>
           <AdminTopbar />

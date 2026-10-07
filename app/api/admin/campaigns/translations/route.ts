@@ -1,14 +1,12 @@
-import { requireAdmin } from "@/lib/auth";
+import { requireRoutePermission, accessErrorResponse } from "@/lib/admin-access";
 import { getSupabase } from "@/lib/supabase";
 import { revalidatePath } from "next/cache";
 import { NextRequest,NextResponse } from "next/server";
 export async function GET(req: NextRequest) {
     try {
-        await requireAdmin(req);
+        await requireRoutePermission(req);
     }
-    catch {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    catch(error) { return accessErrorResponse(error); }
     const url = new URL(req.url);
     const campaignId = url.searchParams.get("campaignId");
     const locale = url.searchParams.get("locale");
@@ -20,11 +18,9 @@ export async function GET(req: NextRequest) {
 }
 export async function POST(req: NextRequest) {
     try {
-        await requireAdmin(req);
+        await requireRoutePermission(req);
     }
-    catch {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    catch(error) { return accessErrorResponse(error); }
     const { campaignId, locale, title, summary, description, authorName, authorRole } = await req.json();
     if (!campaignId || !locale || !title)
         return NextResponse.json({ error: "Missing fields" }, { status: 400 });
@@ -40,11 +36,9 @@ export async function POST(req: NextRequest) {
 }
 export async function DELETE(req: NextRequest) {
     try {
-        await requireAdmin(req);
+        await requireRoutePermission(req);
     }
-    catch {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    catch(error) { return accessErrorResponse(error); }
     const { campaignId, locale } = await req.json();
     const supabase = getSupabase();
     await supabase.from("CampaignTranslation").delete().eq("campaignId", campaignId).eq("locale", locale);

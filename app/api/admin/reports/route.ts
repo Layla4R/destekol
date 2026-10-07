@@ -1,13 +1,11 @@
-import { requireAdmin } from "@/lib/auth";
+import { requirePermission, accessErrorResponse } from "@/lib/admin-access";
 import { getSupabase } from "@/lib/supabase";
 import { NextRequest,NextResponse } from "next/server";
 export async function GET(req: NextRequest) {
     try {
-        await requireAdmin(req);
+        await requirePermission('reports.view',req);
     }
-    catch {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    catch (error) { return accessErrorResponse(error); }
     const url = new URL(req.url);
     const period = url.searchParams.get("period") || "30"; // days
     const days = parseInt(period);

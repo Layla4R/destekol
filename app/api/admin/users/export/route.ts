@@ -1,4 +1,4 @@
-import { getAdminSession,requireAdmin } from "@/lib/auth";
+import { requirePermission, accessErrorResponse, auditAccess } from "@/lib/admin-access";
 import { getSupabase } from "@/lib/supabase";
 import { NextResponse } from "next/server";
 function csvEscape(v: any): string {
@@ -6,27 +6,17 @@ function csvEscape(v: any): string {
     return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
 }
 export async function GET(req: Request) {
-    let authed = false;
-    try {
-        await requireAdmin(req);
-        authed = true;
-    }
-    catch { }
-    if (!authed) {
-        const s = await getAdminSession();
-        if (s && ["ADMIN", "EDITOR", "VIEWER"].includes(s.role))
-            authed = true;
-    }
-    if (!authed)
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    let session;
+    try { session = await requirePermission('users.export', req); } catch (error) { return accessErrorResponse(error); }
     const url = new URL((req as any).url || "http://localhost");
     const role = url.searchParams.get("role");
     const supabase = getSupabase();
     let query = supabase.from("User").select("id, name, email, role, totalDonated, donationCount, emailVerified, createdAt").order("totalDonated", { ascending: false });
-    if (role)
-        query = query.eq("role", role);
+    if (role && role !== "DONOR") return NextResponse.json({ error: "Only donor export is available" }, { status: 400 });
+    query = query.eq("role", "DONOR").eq("isStaff", false);
     query = query.limit(50000); // Safety cap — export is meant to be comprehensive
-    const { data } = await query;
+    const { data, error } = await query;
+    if (error) return NextResponse.json({ error: "Export failed" }, { status: 503 });
     const headers = ["Name", "Email", "Role", "Total Donated", "Donations", "Verified", "Joined"];
     const rows = (data || []).map((u: any) => [
         u.name, u.email, u.role,
@@ -35,8 +25,10 @@ export async function GET(req: Request) {
         new Date(u.createdAt).toISOString(),
     ]);
     const csv = [headers, ...rows].map(r => r.map(csvEscape).join(",")).join("\n");
+    try { await auditAccess(session, 'users.export', 'SUCCESS'); } catch(error) { return accessErrorResponse(error); }
     return new NextResponse("\uFEFF" + csv, {
         headers: {
+            "Cache-Control": "no-store",
             "Content-Type": "text/csv; charset=utf-8",
             "Content-Disposition": `attachment; filename="${role === "DONOR" ? "donors" : "users"}-${new Date().toISOString().slice(0, 10)}.csv"`,
         },

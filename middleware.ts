@@ -7,7 +7,7 @@ const COOKIE_NAME = "destekol_admin_session";
 async function verifyAdminToken(token: string, site: SiteId): Promise<boolean> {
     try {
         const { payload } = await jwtVerify(token, getSessionSecret(), { algorithms: ["HS256"] });
-        return isSiteSession(payload, site) && ["ADMIN", "EDITOR", "VIEWER"].includes(payload.role as string);
+        return isSiteSession(payload, site) && ["ADMIN", "EDITOR", "VIEWER", "FINANCE", "COMPLAINTS"].includes(payload.role as string);
     }
     catch {
         return false;
@@ -29,6 +29,8 @@ export async function middleware(req: NextRequest) {
     const locale = LOCALES.find(l => pathname === `/${l}` || pathname.startsWith(`/${l}/`))
         || (pathname.startsWith("/admin") ? "ar" : defaultLocale);
     requestHeaders.set("x-app-locale", locale);
+    // Always overwrite client-supplied values with the actual route.
+    requestHeaders.set("x-admin-path", pathname);
     // ── 1. Admin route protection ──────────────────────────────
     if (pathname.startsWith("/admin") && !pathname.startsWith("/admin/login") && !pathname.startsWith("/admin/accept-invite")) {
         const cookie = req.cookies.get(COOKIE_NAME)?.value;

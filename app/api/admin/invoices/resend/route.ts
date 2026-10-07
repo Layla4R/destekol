@@ -1,14 +1,12 @@
-import { requireAdmin } from "@/lib/auth";
+import { requirePermission, accessErrorResponse } from "@/lib/admin-access";
 import { sendDonationReceipt } from "@/lib/mailer";
 import { getSupabase } from "@/lib/supabase";
 import { NextRequest,NextResponse } from "next/server";
 export async function POST(req: NextRequest) {
     try {
-        await requireAdmin(req);
+        await requirePermission('donations.export',req);
     }
-    catch {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    catch (error) { return accessErrorResponse(error); }
     const { donationId } = await req.json();
     const supabase = getSupabase();
     const { data: d } = await supabase.from("Donation").select("*, campaign:Campaign(title)").eq("id", donationId).maybeSingle();

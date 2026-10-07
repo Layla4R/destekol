@@ -39,20 +39,22 @@ export async function POST(req: NextRequest) {
         }
         const supabase = getSupabaseOrNull();
         if (supabase) {
-            await supabase.from("ContactMessage").insert({
+            const { error } = await supabase.from("ContactMessage").insert({
                 name: name.trim(),
                 email: email.trim().toLowerCase(),
                 subject: subject?.trim() || null,
                 message: message.trim(),
             });
+            if (error) return NextResponse.json({ error: 'Message could not be saved. Please try again.' }, { status: 503 });
         }
+        else return NextResponse.json({ error: 'Service unavailable' }, { status: 503 });
         try {
             await sendContactNotification({
                 adminEmail: officialEmail(true),
-                senderName: name,
-                senderEmail: email,
-                subject: subject?.trim() || "(no subject)",
-                message: message.trim(),
+                senderName: "Website notification",
+                senderEmail: officialEmail(true),
+                subject: "New message in the admin dashboard",
+                message: "A new message is available to authorized staff in the admin dashboard.",
             });
         }
         catch { }

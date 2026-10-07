@@ -1,4 +1,4 @@
-import { requireAdmin } from "@/lib/auth";
+import { requireRoutePermission, accessErrorResponse } from "@/lib/admin-access";
 import { sendMail } from "@/lib/mailer";
 import { getRequestSite } from "@/lib/request-site";
 import { getSupabase } from "@/lib/supabase";
@@ -9,11 +9,9 @@ export async function GET(req: NextRequest, { params }: {
     };
 }) {
     try {
-        await requireAdmin(req);
+        await requireRoutePermission(req);
     }
-    catch {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    catch(error) { return accessErrorResponse(error); }
     const supabase = getSupabase();
     const { data: updates } = await supabase
         .from("CampaignUpdate")
@@ -29,11 +27,9 @@ export async function POST(req: NextRequest, { params }: {
     };
 }) {
     try {
-        await requireAdmin(req);
+        await requireRoutePermission(req);
     }
-    catch {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    catch(error) { return accessErrorResponse(error); }
     const { title, body, notifyDonors } = await req.json();
     if (!title || !body)
         return NextResponse.json({ error: "Title and body required" }, { status: 400 });

@@ -1,6 +1,7 @@
 import ResendButton from "@/components/admin/ResendButton";
 import Icon from "@/components/icons";
-import { requireAdmin } from "@/lib/auth";
+import { requirePermission } from "@/lib/admin-access";
+import { hasPermission } from "@/lib/permissions";
 import { formatCurrency } from "@/lib/format";
 import { getSupabase } from "@/lib/supabase";
 import { redirect } from "next/navigation";
@@ -11,11 +12,12 @@ export default async function InvoicesPage({ searchParams }: {
         q?: string;
     };
 }) {
+    let session;
     try {
-        await requireAdmin();
+        session = await requirePermission("donations.view");
     }
     catch {
-        redirect("/admin/login");
+        redirect("/admin/forbidden");
     }
     const page = Math.max(1, parseInt(searchParams?.page || "1"));
     const PAGE_SIZE = 50;

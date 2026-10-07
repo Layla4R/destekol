@@ -1,4 +1,4 @@
-import { getAdminSession,requireAdmin } from "@/lib/auth";
+import { requireRoutePermission, accessErrorResponse } from "@/lib/admin-access";
 import { getSupabase } from "@/lib/supabase";
 import { NextResponse } from "next/server";
 function csvEscape(v: any): string {
@@ -6,19 +6,7 @@ function csvEscape(v: any): string {
     return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
 }
 export async function GET(req: Request) {
-    let authed = false;
-    try {
-        await requireAdmin(req);
-        authed = true;
-    }
-    catch { }
-    if (!authed) {
-        const s = await getAdminSession();
-        if (s && ["ADMIN", "EDITOR", "VIEWER"].includes(s.role))
-            authed = true;
-    }
-    if (!authed)
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    try { await requireRoutePermission(req); } catch(error) { return accessErrorResponse(error); }
     const supabase = getSupabase();
     const { data } = await supabase.from("Campaign").select("*").order("createdAt", { ascending: false }).limit(10000);
     const headers = ["ID", "Title", "Slug", "Category", "Country", "Goal", "Raised", "Donors", "Active", "Featured", "Zakatable", "Default Amount", "Created"];

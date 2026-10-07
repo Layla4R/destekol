@@ -1,14 +1,12 @@
 // Legacy endpoint — kept for backwards compatibility. New code uses PATCH /api/admin/pages
-import { requireAdmin } from "@/lib/auth";
+import { requireRoutePermission, accessErrorResponse } from "@/lib/admin-access";
 import { getSupabase } from "@/lib/supabase";
 import { NextRequest,NextResponse } from "next/server";
 export async function POST(req: NextRequest) {
     try {
-        await requireAdmin(req);
+        await requireRoutePermission(req);
     }
-    catch {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    catch(error) { return accessErrorResponse(error); }
     const { order } = await req.json(); // array of page ids in new order
     if (!Array.isArray(order)) {
         return NextResponse.json({ error: "Invalid payload" }, { status: 400 });

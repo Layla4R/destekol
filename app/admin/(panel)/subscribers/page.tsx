@@ -1,6 +1,7 @@
 import SubscriberDeleteButton from "@/components/admin/SubscriberDeleteButton";
 import Icon from "@/components/icons";
-import { requireAdmin } from "@/lib/auth";
+import { requirePermission } from "@/lib/admin-access";
+import { hasPermission } from "@/lib/permissions";
 import { getSupabase } from "@/lib/supabase";
 import { redirect } from "next/navigation";
 export const revalidate = 0;
@@ -10,11 +11,12 @@ export default async function SubscribersPage({ searchParams }: {
         q?: string;
     };
 }) {
+    let session;
     try {
-        await requireAdmin();
+        session = await requirePermission("subscribers.view");
     }
     catch {
-        redirect("/admin/login");
+        redirect("/admin/forbidden");
     }
     const page = Math.max(1, parseInt(searchParams?.page || "1"));
     const PAGE_SIZE = 100;

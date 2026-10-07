@@ -33,11 +33,11 @@ export async function POST(req: NextRequest) {
         const supabase = getSupabase();
         const { data: user, error } = await supabase
             .from("User")
-            .select("id, email, name, role, passwordHash, isStaff")
+            .select("id, email, name, role, passwordHash, isStaff, accessExpiresAt")
             .eq("email", email)
             .maybeSingle();
         // Allow ADMIN role OR isStaff=true (staff members with EDITOR/VIEWER roles)
-        const isAllowed = user && (user.role === "ADMIN" || user.isStaff === true);
+        const isAllowed = user && ["ADMIN","EDITOR","VIEWER","FINANCE","COMPLAINTS"].includes(user.role) && (user.role === "ADMIN" || user.isStaff === true) && (!user.accessExpiresAt || Date.parse(user.accessExpiresAt) > Date.now());
         if (error || !isAllowed || !user.passwordHash) {
             return NextResponse.json({ error: "Invalid email or password." }, { status: 401 });
         }

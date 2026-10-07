@@ -1,4 +1,5 @@
-import { requireAdmin } from "@/lib/auth";
+import { requireSuperAdmin } from "@/lib/auth";
+import { requirePermission, accessErrorResponse, auditAccess } from "@/lib/admin-access";
 import { getSupabase } from "@/lib/supabase";
 import { NextRequest,NextResponse } from "next/server";
 export async function DELETE(req: NextRequest, { params }: {
@@ -6,13 +7,15 @@ export async function DELETE(req: NextRequest, { params }: {
         id: string;
     };
 }) {
+    let session;
     try {
-        await requireAdmin(req);
+        session = await requirePermission("staff.manage", req);
+        await requireSuperAdmin(req);
     }
-    catch {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    catch (error) { return accessErrorResponse(error); }
     const supabase = getSupabase();
-    await supabase.from("AdminInvite").delete().eq("id", params.id);
+    const { error } = await supabase.from("AdminInvite").delete().eq("id", params.id);
+    await auditAccess(session, "staff.invite.delete", error ? "FAILURE" : "SUCCESS", params.id);
+    if (error) return NextResponse.json({ error: "Delete failed" }, { status: 503 });
     return NextResponse.json({ ok: true });
 }

@@ -1,14 +1,12 @@
-import { requireAdmin } from "@/lib/auth";
+import { requireRoutePermission, accessErrorResponse } from "@/lib/admin-access";
 import { getNewsCategories,validNewsCategory } from "@/lib/news-categories-server";
 import { getSupabase } from "@/lib/supabase";
 import { NextRequest,NextResponse } from "next/server";
 export async function GET(req: Request) {
     try {
-        await requireAdmin(req);
+        await requireRoutePermission(req);
     }
-    catch {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    catch(error) { return accessErrorResponse(error); }
     const url = new URL((req as any).url || "http://localhost");
     const page = Math.max(1, parseInt(url.searchParams.get("page") || "1"));
     const PAGE_SIZE = 50;
@@ -35,11 +33,9 @@ export async function GET(req: Request) {
 }
 export async function POST(req: NextRequest) {
     try {
-        await requireAdmin(req);
+        await requireRoutePermission(req);
     }
-    catch {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    catch(error) { return accessErrorResponse(error); }
     const body = await req.json();
     const { title, slug, excerpt, body: content, body2, coverImage, secondaryImage, gallery, videoUrl, isPublished, publishedAt: rawPublishedAt } = body;
     const publishedAt = isPublished ? (rawPublishedAt || new Date().toISOString()) : null;

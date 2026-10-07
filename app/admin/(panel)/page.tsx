@@ -1,16 +1,20 @@
 import Icon from "@/components/icons";
-import { requireAdmin } from "@/lib/auth";
+import { requireSuperAdmin } from "@/lib/auth";
+import { requirePermission } from "@/lib/admin-access";
+import { hasPermission } from "@/lib/permissions";
 import { formatCurrency,formatNumber } from "@/lib/format";
 import { getSupabase } from "@/lib/supabase";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 export const revalidate = 0;
 export default async function AdminDashboard() {
+    let session;
     try {
-        await requireAdmin();
+        await requireSuperAdmin();
+        session = await requirePermission("audit.view");
     }
     catch {
-        redirect("/admin/login");
+        redirect("/admin/forbidden");
     }
     const supabase = getSupabase();
     // حساب التواريخ مرة واحدة وبشكل دقيق

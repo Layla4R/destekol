@@ -1,4 +1,4 @@
-import { requireAdmin } from "@/lib/auth";
+import { requireRoutePermission, accessErrorResponse } from "@/lib/admin-access";
 import { getSupabase } from "@/lib/supabase";
 import { NextRequest,NextResponse } from "next/server";
 export async function GET(req: NextRequest, { params }: {
@@ -7,11 +7,9 @@ export async function GET(req: NextRequest, { params }: {
     };
 }) {
     try {
-        await requireAdmin(req);
+        await requireRoutePermission(req);
     }
-    catch {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    catch(error) { return accessErrorResponse(error); }
     const supabase = getSupabase();
     const { data: campaign, error } = await supabase.from("Campaign").select("*").eq("id", params.id).maybeSingle();
     if (error)
@@ -26,11 +24,9 @@ export async function PATCH(req: NextRequest, { params }: {
     };
 }) {
     try {
-        await requireAdmin(req);
+        await requireRoutePermission(req);
     }
-    catch {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    catch(error) { return accessErrorResponse(error); }
     const body = await req.json();
     const data: any = {};
     for (const key of [
@@ -70,11 +66,9 @@ export async function DELETE(req: NextRequest, { params }: {
     };
 }) {
     try {
-        await requireAdmin(req);
+        await requireRoutePermission(req);
     }
-    catch {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    catch(error) { return accessErrorResponse(error); }
     const supabase = getSupabase();
     const { count: completedCount } = await supabase.from("Donation").select("id", { count: "exact", head: true }).eq("campaignId", params.id).eq("status", "COMPLETED");
     if ((completedCount || 0) > 0) {
