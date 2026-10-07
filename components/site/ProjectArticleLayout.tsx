@@ -1,3 +1,4 @@
+import ConsentEmbed from "@/components/site/ConsentEmbed";
 import Icon from "@/components/icons";
 import { normalizeDestekolBrandCopy } from "@/lib/destekol-brand-copy";
 import { normalizePublicContact,officialEmail } from "@/lib/public-contact";
@@ -66,7 +67,7 @@ export default function ProjectArticleLayout({ data, context, hideHeader = false
       </div>);
     };
     return (<article className="mx-auto max-w-screen-xl px-4 sm:px-6 py-8 sm:py-12 bg-white min-h-screen">
-      
+
       {/* 1. Breadcrumb */}
       <nav aria-label="Breadcrumb" className="mb-6 flex items-center gap-2 text-sm font-medium text-slate-500">
         <Link href={`/${locale}/`} className="transition hover:text-brand">
@@ -134,10 +135,10 @@ export default function ProjectArticleLayout({ data, context, hideHeader = false
 
       {/* 5. Main Content Grid */}
       <div className={`grid grid-cols-1 ${data.videoUrl ? "lg:grid-cols-12" : "max-w-4xl mx-auto"} gap-10 items-start`}>
-        
+
         {/* Main Body Column */}
         <div className={`${data.videoUrl ? "lg:col-span-8" : "w-full"} space-y-8`}>
-          
+
           {data.body && (<div className="w-full">
               {renderFormattedBody(data.body)}
             </div>)}
@@ -180,7 +181,7 @@ export default function ProjectArticleLayout({ data, context, hideHeader = false
               </div>
 
               <div className="relative aspect-video w-full rounded-2xl overflow-hidden bg-black border border-slate-700 shadow-inner">
-                {youtubeEmbed ? (<iframe src={youtubeEmbed} className="w-full h-full border-0" allowFullScreen title={data.title}/>) : (<video src={data.videoUrl} controls playsInline className="w-full h-full object-cover"/>)}
+                {youtubeEmbed ? (<ConsentEmbed src={youtubeEmbed} className="w-full h-full border-0" allowFullScreen title={data.title}/>) : (<video src={data.videoUrl} controls playsInline className="w-full h-full object-cover"/>)}
               </div>
 
               <p className="text-xs text-slate-400 mt-4 px-1 leading-relaxed font-medium">

@@ -7,9 +7,11 @@ export async function getActiveCampaigns(locale: string) {
         return [];
     const { data: campaigns } = await supabase
         .from("Campaign")
-        .select("id, slug, title, summary, coverImage, goalAmount, raisedAmount, donorCount, defaultAmount, category, isFeatured")
+        .select("id, slug, title, summary, coverImage, goalAmount, raisedAmount, donorCount, defaultAmount, category, country, isFeatured")
         .eq("isActive", true)
-        .order("isFeatured", { ascending: false });
+        .order("isFeatured", { ascending: false })
+        .order("createdAt", { ascending: false })
+        .order("id", { ascending: true });
     if (!campaigns || campaigns.length === 0)
         return [];
     if (locale === "ar")

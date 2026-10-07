@@ -1,87 +1,54 @@
 "use client";
-import { normalizeDestekolBrandText } from "@/lib/destekol-brand-copy";
-import Link from "next/link";
-import { useEffect,useState } from "react";
-export default function CookieBanner({ locale = "ar", isDestekol = false }: {
-    locale?: string;
-    isDestekol?: boolean;
-}) {
-    const [showBanner, setShowBanner] = useState(false);
-    useEffect(() => {
-        const consent = localStorage.getItem("destekol_cookie_consent");
-        if (!consent) {
-            setShowBanner(true);
-        }
-        else if (consent === "accepted") {
-            enablePixels();
-        }
-    }, []);
-    const enablePixels = () => {
-        if (typeof window !== "undefined" && (window as any).fbq) {
-            (window as any).fbq("consent", "grant");
-        }
-    };
-    const handleAccept = () => {
-        localStorage.setItem("destekol_cookie_consent", "accepted");
-        setShowBanner(false);
-        enablePixels();
-    };
-    const handleReject = () => {
-        localStorage.setItem("destekol_cookie_consent", "rejected");
-        setShowBanner(false);
-    };
-    if (!showBanner)
-        return null;
-    const t = {
-        ar: {
-            title: "مؤسسة Destekol الإنسانية",
-            desc: "في مؤسسة Destekol، نولي أهمية قصوى لخصوصية وأمان بياناتك الشخصية. نستخدم ملفات تعريف الارتباط لضمان حماية بياناتك وفق المعايير القانونية ولتحسين تجربة تصفحك. يمكنك معرفة المزيد عبر",
-            policy: "سياسة الكوكيز",
-            accept: "قبول الكل",
-            reject: "رفض الكل",
-        },
-        en: {
-            title: "Destekol Charitable Non-Profit Association",
-            desc: "At Destekol, we prioritize the security and privacy of your personal data. We use cookies to process and protect your data according to legal standards and to enhance your experience. Learn more in our",
-            policy: "Cookie Policy",
-            accept: "Accept All",
-            reject: "Reject All",
-        },
-        tr: {
-            title: "Destekol İnsani Yardım Vakfı",
-            desc: "Destekol olarak, kişisel verilerinizin güvenliğine önem veriyoruz. Çerez verilerinizin hukuka uygun işlenmesi, korunması ve deneyiminizi geliştirmek için azami hassasiyeti gösteriyoruz. Detaylı bilgi için",
-            policy: "Çerez Politikası",
-            accept: "Tümünü Kabul Et",
-            reject: "Tümünü Reddet",
-        },
-        fr: {
-            title: "Fondation Humanitaire Destekol",
-            desc: "Chez Destekol, nous accordons une importance primordiale à la sécurité de vos données. Nous utilisons des cookies pour protéger vos données selon les normes légales et améliorer votre expérience. En savoir plus dans notre",
-            policy: "Politique relative aux cookies",
-            accept: "Tout accepter",
-            reject: "Tout refuser",
-        },
-    };
-    const rawText = t[locale as keyof typeof t] || t.en;
-    const text = { ...rawText, title: normalizeDestekolBrandText(rawText.title, locale), desc: normalizeDestekolBrandText(rawText.desc, locale) };
-    return (<div className="fixed bottom-6 left-6 right-6 sm:left-auto sm:max-w-md z-50 animate-in fade-in slide-in-from-bottom-5 duration-300">
-      <div className="bg-slate-900 text-white rounded-3xl p-6 shadow-2xl border border-slate-800">
-        <h3 className="font-display font-extrabold text-base mb-2 text-white">{text.title}</h3>
-        <p className="text-xs text-white/80 leading-relaxed mb-5">
-          {text.desc}{" "}
-          <Link href={`/${locale}/cookie-policy`} className="text-brand-light font-bold underline">
-            {text.policy}
-          </Link>.
-        </p>
+import Script from 'next/script';
+import Link from 'next/link';
+import { cookieDisclosures } from '@/lib/cookie-disclosures';
+import { useEffect, useState } from 'react';
+import { CONSENT_KEY, CONSENT_EVENT, readConsent, trackingAllowed, clearTrackingCookies, type CookieConsent } from '@/lib/cookie-consent';
 
-        <div className="flex items-center gap-2 pt-1">
-          <button onClick={handleAccept} className="flex-1 bg-brand hover:opacity-90 active:scale-95 text-white font-bold text-xs py-2.5 px-4 rounded-xl transition-all shadow-md">
-            {text.accept}
-          </button>
-          <button onClick={handleReject} className="flex-1 bg-slate-800 hover:bg-slate-700 active:scale-95 text-white/80 font-bold text-xs py-2.5 px-4 rounded-xl transition-all">
-            {text.reject}
-          </button>
-        </div>
-      </div>
-    </div>);
+const words = {
+    ar: { title: 'تفضيلات ملفات تعريف الارتباط', text: 'الملفات الضرورية تعمل دائمًا. اختر السماح بالتحليلات أو التسويق أو المحتوى الخارجي.', settings: 'إعدادات ملفات الارتباط', accept: 'قبول الكل', reject: 'رفض غير الضرورية', save: 'حفظ اختياري', analytics: 'التحليلات', marketing: 'التسويق', functional: 'المحتوى الخارجي', policy: 'سياسة ملفات تعريف الارتباط', details: 'المزوّد والغرض والمدة' },
+    en: { title: 'Cookie preferences', text: 'Essential cookies remain active. Choose whether to allow analytics, marketing or external content.', settings: 'Cookie settings', accept: 'Accept all', reject: 'Reject non-essential', save: 'Save my choices', analytics: 'Analytics', marketing: 'Marketing', functional: 'External content', policy: 'Cookie policy', details: 'Provider, purpose and duration' },
+    fr: { title: 'Préférences de cookies', text: 'Les cookies nécessaires restent actifs. Choisissez d’autoriser les analyses, le marketing ou le contenu externe.', settings: 'Paramètres des cookies', accept: 'Tout accepter', reject: 'Refuser les non nécessaires', save: 'Enregistrer mes choix', analytics: 'Analyse', marketing: 'Marketing', functional: 'Contenu externe', policy: 'Politique relative aux cookies', details: 'Fournisseur, finalité et durée' },
+    tr: { title: 'Çerez tercihleri', text: 'Zorunlu çerezler her zaman aktiftir. Analitik, pazarlama veya harici içerik için tercih yapın.', settings: 'Çerez ayarları', accept: 'Tümünü kabul et', reject: 'Zorunlu olmayanları reddet', save: 'Tercihlerimi kaydet', analytics: 'Analitik', marketing: 'Pazarlama', functional: 'Harici içerik', policy: 'Çerez politikası', details: 'Sağlayıcı, amaç ve süre' },
+};
+export default function CookieBanner({ locale = 'tr', gaId, gtmId, pixelId }: { locale?: string; isDestekol?: boolean; gaId?: string | null; gtmId?: string; pixelId?: string }) {
+    const t = words[locale as keyof typeof words] || words.tr;
+    const [consent, setConsent] = useState<CookieConsent | null>(null);
+    const [open, setOpen] = useState(false);
+    const [choices, setChoices] = useState({ analytics: false, marketing: false, functional: false });
+    useEffect(() => {
+        const existing = readConsent(); setConsent(existing); setOpen(!existing);
+        if (existing) setChoices(existing);
+        const sync = (event: StorageEvent) => { if (event.key === CONSENT_KEY) window.location.reload(); };
+        window.addEventListener('storage', sync);
+        return () => window.removeEventListener('storage', sync);
+    }, []);
+    function save(selected: typeof choices) {
+        const next: CookieConsent = { version: 2, updatedAt: new Date().toISOString(), ...selected };
+        try { localStorage.setItem(CONSENT_KEY, JSON.stringify(next)); } catch { /* Apply choices for this visit. */ }
+        const changed = consent && ['analytics', 'marketing', 'functional'].some(key => consent[key as keyof typeof choices] !== selected[key as keyof typeof choices]);
+        const w = window as any;
+        if (!selected.marketing) w.fbq?.('consent', 'revoke');
+        if (!selected.analytics || !selected.marketing) w.gtag?.('consent', 'update', { analytics_storage: selected.analytics ? 'granted' : 'denied', ad_storage: selected.marketing ? 'granted' : 'denied', ad_user_data: selected.marketing ? 'granted' : 'denied', ad_personalization: selected.marketing ? 'granted' : 'denied' });
+        clearTrackingCookies(); setConsent(next); setOpen(false);
+        window.dispatchEvent(new Event(CONSENT_EVENT));
+        // Reload removes previously loaded third-party code after a preference change.
+        if (changed) window.location.reload();
+    }
+    const ga = gaId && /^G-[A-Z0-9]+$/i.test(gaId) ? gaId : null;
+    const gtm = gtmId && /^GTM-[A-Z0-9]+$/i.test(gtmId) ? gtmId : null;
+    const meta = pixelId && /^\d+$/.test(pixelId) ? pixelId : null;
+    return <>
+        {trackingAllowed(consent, 'gtm') && gtm ? <Script id="consented-gtm">{`window.dataLayer=window.dataLayer||[];window.dataLayer.push({'gtm.start':Date.now(),event:'gtm.js'});var s=document.createElement('script');s.async=true;s.src='https://www.googletagmanager.com/gtm.js?id=${gtm}';document.head.appendChild(s);`}</Script> : trackingAllowed(consent, 'ga') && ga ? <><Script src={`https://www.googletagmanager.com/gtag/js?id=${ga}`}/><Script id="consented-ga">{`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}window.gtag=gtag;gtag('consent','default',{analytics_storage:'granted',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});gtag('js',new Date());gtag('config','${ga}');`}</Script></> : null}
+        {trackingAllowed(consent, 'meta') && meta && <Script id="consented-meta">{`!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=true;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=true;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('consent','grant');fbq('init','${meta}');fbq('track','PageView');`}</Script>}
+        {open && <div role="dialog" aria-modal="true" aria-label={t.title} className="fixed inset-0 z-[100] flex items-end justify-center bg-black/30 p-3 sm:items-center" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
+            <div className="max-h-[85vh] w-full max-w-xl overflow-y-auto rounded-2xl bg-white p-6 text-slate-900 shadow-xl">
+                <h2 className="text-lg font-bold mb-3">{t.title}</h2><p className="text-sm mb-4">{t.text}</p>
+                <div className="space-y-3 mb-4">{(['analytics', 'marketing', 'functional'] as const).map(category => <label key={category} className="flex items-center gap-3"><input type="checkbox" checked={choices[category]} onChange={e => setChoices({ ...choices, [category]: e.target.checked })}/>{t[category]}</label>)}</div>
+                <details className="mb-4 text-xs leading-relaxed"><summary className="cursor-pointer font-bold">{t.details}</summary>{(cookieDisclosures[locale] || cookieDisclosures.tr).map(text => <p key={text} className="mt-2">{text}</p>)}<p className="mt-2"><a className="underline" href="https://policies.google.com/technologies/cookies" target="_blank" rel="noreferrer">Google / YouTube / Maps</a> · <a className="underline" href="https://www.facebook.com/privacy/policies/cookies/" target="_blank" rel="noreferrer">Meta</a></p></details>
+                <Link href={`/${locale}/cookie-policy`} className="text-sm text-brand underline">{t.policy}</Link>
+                <div className="mt-5 grid grid-cols-2 gap-3"><button className="rounded-lg border border-brand py-3 text-sm font-bold" onClick={() => save({ analytics: false, marketing: false, functional: false })}>{t.reject}</button><button className="rounded-lg border border-brand py-3 text-sm font-bold" onClick={() => save({ analytics: true, marketing: true, functional: true })}>{t.accept}</button><button className="col-span-2 rounded-lg bg-brand py-3 text-sm font-bold text-white" onClick={() => save(choices)}>{t.save}</button></div>
+            </div>
+        </div>}
+    </>;
 }

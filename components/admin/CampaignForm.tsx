@@ -25,6 +25,7 @@ interface CampaignData {
 const CATEGORIES = ["food", "medical", "shelter", "education", "water", "general"];
 const COUNTRIES = [
     { value: "", label: "— Not specified —" },
+    { value: "غزة", label: "Gaza / غزة 🇵🇸" },
     { value: "فلسطين", label: "Palestine 🇵🇸" },
     { value: "اليمن", label: "Yemen 🇾🇪" },
     { value: "سوريا", label: "Syria 🇸🇾" },

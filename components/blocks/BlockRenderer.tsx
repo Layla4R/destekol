@@ -1,3 +1,4 @@
+import ConsentEmbed from "@/components/site/ConsentEmbed";
 import { storyLink } from "@/lib/story-link";
 import CampaignCard from "@/components/blocks/CampaignCard";
 import ContactForm from "@/components/blocks/ContactForm";
@@ -502,8 +503,8 @@ export default function BlockRenderer({ section, context = {}, }: {
               {p.title && <h2 className="font-display text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight mb-3">{p.title}</h2>}
               {p.subtitle && <p className="text-slate-500 text-sm sm:text-base">{p.subtitle}</p>}
             </div>
-            <CardCarousel enabled={context?.isHomePage === true} locale={locale} href={getLocalizedLink("/campaigns")} className={context?.isHomePage ? "campaign-carousel-one-up items-stretch" : "grid sm:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch"}>
-              {campaigns.map((c) => (<CampaignCard variant={context?.isHomePage ? "destekol" : "default"} currency={(context?.settings?.defaultCurrency || "USD").toUpperCase()} key={c.id} id={c.id} amounts={context.donationAmounts || []} defaultAmount={c.defaultAmount} slug={c.slug} title={c.title} summary={c.summary} coverImage={c.coverImage} goalAmount={c.goalAmount} raisedAmount={c.raisedAmount} donorCount={c.donorCount} category={c.category} locale={locale} dict={dict}/>))}
+            <CardCarousel grouped={context?.isHomePage === true} enabled={context?.isHomePage === true} locale={locale} href={getLocalizedLink("/campaigns")} className={context?.isHomePage ? "campaign-carousel-one-up items-stretch" : "grid sm:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch"}>
+              {campaigns.map((c) => (<CampaignCard variant={context?.isHomePage ? "destekol" : "default"} currency={(context?.settings?.defaultCurrency || "USD").toUpperCase()} key={c.id} id={c.id} amounts={context.donationAmounts || []} defaultAmount={c.defaultAmount} slug={c.slug} title={c.title} summary={c.summary} coverImage={c.coverImage} goalAmount={c.goalAmount} raisedAmount={c.raisedAmount} donorCount={c.donorCount} category={c.category} country={c.country} locale={locale} dict={dict}/>))}
               {campaigns.length === 0 && (<p className="text-slate-500 col-span-full text-center py-10">{noCampaignsText}</p>)}
             </CardCarousel>
             {!context?.isHomePage && campaigns.length > 0 && (<div className="text-center mt-12">
@@ -554,7 +555,7 @@ export default function BlockRenderer({ section, context = {}, }: {
                         url.includes("youtube.com") ||
                         url.includes("youtu.be");
                     return (<div key={i} className="group relative aspect-[4/3] rounded-3xl overflow-hidden bg-slate-900 shadow-md border border-slate-100 flex flex-col justify-end">
-                    {isVideo ? (url.includes("youtube.com") || url.includes("youtu.be") ? (<iframe src={`https://www.youtube.com/embed/${url.includes("v=")
+                    {isVideo ? (url.includes("youtube.com") || url.includes("youtu.be") ? (<ConsentEmbed src={`https://www.youtube.com/embed/${url.includes("v=")
                                 ? url.split("v=")[1]?.split("&")[0]
                                 : url.split("/").pop()}`} title="Video" className="w-full h-full border-0" allowFullScreen/>) : (<video src={url} controls playsInline preload="metadata" className="w-full h-full object-cover"/>)) : (<Image src={url} alt={item.caption || "Gallery Image"} fill sizes="(max-width: 640px) 100vw, 33vw" className="object-cover group-hover:scale-105 transition-transform duration-500"/>)}
 

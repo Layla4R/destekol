@@ -1,0 +1,62 @@
+[
+  {
+    "slug": "warmth-that-protects",
+    "category": "shelter",
+    "image": "/images/winter-warmth-campaign.png",
+    "texts": {
+      "ar": {
+        "title": "حملة دفء يحميهم",
+        "summary": "ساند الأسر في غزة ببطانيات وملابس شتوية تساعدها على مواجهة البرد.",
+        "description": "<h2>دفء يحميهم</h2><p>مع انخفاض درجات الحرارة، تحتاج الأسر التي تعيش في ظروف نزوح إلى مستلزمات تحفظ دفئها وتخفف قسوة الشتاء. تسعى هذه الحملة إلى دعم الأسر في غزة ببطانيات وملابس شتوية مناسبة لاحتياجاتها.</p><p>تُوجَّه التبرعات إلى مستلزمات الدفء بحسب الاحتياجات الميدانية والموارد المتاحة، مع مراعاة الأولويات وتوثيق استخدام الأموال وفق سياسة الشفافية المالية.</p><p>هدف الحملة 10,000 دولار. اختر مبلغ مساهمتك وكن شريكًا في توفير دفء يحميهم.</p>"
+      },
+      "tr": {
+        "title": "Koruyan Sıcaklık kampanyası",
+        "summary": "Gazze’deki ailelerin soğukla mücadele etmesine yardımcı olacak battaniye ve kışlık giysi desteğine katılın.",
+        "description": "<h2>Koruyan Sıcaklık</h2><p>Hava soğudukça, yerinden edilmiş ailelerin sıcak kalmalarını sağlayacak temel malzemelere duyduğu ihtiyaç artar. Bu kampanya, Gazze’deki ailelere ihtiyaçlarına uygun battaniye ve kışlık giysi desteği sağlamayı amaçlar.</p><p>Bağışlar, sahadaki ihtiyaçlar ve mevcut kaynaklar doğrultusunda kışlık malzemelere yönlendirilir. Öncelikler gözetilir ve fonların kullanımı mali şeffaflık politikamız kapsamında kayıt altına alınır.</p><p>Kampanya hedefi 10.000 ABD dolarıdır. Katkı tutarınızı seçerek ailelerin sıcak kalmasına destek olun.</p>"
+      },
+      "en": {
+        "title": "Warmth That Protects Them Campaign",
+        "summary": "Help families in Gaza face the cold with blankets and winter clothing suited to their needs.",
+        "description": "<h2>Warmth That Protects Them</h2><p>As temperatures fall, displaced families need essential supplies to stay warm and cope with harsh winter conditions. This campaign aims to support families in Gaza with blankets and winter clothing suited to their needs.</p><p>Donations are allocated to winter essentials according to field needs and available resources. Priorities are assessed and the use of funds is documented under our financial transparency policy.</p><p>The campaign goal is US$10,000. Choose your contribution and help provide warmth that protects families.</p>"
+      },
+      "fr": {
+        "title": "La chaleur qui les protège — Campagne d’hiver",
+        "summary": "Aidez les familles de Gaza à affronter le froid grâce à des couvertures et des vêtements d’hiver adaptés à leurs besoins.",
+        "description": "<h2>La chaleur qui les protège</h2><p>Lorsque les températures baissent, les familles déplacées ont besoin de fournitures essentielles pour rester au chaud et affronter l’hiver. Cette campagne vise à soutenir les familles de Gaza en leur apportant des couvertures et des vêtements d’hiver adaptés à leurs besoins.</p><p>Les dons sont affectés aux équipements d’hiver selon les besoins sur le terrain et les ressources disponibles. Les priorités sont prises en compte et l’utilisation des fonds est documentée conformément à notre politique de transparence financière.</p><p>L’objectif de la campagne est de 10 000 dollars américains. Choisissez votre contribution et aidez les familles à se protéger du froid.</p>"
+      }
+    },
+    "country": "غزة",
+    "goalAmount": 10000,
+    "defaultAmount": 25
+  },
+  {
+    "slug": "paper-and-pencil",
+    "category": "education",
+    "image": "/images/paper-pencil-campaign.png",
+    "texts": {
+      "ar": {
+        "title": "حملة ورقة وقلم",
+        "summary": "ساهم في توفير حقائب ودفاتر وأقلام للأطفال في غزة، لمساندتهم في مواصلة التعلّم.",
+        "description": "<h2>ورقة وقلم</h2><p>يمكن لحقيبة ودفتر وقلم أن تساعد طفلًا على متابعة التعلّم رغم الظروف الصعبة. تسعى حملة ورقة وقلم إلى توفير مستلزمات تعليمية أساسية للأطفال في غزة، تشمل حقائب ودفاتر وأقلامًا بحسب الحاجة.</p><p>تُخصَّص المساهمات لشراء وتجهيز المستلزمات التعليمية وفق الاحتياجات الميدانية والموارد المتاحة، مع توثيق استخدام الأموال وفق سياسة الشفافية المالية.</p><p>هدف الحملة 10,000 دولار. ساهم بالمبلغ الذي يناسبك وكن إلى جانب طفل يواصل التعلّم.</p>"
+      },
+      "tr": {
+        "title": "Bir Kâğıt, Bir Kalem kampanyası",
+        "summary": "Gazze’deki çocukların öğrenmeye devam edebilmesi için okul çantası, defter ve kalem desteğine katkıda bulunun.",
+        "description": "<h2>Bir Kâğıt, Bir Kalem</h2><p>Bir çanta, bir defter ve bir kalem, zor koşullarda yaşayan bir çocuğun öğrenmeye devam etmesine yardımcı olabilir. Bu kampanya, Gazze’deki çocuklara ihtiyaçlarına göre okul çantası, defter ve kalem gibi temel eğitim malzemeleri sağlamayı amaçlar.</p><p>Katkılar, sahadaki ihtiyaçlar ve mevcut kaynaklar doğrultusunda eğitim malzemelerinin satın alınması ve hazırlanması için kullanılır. Fonların kullanımı mali şeffaflık politikamız kapsamında kayıt altına alınır.</p><p>Kampanya hedefi 10.000 ABD dolarıdır. Size uygun tutarla katkıda bulunarak öğrenmeye devam eden bir çocuğun yanında olun.</p>"
+      },
+      "en": {
+        "title": "Paper and Pencil Campaign",
+        "summary": "Support children in Gaza with school bags, notebooks and pencils to help them continue learning.",
+        "description": "<h2>Paper and Pencil</h2><p>A school bag, a notebook and a pencil can help a child keep learning through difficult circumstances. This campaign aims to provide children in Gaza with essential learning supplies, including bags, notebooks and pencils according to their needs.</p><p>Contributions are used to purchase and prepare educational supplies according to field needs and available resources. The use of funds is documented under our financial transparency policy.</p><p>The campaign goal is US$10,000. Give an amount that suits you and stand beside a child who is continuing to learn.</p>"
+      },
+      "fr": {
+        "title": "Une feuille, un crayon — Campagne de rentrée scolaire",
+        "summary": "Soutenez les enfants de Gaza avec des cartables, des cahiers et des crayons pour les aider à poursuivre leur apprentissage.",
+        "description": "<h2>Une feuille, un crayon</h2><p>Un cartable, un cahier et un crayon peuvent aider un enfant à continuer d’apprendre malgré des conditions difficiles. Cette campagne vise à fournir aux enfants de Gaza du matériel éducatif essentiel, notamment des cartables, des cahiers et des crayons, selon leurs besoins.</p><p>Les contributions servent à acheter et à préparer le matériel éducatif en fonction des besoins sur le terrain et des ressources disponibles. L’utilisation des fonds est documentée conformément à notre politique de transparence financière.</p><p>L’objectif de la campagne est de 10 000 dollars américains. Contribuez à la mesure de vos moyens et soutenez un enfant qui poursuit son apprentissage.</p>"
+      }
+    },
+    "country": "غزة",
+    "goalAmount": 10000,
+    "defaultAmount": 25
+  }
+]

@@ -80,7 +80,7 @@ export default function SiteHeader({ navItems, settings, locale, dict, transpare
                   </Link>
                 </li>);
         })}
-            {false}
+            <li><Link href={`${p}/campaigns`} className={navLinkCls}>{t("nav.campaigns", "الحملات", "Campaigns", "Campagnes", "Kampanyalar")}</Link></li>
             <li>
               <Link href={`${p}/news`} className={navLinkCls}>
                 {t("nav.news", "الأخبار", "News", "Actualités", "Haberler")}
@@ -126,7 +126,7 @@ export default function SiteHeader({ navItems, settings, locale, dict, transpare
         </div>
       </div>
       {mobileOpen && <nav id="mobile-navigation" className="md:hidden border-t bg-white p-5 grid gap-4" aria-label={interfaceCopy(locale).mobileNavigation}>
-        {navItems.map(item => <Link onClick={() => setMobileOpen(false)} key={item.slug} href={item.slug === "home" ? p + "/" : p + "/" + item.slug}>{dict["nav." + item.slug] || item.title}</Link>)}
+        {navItems.filter(item => item.slug !== "campaigns").map(item => <Link onClick={() => setMobileOpen(false)} key={item.slug} href={item.slug === "home" ? p + "/" : p + "/" + item.slug}>{dict["nav." + item.slug] || item.title}</Link>)}
         <Link href={p + "/campaigns"} onClick={() => setMobileOpen(false)}>{t("nav.campaigns", "الحملات", "Campaigns", "Campagnes", "Kampanyalar")}</Link>
         <Link href={p + "/news"} onClick={() => setMobileOpen(false)}>{t("nav.news", "الأخبار", "News", "Actualités", "Haberler")}</Link>
         <Link href={p + "/account"}>{t("nav.account", "حسابي", "My Account", "Mon Compte", "Hesabım")}</Link>

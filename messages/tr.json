@@ -36,7 +36,6 @@
     "confirm_donate": "Bağışı Onayla",
     "full_name": "Ad Soyad",
     "email": "E-posta Adresi",
-    "secure_stripe": "Stripe ile güvenli ödeme",
     "edit": "Düzenle"
   },
   "donate": {
@@ -50,8 +49,6 @@
     "frequency": "Bağış Türü",
     "one_time": "Tek Seferlik",
     "monthly": "Aylık",
-    "pay_stripe": "Kart ile Öde",
-    "pay_paypal": "PayPal ile Öde",
     "secure": "Tüm işlemler şifrelenmiş ve güvenlidir",
     "success_title": "Teşekkürler!",
     "success_body": "Bağışınız başarıyla alındı. Onay e-postası gönderilecektir.",
@@ -153,7 +150,7 @@
     "donor_info": "Bağışçı Bilgileri",
     "name": "Ad Soyad",
     "email": "E-posta Adresi",
-    "secure": "Stripe üzerinden güvenli şifreli ödeme",
+    "secure": "Çevrimiçi bağışlar şu anda açık değildir",
     "processing": "İşleniyor..."
   },
   "common": {

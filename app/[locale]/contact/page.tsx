@@ -1,3 +1,4 @@
+import ConsentEmbed from "@/components/site/ConsentEmbed";
 import { getPageBySlug } from "@/lib/pageData";
 import { mergeCmsTranslation } from "@/lib/cms-localization";
 import BlockRenderer from "@/components/blocks/BlockRenderer";
@@ -75,7 +76,7 @@ export default async function ContactPage({ params: { locale }, }: {
     const [{ data: settings }, { data: appearance }, { data: pageData }] = await Promise.all([
         supabase
             ?.from("SiteSettings")
-            .select("siteName,logoText,logoImage,contactEmail,contactPhone,whatsappNumber,facebookUrl,twitterUrl,instagramUrl,linkedinUrl,youtubeUrl,enableStripe,enablePaypal")
+            .select("siteName,logoText,logoImage,contactEmail,contactPhone,whatsappNumber,facebookUrl,twitterUrl,instagramUrl,linkedinUrl,youtubeUrl")
             .eq("id", "default")
             .maybeSingle() || { data: null },
         supabase
@@ -216,7 +217,7 @@ export default async function ContactPage({ params: { locale }, }: {
         {/* Direct Summary Block (SEO / E-E-A-T) */}
         <section aria-label="Direct Contact Summary" itemScope itemType="http://schema.org/Organization" className={"destekol-contact-summary"}>
           <meta itemProp="name" content={(settings?.siteName || "")}/>
-          
+
           <div className={"destekol-contact-heading"}>
             <div className="w-8 h-8 rounded-full bg-brand/10 text-brand flex items-center justify-center shrink-0">
               <Icon name="shield-check" size={18}/>
@@ -323,7 +324,7 @@ export default async function ContactPage({ params: { locale }, }: {
       {/* Google Maps Section */}
       <div className="max-w-screen-xl mx-auto px-6 pt-8 pb-10">
         <div className="bg-white p-2 sm:p-3 rounded-[2rem] border border-slate-100 shadow-sm">
-          {street && <iframe src={mapEmbedUrl} width="100%" height="400" className="border-0 rounded-3xl w-full grayscale-[20%] contrast-125 transition-all hover:grayscale-0" allowFullScreen={true} loading="lazy" referrerPolicy="no-referrer-when-downgrade" title={street}/>}
+          {street && <ConsentEmbed src={mapEmbedUrl} width="100%" height="400" className="border-0 rounded-3xl w-full grayscale-[20%] contrast-125 transition-all hover:grayscale-0" allowFullScreen={true} loading="lazy" referrerPolicy="no-referrer-when-downgrade" title={street}/>}
         </div>
       </div>
     </div>);

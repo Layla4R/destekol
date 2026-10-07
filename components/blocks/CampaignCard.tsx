@@ -1,4 +1,5 @@
 "use client";
+import PayTRMethods from "@/components/site/PayTRMethods";
 import Icon from "@/components/icons";
 import { categoryMeta } from "@/lib/categories";
 import { formatCurrency } from "@/lib/format";
@@ -15,6 +16,7 @@ interface Props {
     raisedAmount: number;
     donorCount: number;
     category?: string;
+    country?: string | null;
     locale?: string;
     dict?: Record<string, string>;
     variant?: "default" | "destekol";
@@ -22,14 +24,14 @@ interface Props {
     amounts?: number[];
     defaultAmount?: number;
 }
-export default function CampaignCard({ id, slug, title, summary, coverImage, goalAmount, raisedAmount, donorCount, category, locale = "ar", dict = {}, variant = "default", currency = "USD", amounts = [], defaultAmount = 0 }: Props) {
+export default function CampaignCard({ id, slug, title, summary, coverImage, goalAmount, raisedAmount, donorCount, category, country, locale = "ar", dict = {}, variant = "default", currency = "USD", amounts = [], defaultAmount = 0 }: Props) {
     const [amount, setAmount] = useState(defaultAmount || amounts[0] || 0);
     const [custom, setCustom] = useState("");
     const [frequency, setFrequency] = useState<"one_time" | "monthly">("one_time");
     const [step, setStep] = useState<"widget" | "details">("widget");
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
-    const [loading, setLoading] = useState<"stripe" | "paypal" | false>(false);
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [added, setAdded] = useState(false);
     const [cartUpdated, setCartUpdated] = useState(false);
@@ -150,51 +152,7 @@ export default function CampaignCard({ id, slug, title, summary, coverImage, goa
         parsedCustom > 0
         ? parsedCustom
         : amount;
-    async function pay(provider: "stripe" | "paypal") {
-        if (!name.trim() ||
-            !email.trim()) {
-            setError(t("name_required"));
-            return;
-        }
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
-            setError(t("invalid_email"));
-            return;
-        }
-        setError("");
-        setLoading(provider);
-        try {
-            const endpoint = provider === "stripe"
-                ? "/api/donations/checkout"
-                : "/api/donations/paypal";
-            const res = await fetch(endpoint, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    amount: finalAmount,
-                    frequency: frequency.toUpperCase(),
-                    donorName: name.trim(),
-                    donorEmail: email.trim(),
-                    campaignId: id || null,
-                }),
-            });
-            const data = await res.json();
-            if (data?.url) {
-                window.location.href =
-                    data.url;
-                return;
-            }
-            setError(data?.error ||
-                "Connection error");
-        }
-        catch {
-            setError("Connection error");
-        }
-        finally {
-            setLoading(false);
-        }
-    }
+
     function handleAddToCart() {
         if (!finalAmount ||
             finalAmount <= 0) {
@@ -232,8 +190,13 @@ export default function CampaignCard({ id, slug, title, summary, coverImage, goa
         }
     }
     const inputClass = "w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand";
-    if (variant === "destekol" && step === "widget") {
-        const validAmount = custom === "" || (Number.isFinite(Number(custom)) && Number(custom) >= 1);
+    if (variant === "destekol") {
+        const validAmount = Number.isFinite(finalAmount) && finalAmount >= 1 && (custom === "" || (Number.isFinite(Number(custom)) && Number(custom) >= 1));
+        const labels = ({ ar: { goal: 'الهدف', raised: 'تم جمعه', remaining: 'المتبقي', donors: 'متبرع', support: 'ادعم الآن', country: 'البلد', unknown: 'غير محدد' }, en: { goal: 'Goal', raised: 'Raised', remaining: 'Remaining', donors: 'donors', support: 'Support now', country: 'Country', unknown: 'Not specified' }, fr: { goal: 'Objectif', raised: 'Collecté', remaining: 'Restant', donors: 'donateurs', support: 'Soutenir', country: 'Pays', unknown: 'Non précisé' }, tr: { goal: 'Hedef', raised: 'Toplanan', remaining: 'Kalan', donors: 'bağışçı', support: 'Şimdi Destek Ol', country: 'Ülke', unknown: 'Belirtilmedi' } } as Record<string, { goal: string; raised: string; remaining: string; donors: string; support: string; country: string; unknown: string }>)[locale] || { goal: 'Goal', raised: 'Raised', remaining: 'Remaining', donors: 'donors', support: 'Support now', country: 'Country', unknown: 'Not specified' };
+        let countryLabel = country || labels.unknown;
+        if (country === 'غزة' || country?.toLowerCase() === 'gaza') countryLabel = ({ ar: 'غزة', en: 'Gaza', fr: 'Gaza', tr: 'Gazze' } as Record<string,string>)[locale] || 'Gaza';
+        if (country && /^[A-Za-z]{2}$/.test(country)) { try { countryLabel = new Intl.DisplayNames([locale], { type: 'region' }).of(country.toUpperCase()) || country; } catch {} }
+        const donationUrl = `/${locale}/donate?${new URLSearchParams({ ...(id ? { campaign: id } : {}), amount: String(finalAmount), freq: frequency === 'monthly' ? 'MONTHLY' : 'ONE_TIME' })}`;
         const money = (value: number) => locale === "ar" && currency === "USD"
             ? `$${new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 }).format(value)}`
             : new Intl.NumberFormat(locale, { style: "currency", currency, maximumFractionDigits: 0 }).format(value);
@@ -243,16 +206,18 @@ export default function CampaignCard({ id, slug, title, summary, coverImage, goa
         return <article className="destekol-campaign-card" dir={locale === "ar" ? "rtl" : "ltr"}>
       <Link href={prefix + "/campaigns/" + slug} className="dc-image" aria-label={title}>
         {coverImage && !imgError ? <Image src={coverImage} alt={title} fill sizes="(max-width: 767px) 100vw, 33vw" className="object-cover" onError={() => setImgError(true)}/> : <Icon name="hand-heart" size={42}/>}
-        <span>{cat.label}</span>
       </Link>
       <div className="dc-body">
+        <div className="dc-meta"><span><Icon name={cat.icon} size={13}/>{cat.label}</span><span title={labels.country}><Icon name="map-pin" size={13}/>{countryLabel}</span></div>
         <Link href={prefix + "/campaigns/" + slug}><h3>{title}</h3><p>{summary}</p></Link>
+        <dl className="dc-funding">{[[labels.goal,safeGoal],[labels.raised,safeRaised],[labels.remaining,Math.max(0,safeGoal-safeRaised)]].map(([label,value]) => <div key={String(label)}><dt>{label}</dt><dd>{money(Number(value))}</dd></div>)}</dl>
         <div className="dc-progress" role="progressbar" aria-label={title} aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100}><span style={{ width: pct + "%" }}/></div>
         <div className="dc-totals"><b>{pct}%</b><span><strong>{money(safeRaised)}</strong> / {money(safeGoal)}</span></div>
         <div className="dc-frequency">{(["one_time", "monthly"] as const).map(value => <button key={value} type="button" aria-pressed={frequency === value} onClick={() => setFrequency(value)}>{locale === "tr" && value === "one_time" ? "Bir Kez" : t(value)}</button>)}</div>
         <div className="dc-amounts">{amounts.map(value => <button key={value} type="button" aria-pressed={custom === "" && amount === value} onClick={() => { setAmount(value); setCustom(""); }}>{money(value)}</button>)}</div>
         <label className="dc-custom"><span>{currencySymbol}</span><input type="number" min="1" step="0.01" value={custom} onChange={e => setCustom(e.target.value)} aria-label={locale === "ar" ? "مبلغ آخر" : locale === "tr" ? "Diğer tutar" : locale === "fr" ? "Autre montant" : "Other amount"} placeholder={locale === "ar" ? "مبلغ آخر" : locale === "tr" ? "Diğer tutar" : locale === "fr" ? "Autre montant" : "Other amount"}/></label>
-        <button type="button" className="dc-donate" disabled={!validAmount} onClick={() => { setStep("details"); setError(""); }}>{t("donate_now")}<span aria-hidden="true">{locale === "ar" ? "←" : "→"}</span></button>
+        <div className="dc-actions"><Link href={donationUrl} onClick={e => { if (!validAmount) e.preventDefault(); }} aria-disabled={!validAmount} className="dc-donate">{labels.support}<Icon name={locale === 'ar' ? 'arrow-left' : 'arrow-right'} size={15}/></Link><button type="button" disabled={!validAmount} onClick={handleAddToCart} className="dc-add"><Icon name={added ? 'check' : 'shopping-bag'} size={15}/>{added ? t('added') : t('add_to_cart')}</button></div>
+        <div className="dc-donors"><Icon name="users" size={16}/><strong>{new Intl.NumberFormat(locale).format(Math.max(0,Number(donorCount)||0))}</strong><span>{labels.donors}</span></div>
       </div>
     </article>;
     }
@@ -445,21 +410,9 @@ export default function CampaignCard({ id, slug, title, summary, coverImage, goa
                   {error}
                 </p>)}
 
-              <button type="button" onClick={() => pay("stripe")} disabled={!!loading} className="flex w-full items-center justify-center gap-1.5 rounded-xl bg-brand py-2 text-xs font-bold text-white shadow-sm transition-all hover:opacity-90 disabled:opacity-60">
-                <Icon name="wallet" size={14}/>
+              <PayTRMethods locale={locale} monthly={frequency === "monthly"} onCollapse={() => { setStep("widget"); setError(""); }}/>
 
-                {loading ===
-                "stripe"
-                ? "..."
-                : t("pay_card")}
-              </button>
 
-              <button type="button" onClick={() => pay("paypal")} disabled={!!loading} className="flex w-full items-center justify-center gap-1.5 rounded-xl bg-[#FFC439] py-2 text-xs font-bold text-[#003087] transition-all hover:bg-[#f0b429] disabled:opacity-60">
-                {loading ===
-                "paypal"
-                ? "..."
-                : "PayPal"}
-              </button>
 
               <p className="flex items-center justify-center gap-1 pt-0.5 text-center text-[10px] text-slate-500">
                 <Icon name="shield-check" size={10}/>

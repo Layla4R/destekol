@@ -1,4 +1,5 @@
 "use client";
+import PayTRMethods from "@/components/site/PayTRMethods";
 import Icon from "@/components/icons";
 import { useEffect,useState } from "react";
 import { donationOptions } from "@/lib/donation-options";
@@ -18,7 +19,7 @@ export default function DonateWidget({ locale, dict, primaryColor, accentColor, 
     const [step, setStep] = useState<"amount" | "details">("amount");
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
-    const [loading, setLoading] = useState<"stripe" | "paypal" | null>(null);
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     useEffect(() => {
         setMounted(true);
@@ -30,38 +31,14 @@ export default function DonateWidget({ locale, dict, primaryColor, accentColor, 
     const eyebrow = data?.eyebrow || t("donate.eyebrow", "تبرع الآن", "Donate Now", "Faire un Don", "Bağış Yap");
     const primary = primaryColor || "var(--color-brand, #0069D2)";
     const accent = accentColor || "var(--color-accent, #F00F5A)";
-    async function pay(provider: "stripe" | "paypal") {
-        if (!name.trim() || !email.trim()) {
-            setError(t("donate.name", "الاسم والبريد مطلوبان", "Name and email required", "Nom et email requis", "Ad ve e-posta gerekli"));
-            return;
-        }
-        setLoading(provider);
-        setError("");
-        try {
-            const res = await fetch(provider === "stripe" ? "/api/donations/checkout" : "/api/donations/paypal", {
-                method: "POST", headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ amount: final, frequency: freq, donorName: name, donorEmail: email }),
-            });
-            const d = await res.json();
-            if (d.url)
-                window.location.href = d.url;
-            else
-                setError(d.error || t("common.error", "حدث خطأ", "Error", "Erreur", "Hata"));
-        }
-        catch {
-            setError(t("common.error", "حدث خطأ", "Error", "Erreur", "Hata"));
-        }
-        finally {
-            setLoading(null);
-        }
-    }
+
     const inp = "w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 px-3.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand placeholder-slate-400";
     return (<section aria-label="Quick Donation Section" className="py-16 bg-slate-50/50 border-t border-slate-100" suppressHydrationWarning>
       <div className="max-w-screen-xl mx-auto px-6">
-        
+
         <div className="bg-white rounded-3xl p-8 lg:p-12 border border-slate-100 shadow-xl shadow-slate-200/40">
           <div className="grid lg:grid-cols-12 gap-10 lg:gap-12 items-center">
-            
+
             {/* Left Column */}
             <div className="lg:col-span-6 flex flex-col justify-center">
               <header>
@@ -69,11 +46,11 @@ export default function DonateWidget({ locale, dict, primaryColor, accentColor, 
                   <span className="w-1.5 h-1.5 rounded-full bg-brand"/>
                   <span>{eyebrow}</span>
                 </div>
-                
+
                 <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 leading-tight mb-4 tracking-tight">
                   {title}
                 </h2>
-                
+
                 <p className="text-slate-500 text-sm sm:text-base leading-relaxed mb-8">
                   {subtitle}
                 </p>
@@ -152,18 +129,12 @@ export default function DonateWidget({ locale, dict, primaryColor, accentColor, 
 
                     <input value={name} onChange={e => setName(e.target.value)} aria-label={t("donate.name", "الاسم الكامل", "Full Name", "Nom Complet", "Ad Soyad")} placeholder={t("donate.name", "الاسم الكامل", "Full Name", "Nom Complet", "Ad Soyad")} className={inp}/>
                     <input type="email" value={email} onChange={e => setEmail(e.target.value)} aria-label={t("donate.email", "البريد الإلكتروني", "Email Address", "Adresse Email", "E-posta")} placeholder={t("donate.email", "البريد الإلكتروني", "Email Address", "Adresse Email", "E-posta")} className={inp}/>
-                    
+
                     {error && <p className="text-red-300 text-xs">{error}</p>}
-                    
-                    <button type="button" onClick={() => pay("stripe")} disabled={!!loading} className="w-full bg-white text-slate-900 font-bold rounded-xl py-2.5 transition hover:bg-slate-100 disabled:opacity-60 flex items-center justify-center gap-2 text-xs shadow-sm">
-                      <Icon name="wallet" size={15}/>
-                      <span>{loading === "stripe" ? "..." : `${t("donate.pay_card", "الدفع بالبطاقة", "Pay with Card", "Payer par Carte", "Kart ile Öde")} — $${final}`}</span>
-                    </button>
-                    
-                    <button type="button" onClick={() => pay("paypal")} disabled={!!loading} className="w-full bg-[#FFC439] hover:bg-[#ffcd54] text-[#003087] font-bold rounded-xl py-2.5 transition disabled:opacity-60 flex items-center justify-center gap-2 text-xs">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="#003087"><path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106z"/></svg>
-                      <span>{loading === "paypal" ? "..." : `PayPal — $${final}`}</span>
-                    </button>
+
+                    <PayTRMethods locale={locale} monthly={freq === "MONTHLY"} onCollapse={() => { setStep("amount"); setError(""); }}/>
+
+
                   </div>)}
               </div>
             </aside>

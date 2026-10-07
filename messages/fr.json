@@ -36,7 +36,6 @@
     "confirm_donate": "Confirmer le Don",
     "full_name": "Nom Complet",
     "email": "Adresse Email",
-    "secure_stripe": "Paiement sécurisé via Stripe",
     "edit": "Modifier"
   },
   "donate": {
@@ -50,8 +49,6 @@
     "frequency": "Type de Don",
     "one_time": "Unique",
     "monthly": "Mensuel",
-    "pay_stripe": "Payer par Carte",
-    "pay_paypal": "Payer via PayPal",
     "secure": "Toutes les transactions sont chiffrées et sécurisées",
     "success_title": "Merci !",
     "success_body": "Votre don a été reçu avec succès. Un email de confirmation vous sera envoyé.",
@@ -153,7 +150,7 @@
     "donor_info": "Informations du Donateur",
     "name": "Nom Complet",
     "email": "Adresse Email",
-    "secure": "Paiement sécurisé et chiffré via Stripe",
+    "secure": "Les dons en ligne sont actuellement indisponibles",
     "processing": "Traitement en cours..."
   },
   "common": {

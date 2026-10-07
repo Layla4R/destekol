@@ -36,7 +36,6 @@
     "confirm_donate": "Confirm Donation",
     "full_name": "Full Name",
     "email": "Email Address",
-    "secure_stripe": "Secure payment via Stripe",
     "edit": "Edit"
   },
   "donate": {
@@ -50,8 +49,6 @@
     "frequency": "Donation Type",
     "one_time": "One-time",
     "monthly": "Monthly",
-    "pay_stripe": "Pay with Card",
-    "pay_paypal": "Pay with PayPal",
     "secure": "All transactions are encrypted and secure",
     "success_title": "Thank You!",
     "success_body": "Your donation was received successfully. A confirmation email will be sent to you.",
@@ -153,7 +150,7 @@
     "donor_info": "Donor Information",
     "name": "Full Name",
     "email": "Email Address",
-    "secure": "Secure encrypted payment via Stripe",
+    "secure": "Online donations are currently unavailable",
     "processing": "Processing..."
   },
   "common": {

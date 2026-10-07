@@ -22,6 +22,7 @@ export interface CampaignLite {
     defaultAmount?: number;
     isFeatured?: boolean;
     category?: string;
+    country?: string | null;
 }
 /**
  * Get a page for a given slug and locale.
@@ -79,7 +80,7 @@ export async function getCampaignsLite(locale = "ar"): Promise<CampaignLite[]> {
     try {
         const { data: campaigns } = await supabase
             .from("Campaign")
-            .select("id, slug, title, summary, description, coverImage, goalAmount, raisedAmount, donorCount, defaultAmount, category, isFeatured")
+            .select("id, slug, title, summary, description, coverImage, goalAmount, raisedAmount, donorCount, defaultAmount, category, country, isFeatured")
             .eq("isActive", true)
             .order("isFeatured", { ascending: false })
             .limit(6);

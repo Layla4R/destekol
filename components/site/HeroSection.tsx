@@ -1,4 +1,5 @@
 "use client";
+import PayTRMethods from "@/components/site/PayTRMethods";
 import { interfaceCopy } from "@/lib/interface-copy";
 
 import { storyLink } from "@/lib/story-link";
@@ -99,7 +100,7 @@ export default function HeroSection({ locale, dict, heroImage, heroSlides, accen
     const [amount, setAmount] = useState(Number(data?.defaultAmount ?? data?.amounts?.[0]?.value ?? data?.amounts?.[0]) || 0);
     const [custom, setCustom] = useState("");
     const [freq, setFreq] = useState<"ONE_TIME" | "MONTHLY">("ONE_TIME");
-    const [loading, setLoading] = useState<"stripe" | "paypal" | false>(false);
+    const [loading, setLoading] = useState(false);
     const [showDetails, setShowDetails] = useState(false);
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
@@ -169,49 +170,7 @@ export default function HeroSection({ locale, dict, heroImage, heroSlides, accen
             : locale === "tr"
                 ? "tr"
                 : "en";
-    async function pay(provider: "stripe" | "paypal") {
-        if (!name.trim() || !email.trim()) {
-            setPayError(t("donate.name", "الاسم والبريد مطلوبان", "Name and email required", "Nom et email requis", "Ad ve e-posta gerekli"));
-            return;
-        }
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
-            setPayError(t("cart.invalid_email", "بريد إلكتروني غير صحيح", "Invalid email address", "Email invalide", "Geçersiz e-posta"));
-            return;
-        }
-        setLoading(provider);
-        setPayError("");
-        try {
-            const endpoint = provider === "stripe"
-                ? "/api/donations/checkout"
-                : "/api/donations/paypal";
-            const res = await fetch(endpoint, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    amount: final,
-                    frequency: freq,
-                    donorName: name.trim(),
-                    donorEmail: email.trim(),
-                }),
-            });
-            const d = await res.json();
-            if (d?.url) {
-                window.location.href =
-                    d.url;
-                return;
-            }
-            setPayError(d?.error ||
-                t("common.error", "حدث خطأ", "An error occurred", "Une erreur s'est produite", "Bir hata oluştu"));
-        }
-        catch {
-            setPayError(t("common.error", "حدث خطأ", "An error occurred", "Une erreur s'est produite", "Bir hata oluştu"));
-        }
-        finally {
-            setLoading(false);
-        }
-    }
+
     function handleAddToCart() {
         if (!final || final <= 0)
             return;
@@ -245,7 +204,7 @@ export default function HeroSection({ locale, dict, heroImage, heroSlides, accen
     }
     // Each slide uses the campaign URL saved by the admin.
     const enteredUrl = slide?.buttonUrl?.trim() || "";
-    const donationUrl = storyLink(enteredUrl, locale);
+    const donationUrl = storyLink(enteredUrl, locale) || `/${locale}/donate`;
     if (!slide) {
         return null;
     }
@@ -437,23 +396,9 @@ export default function HeroSection({ locale, dict, heroImage, heroSlides, accen
                 </div>
 
                 <div className="flex shrink-0 flex-wrap gap-2">
-                  <button type="button" onClick={() => pay("stripe")} disabled={!!loading} className="flex items-center gap-1.5 rounded-xl bg-white px-4 py-2 text-xs font-bold shadow-sm transition hover:bg-slate-100 disabled:opacity-60" style={{
-                    color: primary,
-                }}>
-                    {loading ===
-                    "stripe" ? ("...") : (<>
-                        <Icon name="wallet" size={14}/>
+                  <PayTRMethods locale={locale} monthly={freq === "MONTHLY"} onCollapse={() => { setShowDetails(false); setPayError(""); }}/>
 
-                        {t("donate.pay_card", "بطاقة", "Card", "Carte", "Kart")}
-                      </>)}
-                  </button>
 
-                  <button type="button" onClick={() => pay("paypal")} disabled={!!loading} className="flex items-center gap-1.5 rounded-xl bg-[#FFC439] px-4 py-2 text-xs font-bold text-[#003087] transition hover:bg-[#ffcd54] disabled:opacity-60">
-                    {loading ===
-                    "paypal"
-                    ? "..."
-                    : "PayPal"}
-                  </button>
 
                   <button type="button" onClick={handleAddToCart} className={`flex items-center gap-1.5 rounded-xl border px-4 py-2 text-xs font-bold transition ${cartAdded
                     ? "border-emerald-400 bg-emerald-500/20 text-emerald-100"

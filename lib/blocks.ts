@@ -535,7 +535,7 @@ export const BLOCK_DEFINITIONS: BlockDefinition[] = [
         defaultProps: {
             title: "Frequently Asked Questions",
             items: [
-                { title: "Are my donations secure?", body: "Yes, we use world-class payment gateways including Stripe and PayPal to fully secure your financial information." },
+                { title: "Are my donations secure?", body: "Online donations are not open yet. We will announce the official payment channel when it is ready." },
                 { title: "Will I get a donation receipt?", body: "Yes, an electronic receipt is automatically sent to your email immediately after your donation is completed." },
                 { title: "How are donations used?", body: "Visit our Financial Transparency page for a detailed breakdown of how donations are distributed across projects." },
             ],

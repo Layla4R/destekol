@@ -1,196 +1,56 @@
 "use client";
+import PayTRMethods from "@/components/site/PayTRMethods";
 import Icon from "@/components/icons";
+import Image from "next/image";
 import Link from "next/link";
-import { useEffect,useState } from "react";
-interface Item {
-    slug: string;
-    title: string;
-    amount: number;
-    frequency: string;
-    kindnessBox?: boolean;
-    campaignId?: string; // UUID — required for FK
-}
-export default function CartClient({ locale, dict: D }: {
-    locale: string;
-    dict: Record<string, string>;
-}) {
-    const p = locale === "ar" ? "" : `/${locale}`;
-    const [selectedCampaign, setSelectedCampaign] = useState("");
-    const itemKey = (item: Item) => item.slug + ":" + item.frequency.toLowerCase();
-    const [cart, setCart] = useState<Item[]>([]);
-    const [name, setName] = useState("");
-    const [email, setEmail] = useState("");
-    const [loading, setLoading] = useState<"stripe" | "paypal" | null>(null);
-    const [error, setError] = useState("");
-    const [itemErrors, setItemErrors] = useState<Record<string, string>>({});
-    const t = (key: string, ar: string, en: string, fr: string, tr: string) => D[key] || (locale === "ar" ? ar : locale === "fr" ? fr : locale === "tr" ? tr : en);
-    useEffect(() => {
-        try {
-            setCart(JSON.parse(sessionStorage.getItem("destekol_cart") || "[]"));
-        }
-        catch { }
-    }, []);
-    function remove(slug: string) {
-        const u = cart.filter(i => itemKey(i) !== slug);
-        setCart(u);
-        sessionStorage.setItem("destekol_cart", JSON.stringify(u));
-        window.dispatchEvent(new Event("storage"));
-    }
-    function updateAmount(slug: string, amount: number) {
-        if (amount < 1)
-            return;
-        const u = cart.map(i => itemKey(i) === slug ? { ...i, amount } : i);
-        setCart(u);
-        sessionStorage.setItem("destekol_cart", JSON.stringify(u));
-    }
-    const total = cart.reduce((s, i) => s + i.amount, 0);
-    const separateCampaigns = cart.length > 1 && cart.some(item => item.kindnessBox);
-    const checkoutAmount = separateCampaigns ? (cart.find(item => itemKey(item) === selectedCampaign)?.amount || 0) : total;
-    async function checkout(provider: "stripe" | "paypal") {
-        if (separateCampaigns && !cart.some(item => itemKey(item) === selectedCampaign)) {
-            setError(t("cart.choose_campaign", "اختر الحملة التي تريد دفع تبرعها", "Choose a campaign to pay", "Choisissez une campagne", "Ödenecek kampanyayı seçin"));
-            return;
-        }
-        if (!name.trim() || !email.trim()) {
-            setError(t("cart.name_email_required", "الاسم والبريد مطلوبان", "Name and email required", "Nom et email requis", "Ad ve e-posta gerekli"));
-            return;
-        }
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-            setError(t("cart.invalid_email", "بريد إلكتروني غير صحيح", "Invalid email address", "Email invalide", "Geçersiz e-posta"));
-            return;
-        }
-        setError("");
-        setItemErrors({});
-        setLoading(provider);
-        // Per-item donations — each campaign gets its own donation record
-        const endpoint = provider === "stripe" ? "/api/donations/checkout" : "/api/donations/paypal";
-        if (cart.length === 1 || separateCampaigns) {
-            // Single item — normal flow
-            const item = separateCampaigns ? cart.find(item => itemKey(item) === selectedCampaign)! : cart[0];
-            try {
-                const res = await fetch(endpoint, {
-                    method: "POST", headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        amount: item.amount,
-                        frequency: item.frequency?.toUpperCase() || "ONE_TIME",
-                        donorName: name, donorEmail: email,
-                        campaignId: item.campaignId || null,
-                    }),
-                });
-                const d = await res.json();
-                if (d.url) {
-                    sessionStorage.setItem("destekol_cart", JSON.stringify(cart.filter(candidate => itemKey(candidate) !== itemKey(item))));
-                    window.dispatchEvent(new Event("storage"));
-                    window.location.href = d.url;
-                }
-                else {
-                    setError(d.error || t("common.error", "حدث خطأ", "An error occurred", "Une erreur s'est produite", "Bir hata oluştu"));
-                }
-            }
-            catch {
-                setError(t("common.error", "حدث خطأ", "An error occurred", "Une erreur s'est produite", "Bir hata oluştu"));
-            }
-            finally {
-                setLoading(null);
-            }
-            return;
-        }
-        // Multiple items — checkout with total, campaigns noted in description
-        // We use total amount and note the campaigns — Stripe/PayPal don't support multi-item splits natively
-        try {
-            const res = await fetch(endpoint, {
-                method: "POST", headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    amount: total,
-                    frequency: "ONE_TIME", // multi-item always one-time
-                    donorName: name, donorEmail: email,
-                    campaignId: cart[0]?.campaignId || null, // primary campaign
-                    message: cart.map(i => `${i.title}: $${i.amount}`).join(" | "),
-                }),
-            });
-            const d = await res.json();
-            if (d.url) {
-                sessionStorage.removeItem("destekol_cart");
-                window.dispatchEvent(new Event("storage"));
-                window.location.href = d.url;
-            }
-            else {
-                setError(d.error || t("common.error", "حدث خطأ", "An error occurred", "Une erreur s'est produite", "Bir hata oluştu"));
-            }
-        }
-        catch {
-            setError(t("common.error", "حدث خطأ", "An error occurred", "Une erreur s'est produite", "Bir hata oluştu"));
-        }
-        finally {
-            setLoading(null);
-        }
-    }
-    const inp = "w-full rounded-xl border border-line bg-cream py-3 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-brand/30";
-    return (<div dir={locale === "ar" ? "rtl" : "ltr"} className="max-w-screen-xl mx-auto px-6 py-16">
-      <h1 className="font-display text-3xl font-extrabold text-ink mb-8">
-        {t("cart.title", "سلة التبرعات", "Donation Cart", "Panier de Dons", "Bağış Sepeti")}
-      </h1>
-
-      {cart.length === 0 ? (<div className="text-center py-20">
-          <Icon name="layers" size={48} className="text-line mx-auto mb-4"/>
-          <p className="text-muted mb-6">{t("cart.empty", "السلة فارغة", "Your cart is empty", "Votre panier est vide", "Sepetiniz boş")}</p>
-          <Link href={`${p || ""}/campaigns`} className="bg-brand hover:bg-brand-dark text-white font-bold rounded-xl px-6 py-3 transition">
-            {t("cart.browse", "تصفح الحملات", "Browse Campaigns", "Voir les Campagnes", "Kampanyalara Göz At")}
-          </Link>
-        </div>) : (<div className="space-y-4">
-          {cart.map(item => (<div key={itemKey(item)} className="flex items-center justify-between bg-white rounded-xl border border-line p-4 gap-4">
-              <div className="flex-1">
-                <p className="font-bold text-ink text-sm">{item.title}</p>
-                <p className="text-xs text-muted mt-0.5">
-                  {item.frequency === "monthly" || item.frequency === "MONTHLY"
-                    ? t("common.per_month", "شهري", "Monthly", "Mensuel", "Aylık")
-                    : t("common.one_time", "مرة واحدة", "One-time", "Unique", "Tek Seferlik")}
-                </p>
-                {itemErrors[item.slug] && <p className="text-xs text-danger mt-1">{itemErrors[item.slug]}</p>}
-              </div>
-              {/* Editable amount */}
-              <div className="flex items-center gap-1">
-                <button onClick={() => updateAmount(itemKey(item), item.amount - 5)} className="w-7 h-7 rounded-lg border border-line text-muted hover:border-brand hover:text-brand flex items-center justify-center text-sm">−</button>
-                <span className="font-bold text-brand min-w-[48px] text-center text-sm">${item.amount}</span>
-                <button onClick={() => updateAmount(itemKey(item), item.amount + 5)} className="w-7 h-7 rounded-lg border border-line text-muted hover:border-brand hover:text-brand flex items-center justify-center text-sm">+</button>
-              </div>
-              <button onClick={() => remove(itemKey(item))} aria-label={(D["cart.remove_item"] || "Remove") + ": " + item.title} className="text-danger hover:text-danger/70"><Icon name="trash" size={16}/></button>
-            </div>))}
-
-          <div className="flex justify-between items-center bg-brand/5 border border-brand/20 rounded-xl p-4">
-            <span className="font-bold text-ink">{t("cart.total", "الإجمالي", "Total", "Total", "Toplam")}</span>
-            <span className="font-display text-2xl font-extrabold text-brand">${total}</span>
-          </div>
-
-          {separateCampaigns && <div className="border border-line rounded-xl p-4"><label htmlFor="campaign-to-pay" className="block font-bold mb-2">{t("cart.pay_separately", "ادفع لكل حملة على حدة لضمان تخصيص تبرعك لها", "Pay each campaign separately to allocate your donation correctly", "Payez chaque campagne séparément", "Bağışınızın doğru kampanyaya ulaşması için her kampanyayı ayrı ödeyin")}</label><select id="campaign-to-pay" value={selectedCampaign} onChange={e => setSelectedCampaign(e.target.value)} className="w-full p-3 rounded border"><option value="">{t("cart.choose_campaign", "اختر حملة", "Choose a campaign", "Choisissez une campagne", "Kampanya seçin")}</option>{cart.map(item => <option key={itemKey(item)} value={itemKey(item)}>{item.title} — {item.amount}</option>)}</select></div>}
-          <div className="bg-cream border border-line rounded-xl p-5 space-y-3 mt-6">
-            <h2 className="font-display font-bold text-ink mb-2">
-              {t("cart.donor_info", "بيانات المتبرع", "Donor Information", "Informations du Donateur", "Bağışçı Bilgileri")}
-            </h2>
-            <input type="text" placeholder={t("donate.name", "الاسم الكامل", "Full Name", "Nom Complet", "Ad Soyad")} value={name} onChange={e => setName(e.target.value)} className={inp}/>
-            <input type="email" placeholder={t("donate.email", "البريد الإلكتروني", "Email Address", "Adresse Email", "E-posta")} value={email} onChange={e => setEmail(e.target.value)} className={inp}/>
-
-            {error && <p className="text-sm text-danger flex items-center gap-2"><Icon name="x" size={13}/>{error}</p>}
-
-            <button onClick={() => checkout("stripe")} disabled={!!loading || (separateCampaigns && !checkoutAmount)} className="w-full bg-brand hover:bg-brand-dark disabled:opacity-60 text-white font-bold rounded-xl py-3.5 transition flex items-center justify-center gap-2">
-              <Icon name="wallet" size={18}/>
-              {loading === "stripe"
-                ? t("cart.processing", "جاري المعالجة...", "Processing...", "Traitement...", "İşleniyor...")
-                : `${t("cart.pay_card", "الدفع بالبطاقة", "Pay with Card", "Payer par Carte", "Kart ile Öde")} — $${checkoutAmount}`}
-            </button>
-
-            <button onClick={() => checkout("paypal")} disabled={!!loading || (separateCampaigns && !checkoutAmount)} className="w-full bg-[#FFC439] hover:bg-[#f0b429] disabled:opacity-60 text-[#003087] font-bold rounded-xl py-3.5 transition flex items-center justify-center gap-2">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="#003087"><path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106z"/></svg>
-              {loading === "paypal"
-                ? t("cart.processing", "جاري المعالجة...", "Processing...", "Traitement...", "İşleniyor...")
-                : `PayPal — $${checkoutAmount}`}
-            </button>
-
-            <p className="text-xs text-muted text-center">
-              <Icon name="shield-check" size={12} className="inline ml-1"/>
-              {t("cart.secure", "دفع آمن ومشفر", "Secure encrypted payment", "Paiement sécurisé et chiffré", "Güvenli şifreli ödeme")}
-            </p>
-          </div>
-        </div>)}
-    </div>);
+import { useEffect, useRef, useState } from "react";
+interface Item { slug: string; title: string; amount: number; frequency: string; kindnessBox?: boolean; campaignId?: string }
+const copy = {
+ ar: { title: 'سلة تبرعاتي', clear: 'إفراغ السلة', total: 'إجمالي التبرع', complete: 'إتمام التبرع', back: 'العودة إلى السلة', payment: 'إتمام التبرع', remove: 'حذف التبرع', increase: 'زيادة المبلغ', decrease: 'خفض المبلغ', amount: 'مبلغ التبرع', donor: 'بيانات المتبرع' },
+ en: { title: 'My donation cart', clear: 'Clear cart', total: 'Total donation', complete: 'Complete donation', back: 'Back to cart', payment: 'Complete your donation', remove: 'Remove donation', increase: 'Increase amount', decrease: 'Decrease amount', amount: 'Donation amount', donor: 'Donor information' },
+ fr: { title: 'Mon panier de dons', clear: 'Vider le panier', total: 'Total des dons', complete: 'Finaliser le don', back: 'Retour au panier', payment: 'Finalisez votre don', remove: 'Retirer le don', increase: 'Augmenter le montant', decrease: 'Réduire le montant', amount: 'Montant du don', donor: 'Informations du donateur' },
+ tr: { title: 'Bağış Sepetim', clear: 'Sepeti Temizle', total: 'Toplam Bağış', complete: 'Bağışı Tamamla', back: 'Sepete Dön', payment: 'Bağışınızı Tamamlayın', remove: 'Bağışı kaldır', increase: 'Tutarı artır', decrease: 'Tutarı azalt', amount: 'Bağış tutarı', donor: 'Bağışçı Bilgileri' },
+};
+export default function CartClient({ locale, dict: D, images = {} }: { locale: string; dict: Record<string,string>; images?: Record<string,string> }) {
+ const p = `/${locale}`;
+ const t = copy[locale as keyof typeof copy] || copy.tr;
+ const [cart, setCart] = useState<Item[]>([]);
+ const [ready, setReady] = useState(false);
+ const [step, setStep] = useState<'cart'|'payment'>('cart');
+ const [name, setName] = useState('');
+ const [email, setEmail] = useState('');
+ const titleRef = useRef<HTMLHeadingElement>(null);
+ const key = (item: Item) => item.slug + ':' + item.frequency.toLowerCase();
+ useEffect(() => {
+  try { const stored = JSON.parse(sessionStorage.getItem('destekol_cart') || '[]'); setCart(Array.isArray(stored) ? stored.filter(i => typeof i.slug === 'string' && typeof i.title === 'string' && typeof i.frequency === 'string' && Number.isFinite(i.amount) && i.amount >= 1) : []); } catch {}
+  setReady(true);
+ }, []);
+ function save(items: Item[]) { setCart(items); sessionStorage.setItem('destekol_cart', JSON.stringify(items)); window.dispatchEvent(new Event('storage')); if (!items.length) setStep('cart'); }
+ function changeAmount(id: string, amount: number) { if (Number.isFinite(amount) && amount >= 1) save(cart.map(item => key(item) === id ? { ...item, amount: Math.round(amount * 100) / 100 } : item)); }
+ function navigate(next: 'cart'|'payment') { setStep(next); requestAnimationFrame(() => { titleRef.current?.focus(); titleRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }); }
+ const total = cart.reduce((sum, item) => sum + Math.round(item.amount * 100), 0) / 100;
+ const money = (value: number) => new Intl.NumberFormat(locale, { style: 'currency', currency: 'USD' }).format(value);
+ const frequency = (item: Item) => item.frequency.toLowerCase() === 'monthly' ? D['donate.monthly'] : D['donate.one_time'];
+ const field = 'w-full rounded-xl border border-line bg-white px-4 py-3 text-sm outline-none focus:border-brand focus:ring-2 focus:ring-brand/10';
+ return <main dir={locale === 'ar' ? 'rtl' : 'ltr'} className="bg-white px-4 py-10 sm:px-6 sm:py-14">
+  <div className="mx-auto max-w-5xl">
+   <div className="mb-7 flex items-center justify-between gap-4 border-b border-line pb-6">
+    <h1 ref={titleRef} tabIndex={-1} className="flex scroll-mt-28 items-center gap-3 text-xl font-bold text-brand outline-none sm:text-2xl"><Icon name="shopping-bag" size={24}/>{step === 'cart' ? t.title : t.payment}</h1>
+    {cart.length > 0 && <button type="button" onClick={() => step === 'cart' ? save([]) : navigate('cart')} className="flex shrink-0 items-center gap-2 text-xs text-muted transition hover:text-brand sm:text-sm"><Icon name={step === 'cart' ? 'trash' : 'undo'} size={16}/>{step === 'cart' ? t.clear : t.back}</button>}
+   </div>
+   {!ready ? <div className="h-40 animate-pulse rounded-xl bg-brand/5" aria-busy="true"/> : !cart.length ? <div className="py-20 text-center"><Icon name="hand-heart" size={52} className="mx-auto mb-5 text-brand/30"/><p className="mb-7 text-muted">{D['cart.empty']}</p><Link href={`${p}/campaigns`} className="inline-flex rounded-xl bg-accent px-7 py-3 font-bold text-white">{D['cart.browse']}</Link></div> : step === 'cart' ? <>
+    <ul>{cart.map(item => <li key={key(item)} className="grid grid-cols-[76px_minmax(0,1fr)_auto] items-center gap-4 border-b border-line py-6 sm:grid-cols-[112px_minmax(0,1fr)_180px_120px_32px] sm:gap-6">
+     <div className="relative h-20 overflow-hidden rounded-xl bg-brand/5 sm:h-24">{images[item.slug] ? <Image src={images[item.slug]} alt="" fill sizes="112px" className="object-cover"/> : <div className="flex h-full items-center justify-center"><Icon name="hand-heart" size={32} className="text-brand/60"/></div>}</div>
+     <div className="min-w-0"><p className="text-sm font-semibold leading-6 text-ink sm:text-base">{item.title}</p><p className="mt-1 text-xs text-muted sm:text-sm">{frequency(item)}</p></div>
+     <button type="button" onClick={() => save(cart.filter(i => key(i) !== key(item)))} aria-label={`${t.remove}: ${item.title}`} className="p-2 text-muted hover:text-danger sm:order-last"><Icon name="trash" size={17}/></button>
+     <div className="col-span-2 flex w-fit items-center rounded-lg border border-line sm:col-span-1"><button type="button" disabled={item.amount <= 1} onClick={() => changeAmount(key(item), Math.max(1, item.amount - 5))} aria-label={`${t.decrease}: ${item.title}`} className="p-3 text-brand disabled:opacity-30"><Icon name="minus" size={16}/></button><input type="number" min={1} step="0.01" value={item.amount} aria-label={`${t.amount}: ${item.title}`} onChange={e => changeAmount(key(item), Number(e.target.value))} className="w-16 bg-transparent text-center text-sm font-semibold text-ink outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none"/><button type="button" onClick={() => changeAmount(key(item), item.amount + 5)} aria-label={`${t.increase}: ${item.title}`} className="p-3 text-brand"><Icon name="plus" size={16}/></button></div>
+     <span className="text-end text-sm font-bold text-ink sm:text-base">{money(item.amount)}</span>
+    </li>)}</ul>
+    <div className="flex flex-col items-end gap-5 pt-8"><p className="flex flex-wrap items-center justify-end gap-3 text-base text-ink sm:text-lg"><span>{t.total}</span><strong className="text-xl text-brand">{money(total)}</strong></p><button type="button" onClick={() => navigate('payment')} className="inline-flex items-center gap-3 rounded-xl bg-accent px-8 py-3.5 text-sm font-bold text-white shadow-sm transition hover:opacity-90">{t.complete}<Icon name={locale === 'ar' ? 'arrow-left' : 'arrow-right'} size={18}/></button></div>
+   </> : <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_300px]">
+    <div className="space-y-7"><section><h2 className="mb-5 text-lg font-bold text-ink">{t.donor}</h2><div className="grid gap-5 sm:grid-cols-2"><div><label htmlFor="cart-donor-name" className="mb-2 block text-sm text-muted">{D['donate.name']}</label><input id="cart-donor-name" autoComplete="name" value={name} onChange={e => setName(e.target.value)} className={field}/></div><div><label htmlFor="cart-donor-email" className="mb-2 block text-sm text-muted">{D['donate.email']}</label><input id="cart-donor-email" type="email" autoComplete="email" value={email} onChange={e => setEmail(e.target.value)} className={field}/></div></div></section><section className="border-t border-line pt-6"><PayTRMethods locale={locale} monthly={cart.every(item => item.frequency.toLowerCase() === 'monthly')}/></section></div>
+    <aside className="rounded-2xl border border-line bg-brand/5 p-5"><ul className="space-y-4">{cart.map(item => <li key={key(item)} className="flex items-start justify-between gap-4 text-sm"><span className="leading-6 text-ink">{item.title}<span className="block text-xs text-muted">{frequency(item)}</span></span><strong className="shrink-0 text-brand">{money(item.amount)}</strong></li>)}</ul><p className="mt-5 flex justify-between gap-3 border-t border-line pt-5 font-bold text-ink"><span>{t.total}</span><span className="text-brand">{money(total)}</span></p></aside>
+   </div>}
+  </div>
+ </main>;
 }

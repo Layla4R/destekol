@@ -1,3 +1,4 @@
+import ConsentEmbed from "@/components/site/ConsentEmbed";
 import { getCmsBranding } from "@/lib/cms-branding";
 import Icon from "@/components/icons";
 import DestekolPageIntro from "@/components/site/DestekolPageIntro";
@@ -346,10 +347,10 @@ export default async function NewsPostPage({ params, }: {
 
       {/* Grid Layout: Main Article vs Sticky Sidebar Video */}
       <div className={`grid grid-cols-1 ${displayVideoUrl ? "lg:grid-cols-12" : "max-w-4xl mx-auto"} gap-8 items-start`}>
-        
+
         {/* Main Body Column */}
         <div className={`${displayVideoUrl ? "lg:col-span-8" : "w-full"} space-y-6`}>
-          
+
           {/* 1. Primary Text Block */}
           {displayBody && (<div className="text-slate-800 text-sm sm:text-base leading-relaxed">
               {renderFormattedBody(displayBody)}
@@ -390,7 +391,7 @@ export default async function NewsPostPage({ params, }: {
               </div>
 
               <div className="relative aspect-video w-full rounded-xl overflow-hidden bg-black border border-slate-800">
-                {youtubeEmbed ? (<iframe src={youtubeEmbed} className="w-full h-full border-0" allowFullScreen title={displayTitle}/>) : (<video src={displayVideoUrl} controls playsInline className="w-full h-full object-cover"/>)}
+                {youtubeEmbed ? (<ConsentEmbed src={youtubeEmbed} className="w-full h-full border-0" allowFullScreen title={displayTitle}/>) : (<video src={displayVideoUrl} controls playsInline className="w-full h-full object-cover"/>)}
               </div>
 
               <p className="text-[11px] text-slate-300 mt-2.5 px-1 leading-relaxed">

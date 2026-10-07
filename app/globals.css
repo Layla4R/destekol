@@ -562,6 +562,14 @@ body[data-site="destekol"] .home-layout .destekol-campaigns h2 { font-size: clam
 .destekol-campaigns .home-view-all { font-size: 12px; }
 .destekol-campaigns .home-carousel-track { gap: 20px; padding: 2px 2px 16px; }
 .destekol-campaigns .home-carousel-slide { flex: 0 0 calc((100% - 40px)/3); }
+.destekol-campaigns .campaign-carousel-four-up > .home-carousel-slide { flex-basis:calc((100% - 60px)/4); }
+.home-carousel-dots { display:flex; justify-content:center; gap:8px; margin:16px 0 8px; }
+.home-carousel-dots button { width:9px; height:9px; border-radius:20px; background:#dce8ef; transition:width .2s,background .2s; }
+.home-carousel-dots button[aria-current="true"] { width:28px; background:#0a5171; }
+.home-carousel-dots button:focus-visible { outline:2px solid #0a5171; outline-offset:4px; }
+@media(min-width:1200px) { body[data-site="destekol"] .campaigns-page-grid { grid-template-columns:repeat(4,minmax(0,1fr)); } }
+@media(max-width:1199px) and (min-width:768px) { .destekol-campaigns .campaign-carousel-four-up > .home-carousel-slide { flex-basis:calc((100% - 20px)/2); } }
+@media(max-width:767px) { .destekol-campaigns .campaign-carousel-four-up > .home-carousel-slide { flex-basis:100%; } }
 .destekol-campaigns .home-carousel-track.campaign-carousel-one-up > .home-carousel-slide { flex-basis: 100%; display: flex; justify-content: center; }
 .destekol-campaigns .home-carousel-track.campaign-carousel-one-up > .home-carousel-slide > .destekol-campaign-card { width: min(100%, 820px); }
 .destekol-campaigns .home-carousel-track.campaign-carousel-one-up .dc-image { aspect-ratio: 2.4; }
@@ -571,7 +579,22 @@ body[data-site="destekol"] .home-layout .destekol-campaigns h2 { font-size: clam
 .dc-body { display: flex; flex-direction: column; flex: 1; padding: 13px 16px 16px; }
 .dc-body h3 { font-size: 17px; line-height: 1.3; font-weight: 800; margin: 0 0 5px; min-height: 2.6em; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .dc-body p { font-size: 13px; line-height: 1.5; color: #37566c; margin: 0 0 10px; min-height: 3em; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.dc-progress { height: 6px; background: #e4edf2; border-radius: 8px; overflow: hidden; margin-top: auto; }
+.dc-progress { height: 9px; background: #e4edf2; border-radius: 8px; overflow: hidden; margin-top: 12px; }
+.dc-meta { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; margin-bottom:12px; }
+.dc-meta > span { display:inline-flex; align-items:center; gap:5px; padding:4px 9px; border-radius:20px; background:#edf7f8; color:#0a5171; font-size:11px; font-weight:650; }
+.dc-meta > span:last-child { background:#fff8eb; color:#8b6525; }
+.dc-funding { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:0; margin:8px 0 0; padding:12px 0; border:1px solid #dce8ef; border-radius:14px; background:#f6fafb; text-align:center; }
+.dc-funding > div { min-width:0; padding:0 5px; }
+.dc-funding > div + div { border-inline-start:1px solid #dce8ef; }
+.dc-funding dt { color:#6b8190; font-size:11px; margin-bottom:4px; }
+.dc-funding dd { color:#063962; font-weight:800; font-size:13px; overflow-wrap:anywhere; }
+.dc-actions { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.dc-actions > * { min-width:0; text-align:center; }
+.dc-add { display:flex; justify-content:center; align-items:center; gap:6px; border:1px solid #cbdde6; border-radius:6px; padding:10px 5px; font-size:12px; font-weight:700; color:#0a5171; background:white; }
+.dc-add:hover { background:#edf7f8; }
+.dc-add:disabled, .dc-donate[aria-disabled="true"] { opacity:.5; cursor:not-allowed; }
+.dc-donors { display:flex; align-items:center; justify-content:center; gap:6px; margin-top:14px; padding-top:12px; border-top:1px solid #e4edf2; color:#567487; font-size:12px; }
+.dc-donors strong, .dc-donors svg { color:#0a5171; }
 .dc-progress > span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg,#098494,#328970); }
 .dc-totals { display: flex; align-items: center; justify-content: space-between; gap: 6px; font-size: 11px; margin: 5px 0 15px; direction: ltr; color: #7290a6; }
 .dc-totals b, .dc-totals strong { color: #063962; font-weight: 800; }

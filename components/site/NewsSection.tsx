@@ -1,4 +1,5 @@
 "use client";
+import ConsentEmbed from "@/components/site/ConsentEmbed";
 import { interfaceCopy } from "@/lib/interface-copy";
 
 import Icon from "@/components/icons";
@@ -45,7 +46,7 @@ function CardMedia({ videoUrl, image, title }: {
             catch {
                 embedId = videoUrl.includes("v=") ? videoUrl.split("v=")[1]?.split("&")[0] : videoUrl.split("/").pop() || "";
             }
-            return (<iframe src={`https://www.youtube.com/embed/${embedId}`} title={title} className="w-full h-full border-0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen/>);
+            return (<ConsentEmbed src={`https://www.youtube.com/embed/${embedId}`} title={title} className="w-full h-full border-0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen/>);
         }
         return (<video src={videoUrl} poster={image || undefined} controls playsInline preload="metadata" className="w-full h-full object-cover bg-black"/>);
     }
@@ -188,7 +189,7 @@ export default function NewsSection({ posts, locale, dict, data, compact = false
     };
     return (<section className="py-12 bg-white border-t border-slate-100 overflow-hidden">
       <div className="max-w-screen-xl mx-auto px-4 sm:px-6">
-        
+
         {/* Header */}
         <div className="flex items-end justify-between mb-8 flex-wrap gap-4">
           <div>
