@@ -1,5 +1,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { policies } from './current-policies';
+import { getPolicyMetadata } from './policy-metadata';
 import { normalizePublicContact } from './public-contact';
 type Row = Record<string, any>;
 type Document = {
@@ -62,6 +63,15 @@ export function rankSiteContext(documents: Document[], question: string, locale:
     return '[' + chosen.join(',') + ']';
 }
 export async function siteContext(db: SupabaseClient, question: string, locale: string, signal: AbortSignal, email?: string): Promise<string> {
+    // Include every maintained policy even when it has no legacy CMS row.
+    const policyDocuments: Document[] = Object.entries(policies).flatMap(([language, documents]) =>
+        Object.entries(documents).filter(([slug]) => slug !== 'how-we-use-donations').map(([slug, sections]) => ({
+            title: getPolicyMetadata(slug, language).title,
+            url: `/${language}/${slug}`,
+            locale: language,
+            text: sections.map(section => `${section.title}\n${section.text}`).join('\n'),
+        })),
+    );
     const results = await Promise.all(sources.map(async (source) => {
         const documents: Document[] = [];
         for (let offset = 0;;) {
@@ -76,6 +86,7 @@ export async function siteContext(db: SupabaseClient, question: string, locale: 
             if (!batch.length)
                 break;
             for (const row of batch) {
+                if (source.table === 'Page' && policies.ar[row.slug]) continue;
                 const variants = [{ ...row, locale: 'ar' }, ...(Array.isArray(row[source.translations]) ? row[source.translations] : [])];
                 for (const variant of variants) {
                     const lang = variant.locale || 'ar';
@@ -89,5 +100,5 @@ export async function siteContext(db: SupabaseClient, question: string, locale: 
         }
         return documents;
     }));
-    return rankSiteContext(results.flat(), question, locale);
+    return rankSiteContext([...policyDocuments, ...results.flat()], question, locale);
 }

@@ -1,4 +1,5 @@
 import { LOCALES } from "@/lib/i18n";
+import { LEGAL_SLUGS, POLICY_UPDATED_AT } from "@/lib/current-policies";
 import { getRequestSite } from "@/lib/request-site";
 import { getSupabaseOrNull } from "@/lib/supabase";
 import type { MetadataRoute } from "next";
@@ -11,6 +12,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const locales = LOCALES;
     const now = new Date();
     const urls: MetadataRoute.Sitemap = [];
+    for (const slug of LEGAL_SLUGS) {
+        for (const locale of locales) {
+            urls.push({ url: `${SITE_URL}/${locale}/${slug}`, lastModified: new Date(`${POLICY_UPDATED_AT}T00:00:00Z`), changeFrequency: 'monthly', priority: 0.5 });
+        }
+    }
     /*
      * 1. Home pages
      */

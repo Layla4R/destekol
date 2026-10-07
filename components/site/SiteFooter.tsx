@@ -4,6 +4,7 @@ import { normalizeDestekolBrandText } from "@/lib/destekol-brand-copy";
 import type { PublicSiteSettings } from "@/lib/public-site-settings";
 import Image from "next/image";
 import Link from "next/link";
+import { getPolicyMetadata } from "@/lib/policy-metadata";
 interface NavItem {
     slug: string;
     title: string;
@@ -176,7 +177,11 @@ export default function SiteFooter({ isDestekol = false, navItems = [], settings
     const safeNavItems = Array.isArray(navItems)
         ? navItems
         : [];
-    const legalItems = LEGAL_SLUGS;
+    const legalItems = [
+        ...LEGAL_SLUGS.filter(item => item.slug !== 'how-we-use-donations'),
+        { slug: 'license', key: 'legal.license', fallbacks: {} },
+        { slug: 'kvkk', key: 'legal.kvkk', fallbacks: {} },
+    ];
     return (<footer className={`relative bg-sidebar-gradient text-white mt-auto overflow-hidden${" destekol-footer"}`} role="contentinfo">
       {/* =====================================================
               Accent line
@@ -393,7 +398,7 @@ export default function SiteFooter({ isDestekol = false, navItems = [], settings
                 <Link href={`${p}/${item.slug}`} className="flex items-center gap-2 hover:text-white transition group">
                   <span className="w-1.5 h-1.5 rounded-full bg-white/60 group-hover:bg-white transition" aria-hidden="true"/>
 
-                  {d(item.key, item.fallbacks)}
+                  {getPolicyMetadata(item.slug, locale).title}
                 </Link>
               </li>))}
           </ul>

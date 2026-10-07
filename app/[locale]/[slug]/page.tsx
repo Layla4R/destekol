@@ -10,6 +10,7 @@ import { normalizeDestekolBrandCopy,normalizeDestekolBrandText } from "@/lib/des
 import { LOCALES,loadTranslations } from "@/lib/i18n";
 import { getCampaignsLite } from "@/lib/pageData";
 import { getPolicyMetadata } from "@/lib/policy-metadata";
+import { LEGAL_SLUGS } from "@/lib/current-policies";
 import { normalizePublicContact,officialEmail } from "@/lib/public-contact";
 import { getSupabaseOrNull } from "@/lib/supabase";
 import type { Metadata } from "next";
@@ -29,84 +30,6 @@ async function getDomainContext(locale = "en") {
     const brandName = branding.logoText || branding.siteName || "";
     const fullName = branding.siteName || brandName;
     return { isDestekol, siteUrl, brandName, fullName };
-}
-const LEGAL_SLUGS = [
-    "privacy",
-    "terms",
-    "refund-policy",
-    "cookie-policy",
-    "aml-policy",
-    "complaints",
-    "license",
-    "financial-transparency",
-    "how-we-use-donations",
-];
-const LEGAL_TITLES: Record<string, Record<string, string>> = {
-    privacy: {
-        ar: "سياسة الخصوصية",
-        en: "Privacy Policy",
-        fr: "Politique de Confidentialité",
-        tr: "Gizlilik Politikası",
-    },
-    terms: {
-        ar: "الشروط والأحكام",
-        en: "Terms & Conditions",
-        fr: "Conditions d'Utilisation",
-        tr: "Kullanım Koşulları",
-    },
-    "refund-policy": {
-        ar: "سياسة الاسترداد",
-        en: "Refund Policy",
-        fr: "Politique de Remboursement",
-        tr: "İade Politikası",
-    },
-    "cookie-policy": {
-        ar: "سياسة ملفات تعريف الارتباط",
-        en: "Cookie Policy",
-        fr: "Politique des Cookies",
-        tr: "Çerez Politikası",
-    },
-    "aml-policy": {
-        ar: "سياسة مكافحة غسيل الأموال",
-        en: "Anti-Money Laundering Policy",
-        fr: "Politique Anti-Blanchiment",
-        tr: "Kara Para Aklamayla Mücadele",
-    },
-    complaints: {
-        ar: "الشكاوى",
-        en: "Complaints Policy",
-        fr: "Politique de Réclamations",
-        tr: "Şikayet Politikası",
-    },
-    "financial-transparency": {
-        ar: "الشفافية المالية",
-        en: "Financial Transparency",
-        fr: "Transparence Financière",
-        tr: "Mali Şeffاflık",
-    },
-    "how-we-use-donations": {
-        ar: "كيف نستخدم التبرعات",
-        en: "How We Use Donations",
-        fr: "Comment Nous Utilisons les Dons",
-        tr: "Bağışları Nasıl Kullanıyoruz",
-    },
-};
-function getLegalSubtitle(slug: string, locale: string, brandName: string): string | null {
-    const subtitles: Record<string, Record<string, string>> = {
-        privacy: {
-            ar: "حماية بياناتك وخصوصيتك أولوية بالنسبة لنا.",
-            en: "Protecting your personal data and privacy is our priority.",
-            fr: "La protection de vos données personnelles et de votre vie privée est notre priorité.",
-            tr: "Kişisel verilerinizi ve gizliliğinizi korumak önceliğimizdir.",
-        },
-        terms: {
-            ar: `الشروط والأحكام المنظمة لاستخدام منصة ${brandName}.`,
-            en: `The terms and conditions governing the use of the ${brandName} platform.`,
-            fr: `Les conditions générales régissant l'utilisation de la plateforme ${brandName}.`,
-            tr: `${brandName} platformunun kullanımını düzenleyen hüküm ve koşullar.`,
-        },
-    };
-    return subtitles[slug]?.[locale] || subtitles[slug]?.en || null;
 }
 function getCommonPageTitle(slug: string, locale: string, fullName: string, brandName: string): string | null {
     const titles: Record<string, Record<string, string>> = {
@@ -200,6 +123,10 @@ function getSchemaType(slug: string) {
 }
 // 🌟 دالة جلب البيانات مع استخراج الحقول الجديدة من قاعدة البيانات مباشرة
 async function getFullPageData(slug: string, locale: string) {
+    if (LEGAL_SLUGS.includes(slug)) {
+        const { title, description } = getPolicyMetadata(slug, locale);
+        return { slug, title, description, sections: [] };
+    }
     const supabase = getSupabaseOrNull();
     if (!supabase)
         return null;
@@ -319,6 +246,13 @@ export default async function DynamicPage({ params, }: {
 }) {
     const { slug, locale } = params;
     const { isDestekol, siteUrl, brandName, fullName } = await getDomainContext(locale);
+    if (LEGAL_SLUGS.includes(slug)) {
+        const { title, description } = getPolicyMetadata(slug, locale);
+        return <article className="bg-white min-h-screen" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
+            <DestekolPageIntro locale={locale} title={title} description={description}/>
+            <LegalPageContent slug={slug} locale={locale}/>
+        </article>;
+    }
     ;
     const supabase = getSupabaseOrNull();
     const [appearanceResult, page, campaigns, dict] = await Promise.all([

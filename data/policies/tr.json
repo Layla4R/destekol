@@ -1,0 +1,360 @@
+{
+  "aml-policy": [
+    {
+      "title": "AML/CFT, YAPTIRIM VE DOLANDIRICILIKLA MÜCADELE POLİTİKASI",
+      "text": "Bağış, fon, partner, tedarikçi ve ödeme süreçlerinde mali suç ve kötüye kullanım risklerinin yönetimi"
+    },
+    {
+      "title": "1. Amaç",
+      "text": "Destek Ol; kaynaklarının suç gelirlerinin aklanması, terörizmin finansmanı, yaptırım ihlali, dolandırıcılık, rüşvet, yolsuzluk veya yardımın amaç dışı kullanımı için kullanılmasını önlemeyi ve insani yardım fonlarının güvenli, izlenebilir ve amaca uygun biçimde kullanılmasını amaçlar."
+    },
+    {
+      "title": "2. Kapsam",
+      "text": "Risk bazlı kontroller; bireysel ve kurumsal bağışlar, hibeler, kurumsal ortaklıklar, yerel uygulama partnerleri, tedarikçiler, hizmet sağlayıcılar, banka/ödeme işlemleri, sınır ötesi transferler, ayni yardımlar, iadeler ve diğer mali/operasyonel işlemler için uygulanır."
+    },
+    {
+      "title": "3. Temel kontroller",
+      "text": "KYC ve karşı tarafın kimlik/yetki bilgilerinin doğrulanması.\nPartnerler için risk düzeyine uygun due diligence yapılması.\nBanka hesabı ve hesap sahibinin tarafla uyumunun doğrulanması.\nUygulanabilir yaptırım ve malvarlığı dondurma kararlarına karşı risk bazlı tarama yapılması.\nOlağandışı veya şüpheli işlemlerde ek belge, açıklama ve gelişmiş inceleme uygulanması.\nHukuka uygun ölçüde işlemin geçici olarak bekletilmesi, reddedilmesi veya sözleşmenin sona erdirilmesi.\nÇıkar çatışması, görev ayrılığı, satın alma ve anti-fraud kontrollerinin uygulanması.\nİşlem ve karar kayıtlarının denetlenebilir şekilde saklanması."
+    },
+    {
+      "title": "4. Bağışçı ve işlem taraflarının yükümlülükleri",
+      "text": "Fon veya bağışın meşru kaynaktan gelmesi.\nBaşkasının kimlik veya ödeme aracının yetkisiz kullanılmaması.\nYanıltıcı, sahte veya eksik kimlik/kurum/banka bilgisi verilmemesi.\nYaptırım veya hukuki kontrolü aşmak için üçüncü kişi hesabı, parçalı işlem veya yanıltıcı açıklama kullanılmaması.\nGerekli görüldüğünde makul doğrulama bilgi ve belgelerinin sağlanması."
+    },
+    {
+      "title": "5. Yaptırım kontrolleri",
+      "text": "Türkiye’de uygulanabilir mevzuat ve resmî malvarlığı dondurma/yaptırım kararları esas alınır. BM ve işlemle hukuki bağlantısı bulunan diğer yabancı yaptırım rejimleri; ilgili banka, para birimi, ülke, taraf, donör veya sözleşme bağlantısına göre ayrıca değerlendirilir. Liste eşleşmesi tek başına kesin karar sayılmaz; kimlik, sahiplik, kontrol ve işlem bağlamı doğrulanır."
+    },
+    {
+      "title": "6. Şüpheli veya yüksek riskli işlemler",
+      "text": "Kimlik veya hesap uyuşmazlığı, kişisel/ilgisiz üçüncü kişi hesabına ödeme talebi, alışılmadık nakit kullanımı, tutarsız fon kaynağı, parçalı işlemler, sahte belge şüphesi, yaptırım eşleşmesi veya olağandışı işlem örüntüsü tespit edildiğinde işlem ek incelemeye alınabilir. Gerekli hâllerde hukuk, banka/ödeme kuruluşu veya yetkili makam süreçleri işletilir."
+    },
+    {
+      "title": "7. Ayrımcılık yasağı ve orantılılık",
+      "text": "Milliyet, din, etnik köken, yerinden edilme durumu veya çatışma bölgesinde bulunmak tek başına şüphe ya da ret gerekçesi değildir. Kontroller somut riskle orantılı uygulanır ve meşru insani yardımın gereksiz biçimde engellenmemesi gözetilir."
+    },
+    {
+      "title": "8. Bildirim ve kayıt",
+      "text": "Dolandırıcılık, yaptırım, rüşvet, yolsuzluk veya mali suistimal şüphesi info@destekol.org üzerinden bildirilebilir. Hassas bildirimler Şikâyet ve Geri Bildirim Politikası çerçevesinde kısıtlı erişimle ele alınır."
+    }
+  ],
+  "refund-policy": [
+    {
+      "title": "BAĞIŞ, İPTAL VE İADE POLITIKASI",
+      "text": "Bağış işlemlerinde şeffaflık, hata düzeltme, iptal ve iade esasları"
+    },
+    {
+      "title": "1. Kapsam",
+      "text": "Bu Politika, Destek Ol’un çevrimiçi veya diğer resmî kanallar üzerinden kabul ettiği bağışlara ilişkin işlem doğrulama, iptal, iade, mükerrer tahsilat, yetkisiz işlem ve proje bazlı fon kullanımı esaslarını düzenler."
+    },
+    {
+      "title": "2. Resmî bağış kanalları",
+      "text": "Bağış yalnızca Destek Ol tarafından destekol.org üzerinde veya resmî iletişim kanallarında açıkça ilan edilen banka, ödeme kuruluşu veya diğer yetkili kanallar üzerinden yapılmalıdır. Destek Ol adına kişisel hesaba, doğrulanmamış IBAN’a veya resmî olmayan bağlantıya ödeme yapılmamalıdır."
+    },
+    {
+      "title": "3. Bağışın niteliği",
+      "text": "Bağış, kural olarak karşılıksız destek iradesidir; bir yatırım veya mal/hizmet satın alımı değildir. Teknik hata, mükerrer tahsilat, yetkisiz işlem, yanlış tutar veya kampanyanın yürütülememesi gibi durumlar bu Politika ve uygulanabilir hukuk çerçevesinde ayrıca değerlendirilir."
+    },
+    {
+      "title": "4. İade veya işlem düzeltmesi değerlendirilebilecek durumlar",
+      "text": "Aynı işlem için açıkça mükerrer tahsilat yapılması.\nTeknik hata nedeniyle bağışçının seçtiği tutardan farklı bir tutarın tahsil edilmesi.\nÖdeme aracının yetkisiz kullanıldığına ilişkin doğrulanabilir bildirim bulunması.\nDestek Ol veya ödeme hizmet sağlayıcısından kaynaklanan açık işlem hatası.\nBelirli ve kısıtlı amaçlı kampanyanın hukuken veya fiilen uygulanamaz hâle gelmesi ve fonun kampanya şartlarına uygun şekilde kullanılamaması.\nKanun, banka, ödeme kuruluşu veya yetkili makam kararı gereği iade ya da iptal yapılmasının zorunlu olması."
+    },
+    {
+      "title": "5. İade talebi",
+      "text": "İade veya işlem düzeltme talebi info@destekol.org adresine iletilir. Talepte ad-soyad, işlem tarihi, tutar, para birimi, işlem referansı ve talebin gerekçesi belirtilmelidir. Tam kart numarası, CVV, parola veya tek kullanımlık doğrulama kodu paylaşılmamalıdır."
+    },
+    {
+      "title": "6. İnceleme ve ödeme",
+      "text": "Talep; işlem kayıtları, ödeme sağlayıcısı bilgileri, banka kayıtları ve uygulanabilir hukuki şartlar çerçevesinde incelenir. İade kararı verilmesi hâlinde, mümkün olduğunda ödeme işleminin geldiği aynı kanal veya hesap kullanılır. Banka, ödeme kuruluşu veya uluslararası transfer süreçlerinden kaynaklanan süreler Destek Ol’un doğrudan kontrolü dışında olabilir."
+    },
+    {
+      "title": "7. Proje bazlı ve kısıtlı bağışlar",
+      "text": "Belirli proje veya amaç için yapılan bağışlar ilgili kampanya şartlarına göre takip edilir. Projenin uygulanamaz hâle gelmesi, tam finansmana ulaşılması veya hukuki/operasyonel engel ortaya çıkması hâlinde bağışçıya sunulan kampanya koşulları ve uygulanabilir hukuk çerçevesinde iade, alternatif kullanım veya benzer amaçlı yönlendirme değerlendirilir."
+    },
+    {
+      "title": "8. Sahte ödeme talepleri",
+      "text": "Destek Ol adına şüpheli hesap, bağlantı veya ödeme talebiyle karşılaşırsanız ödeme yapmadan önce info@destekol.org üzerinden doğrulama isteyin. Şüpheli ödeme talepleri, gerekli hâllerde ilgili banka, ödeme kuruluşu veya yetkili makamlara bildirilebilir."
+    }
+  ],
+  "cookie-policy": [
+    {
+      "title": "ÇEREZ POLITIKASI",
+      "text": "destekol.org üzerinde kullanılan çerez ve benzeri teknolojilere ilişkin esaslar"
+    },
+    {
+      "title": "1. Çerez nedir?",
+      "text": "Çerezler, bir internet sitesini ziyaret ettiğinizde tarayıcınız aracılığıyla cihazınıza kaydedilebilen küçük veri dosyalarıdır. Çerezler sitenin çalışması, güvenliği, tercihlerin hatırlanması ve izin verilen hâllerde performansın ölçülmesi için kullanılabilir."
+    },
+    {
+      "title": "2. Çerez kategorileri",
+      "text": "Kategori\tAmaç\tTercih\nZorunlu\tTemel site işlevleri, oturum, güvenlik, form bütünlüğü ve tercih kaydı.\tSitenin çalışması için gereklidir.\nAnalitik/performans\tZiyaret, performans, hata ve kullanım istatistiklerinin ölçülmesi.\tGerekli hukuki şart ve kullanıcı tercihiyle.\nİşlevsel\tDil, görünüm veya kullanıcının seçtiği işlevlerin hatırlanması.\tGerekli olduğunda kullanıcı tercihiyle.\nPazarlama\tKampanya etkinliği, yeniden hedefleme veya üçüncü taraf reklam amaçları.\tAçık tercih olmadan çalıştırılmaz."
+    },
+    {
+      "title": "3. Çerez tercihleri",
+      "text": "Zorunlu olmayan çerezler için kullanıcının tercih yapabilmesini sağlayan mekanizma sunulur. “Reddet” veya eşdeğer seçenek, kabul seçeneği kadar erişilebilir olmalıdır. Kullanıcı tercihini sonradan değiştirebilmelidir."
+    },
+    {
+      "title": "4. Üçüncü taraf teknolojiler",
+      "text": "Analitik, video, harita, sosyal medya, güvenlik veya ödeme hizmetleri gibi üçüncü taraf özellikleri devreye alındığında bu hizmetlerin çerez veya benzeri teknolojileri kullanılabilir. Böyle bir teknoloji kullanılmadan önce ilgili kategori, amaç, sağlayıcı ve saklama süresi çerez panelinde veya bu Politikanın güncel sürümünde açıklanır."
+    },
+    {
+      "title": "5. Tarayıcı ayarları",
+      "text": "Tarayıcı ayarlarından çerezleri silebilir veya engelleyebilirsiniz. Zorunlu çerezlerin engellenmesi sitenin bazı işlevlerinin çalışmamasına neden olabilir. Tarayıcı ayarları, sitedeki çerez tercih mekanizmasının yerine geçmez; ikisi birlikte kullanılabilir."
+    },
+    {
+      "title": "6. Kişisel veriler",
+      "text": "Çerezler yoluyla kişisel veri işlenmesi hâlinde işlemler Gizlilik ve Veri Koruma Politikası ile KVKK Aydınlatma Metni kapsamında yürütülür."
+    },
+    {
+      "title": "7. Güncellemeler",
+      "text": "Kullanılan teknoloji veya çerezler değiştiğinde bu Politika ve çerez tercih paneli güncellenir."
+    }
+  ],
+  "financial-transparency": [
+    {
+      "title": "FINANSAL ŞEFFAFLIK VE BAĞIŞLARIN KULLANIMI POLITIKASI",
+      "text": "Bağış, proje bütçesi, mali takip ve kamuya açıklama ilkeleri"
+    },
+    {
+      "title": "1. Amaç",
+      "text": "Destek Ol, kendisine emanet edilen kaynakların amaçla uyumlu, izlenebilir ve hesap verebilir biçimde kullanılmasını; bağışçı ve kamuya sunulan mali bilgilerin doğru, anlaşılır ve doğrulanabilir olmasını esas alır."
+    },
+    {
+      "title": "2. Fon türleri",
+      "text": "Fon türü\tUygulama\nGenel amaçlı bağış\tDestek Ol’un tüzüksel ve insani amaçları içindeki öncelikli faaliyetlerde kullanılabilir.\nKısıtlı/proje bazlı bağış\tBağışçının veya kampanyanın açıkça belirttiği proje/amaç için ayrı takip edilir.\nKurumsal hibe\tSözleşme, bütçe, uygun maliyet ve raporlama şartlarına göre yönetilir.\nAyni bağış\tİhtiyaç, kalite, lojistik, depolama ve uygunluk kontrollerine tabi tutulur."
+    },
+    {
+      "title": "3. Bağışların kullanım ilkeleri",
+      "text": "Fonlar, bağış amacı, onaylı bütçe, sözleşme ve uygulanabilir mevzuata uygun kullanılır.\nKısıtlı fonlar ayrı izlenir ve amaç dışı kullanılamaz.\nPartner üzerinden uygulamada sözleşme, due diligence, bütçe, kanıt ve raporlama kontrolleri uygulanır.\nSatın alma, çıkar çatışması, yaptırım ve dolandırıcılık kontrolleri mali süreçlerin parçasıdır.\nProje uygulama ve mali kayıtları denetlenebilir biçimde saklanır."
+    },
+    {
+      "title": "4. Operasyonel ve idari giderler",
+      "text": "İnsani yardımın güvenli, hukuka uygun ve izlenebilir biçimde yürütülmesi; personel, lojistik, banka/ödeme, teknoloji, denetim, iletişim, veri güvenliği, izleme, uyum ve diğer makul operasyonel/idari giderleri gerektirebilir. Bu giderler, bağışçıya yanıltıcı biçimde gizlenmez ve ilgili proje/fon kurallarına göre takip edilir."
+    },
+    {
+      "title": "5. Proje bütçeleri ve birim maliyetler",
+      "text": "Saha fiyatları, döviz kuru, erişim, güvenlik, tedarik ve lojistik koşulları nedeniyle değişebilir. Sitede yer alan tahmini proje veya birim maliyetleri, aksi açıkça belirtilmedikçe planlama verisidir. Kesin gerçekleşen maliyetler, muhasebe ve proje kapanış kayıtları üzerinden belirlenir."
+    },
+    {
+      "title": "6. Kamuya açıklanan veriler",
+      "text": "Proje sayısı, ulaşılan kişi/hane, dağıtım miktarı, bütçe, tahsis oranı ve benzeri göstergeler yalnızca dayanak kayıtları ve dönemi doğrulanabildiğinde yayımlanır. Tahmin, hedef ve gerçekleşen veri birbirinden açıkça ayrılır."
+    },
+    {
+      "title": "7. Raporlama ve denetim",
+      "text": "Destek Ol; proje, bağışçı veya mevzuat şartlarına göre mali ve teknik raporlama, banka mutabakatı, belge kontrolü, partner raporlaması ve gerekli denetim süreçlerini uygular. Hata veya önemli değişiklik tespit edildiğinde yayımlanan bilgi güncellenir."
+    },
+    {
+      "title": "8. Bağışçı soruları",
+      "text": "Bağışların kullanımı, proje bütçeleri veya mali şeffaflık hakkında sorular info@destekol.org adresine iletilebilir. Kişisel veri, ticari sır, güvenlik ve yararlanıcı mahremiyeti gerektiren bilgiler kamuya açık şekilde paylaşılmaz."
+    }
+  ],
+  "privacy": [
+    {
+      "title": "GIZLILIK VE VERI KORUMA POLITIKASI",
+      "text": "destekol.org ve Destek Ol dijital kanallarında kişisel verilerin korunmasına ilişkin esaslar"
+    },
+    {
+      "title": "1. Amaç ve kapsam",
+      "text": "Bu Politika, destekol.org web sitesi ile Destek Ol’un web formları, e-posta, gönüllülük ve iş birliği başvuruları, şikâyet ve geri bildirim kanalları, dijital kampanyaları ve çevrimiçi bağış kanalları üzerinden elde edilen bilgilerin gizliliğinin ve kişisel verilerin korunmasına ilişkin esasları düzenler."
+    },
+    {
+      "title": "2. Temel ilkeler",
+      "text": "Kişisel veriler hukuka ve dürüstlük kurallarına uygun, belirli, açık ve meşru amaçlarla işlenir.\nİşlenen veriler amaçla bağlantılı, sınırlı ve ölçülü tutulur; gereksiz veri toplanmaz.\nVerilerin doğru ve gerektiğinde güncel tutulması için makul önlemler alınır.\nKişisel veriler, işleme amacı ve ilgili mevzuatın gerektirdiği süre kadar saklanır.\nKişisel veriler veri ticareti amacıyla satılmaz, kiralanmaz veya üçüncü kişilere pazarlanmaz.\nYetkisiz erişim, kayıp, değiştirme, ifşa ve kötüye kullanıma karşı uygun teknik ve idari tedbirler uygulanır.\nÇocuklar, yararlanıcılar, şikâyetçiler ve risk altındaki kişilere ilişkin bilgiler için daha sıkı gizlilik ve erişim kısıtları uygulanır."
+    },
+    {
+      "title": "3. İşlenebilecek veri kategorileri",
+      "text": "Kategori\tÖrnekler\nKimlik ve iletişim\tAd-soyad, e-posta, telefon, ülke/şehir, başvuru ve iletişim bilgileri.\nBaşvuru ve işlem\tGönüllülük, iş birliği, proje, şikâyet, geri bildirim ve bağış işlemine ilişkin bilgiler.\nFinans ve ödeme\tBağış tutarı, para birimi, işlem referansı ve ödeme sağlayıcısının ilettiği sınırlı işlem bilgileri. Tam kart bilgileri Destek Ol tarafından saklanmaz.\nTeknik kayıt\tIP adresi, tarih-saat, cihaz/tarayıcı bilgisi, oturum ve güvenlik kayıtları.\nTercihler\tÇerez tercihleri, iletişim ve bülten izinleri.\nHassas içerik\tKullanıcının kendiliğinden ilettiği sağlık, engellilik, çocuk koruma veya safeguarding bilgileri yalnızca gerekli olduğu ölçüde ve uygun güvenlik tedbirleriyle işlenir."
+    },
+    {
+      "title": "4. İşleme amaçları",
+      "text": "Web sitesinin işletilmesi, güvenliği, erişilebilirliği ve teknik performansının sağlanması.\nSoru, başvuru, gönüllülük, proje, ortaklık, basın ve iletişim taleplerinin değerlendirilmesi ve yanıtlanması.\nBağış kanalları aktif olduğunda bağış işlemlerinin yürütülmesi, mutabakat, muhasebe, kayıt, iade ve itiraz süreçlerinin yönetilmesi.\nSahtecilik, yetkisiz erişim, kötüye kullanım, kara para aklama, terörizmin finansmanı, yaptırım ve dolandırıcılık risklerinin önlenmesi.\nŞikâyet, etik, safeguarding/PSEA ve çocuk koruma bildirimlerinin güvenli biçimde ele alınması.\nHukuki yükümlülüklerin yerine getirilmesi ve hakların tesisi, kullanılması veya korunması.\nAçık tercih veya başka geçerli hukuki sebep bulunması hâlinde bülten, duyuru ve kampanya iletişimi yapılması."
+    },
+    {
+      "title": "5. Veri paylaşımı",
+      "text": "Kişisel veriler, yalnızca gerekli olduğu ölçüde ve uygun hukuki dayanak bulunduğunda; yetkili kamu kurumları, bankalar ve ödeme hizmet sağlayıcıları, bilişim/barındırma/güvenlik hizmet sağlayıcıları, hukuk ve mali müşavirler, denetçiler ve sözleşmeli iş ortaklarıyla paylaşılabilir. Her paylaşımda veri minimizasyonu, gizlilik ve erişim yetkisi esas alınır."
+    },
+    {
+      "title": "6. Yurt dışına veri aktarımı",
+      "text": "Yurt dışında bulunan bulut, e-posta, barındırma, güvenlik, analitik, iletişim veya ödeme hizmetlerinin kullanılması hâlinde kişisel verilerin yurt dışına aktarımı, 6698 sayılı Kanun ve yürürlükteki ikincil düzenlemeler uyarınca gerekli aktarım şartları ve uygun güvenceler sağlanarak gerçekleştirilir."
+    },
+    {
+      "title": "7. Çerezler ve benzeri teknolojiler",
+      "text": "Zorunlu çerezler, sitenin temel işlevleri ve güvenliği için kullanılır. Analitik, kişiselleştirme veya pazarlama amaçlı zorunlu olmayan çerezler, gerekli tercih mekanizması çalıştırılarak ve hukuki şartları sağlanarak kullanılır. Ayrıntılar Çerez Politikası’nda açıklanır."
+    },
+    {
+      "title": "8. Veri güvenliği",
+      "text": "Yetki ve erişim kontrolü, güçlü kimlik doğrulama ve görev ayrılığı uygulanır.\nSistem ve hesap erişimleri ihtiyaçla sınırlanır; gereksiz erişimler kaldırılır.\nYedekleme, kayıt, güvenlik güncellemesi ve olay müdahale tedbirleri uygulanır.\nHizmet sağlayıcılarla gizlilik ve veri güvenliği yükümlülükleri sözleşmesel olarak düzenlenir.\nKişisel veriler e-posta veya form üzerinden gereksiz şekilde talep edilmez; parola, CVV ve tek kullanımlık doğrulama kodu istenmez."
+    },
+    {
+      "title": "9. Saklama ve silme",
+      "text": "Kişisel veriler, işleme amacının gerektirdiği süre ve ilgili mevzuat, sözleşme, denetim veya uyuşmazlık süreçleri için gerekli süre boyunca saklanır. İşleme şartları sona erdiğinde veriler silinir, yok edilir veya anonim hâle getirilir."
+    },
+    {
+      "title": "10. Haklar ve başvuru",
+      "text": "Kişisel verilerinize ilişkin kanuni haklarınızı kullanmak veya gizlilik konusunda soru iletmek için info@destekol.org adresinden Destek Ol ile iletişime geçebilirsiniz. Başvurular, kimlik ve talep doğrulaması yapılarak yürürlükteki mevzuata uygun şekilde değerlendirilir."
+    },
+    {
+      "title": "11. Güncellemeler",
+      "text": "Bu Politika; mevzuat, hizmetler, kullanılan teknolojiler veya veri işleme süreçleri değiştiğinde güncellenebilir. Güncel sürüm destekol.org üzerinde yayımlanır."
+    }
+  ],
+  "license": [
+    {
+      "title": "İÇERIK HAKLARI, MARKA KULLANIMI VE RESMÎ BILGILENDIRME POLITIKASI",
+      "text": "Site içerikleri, Destek Ol markası ve resmî bilginin kullanımına ilişkin kurallar"
+    },
+    {
+      "title": "1. Kapsam",
+      "text": "Bu Politika, destekol.org üzerindeki logo, marka, metin, fotoğraf, video, grafik, proje adı, rapor, veri ve diğer içeriklerin kullanımına ilişkin esasları düzenler."
+    },
+    {
+      "title": "2. Destek Ol markası ve logosu",
+      "text": "Destek Ol adı, logosu ve ayırt edici görsel kimliği; açık yazılı izin olmaksızın bağış toplama, ürün veya hizmet tanıtma, resmî ortaklık izlenimi yaratma, sosyal medya hesabını resmî hesap gibi gösterme veya kurum adına temsil yetkisi varmış gibi kullanılamaz. Kanuni haber, eleştiri ve kaynak gösterme hakları saklıdır."
+    },
+    {
+      "title": "3. Site içeriklerinin kullanımı",
+      "text": "Kamuya açık metinlerden, kaynağı belirtilerek ve anlamı bozulmadan makul alıntı yapılabilir. Fotoğraf, video, logo, infografik, veri seti veya tam metinlerin sistematik ya da ticari yeniden kullanımı için ayrıca izin gerekebilir."
+    },
+    {
+      "title": "4. Yararlanıcı görselleri ve insan onuru",
+      "text": "Bir görselin sitede yayımlanmış olması üçüncü kişilere sınırsız yeniden kullanım hakkı vermez. Çocuklar, sağlık veya engellilik durumu, yerinden edilme, şiddet veya başka hassas bağlamlara ilişkin görseller; kişilerin onurunu, güvenliğini veya mahremiyetini zedeleyecek biçimde kopyalanamaz, değiştirilemez veya bağlamından koparılamaz."
+    },
+    {
+      "title": "5. Resmî bilgi",
+      "text": "Destek Ol adına geçerli kurumsal bilgi, destekol.org üzerinde yayımlanan veya kurumun doğrulanmış iletişim kanallarından teyit edilen bilgidir. Herhangi bir statü, akreditasyon, izin veya yetki iddiası yalnızca dayanak resmî belge veya sicil bilgisi bulunduğunda kullanılır."
+    },
+    {
+      "title": "6. Mali ve proje verileri",
+      "text": "Sayaç, hedef, bütçe, ulaşılan kişi/hane veya yüzde gibi proje ve mali veriler kaynak ve dönem bilgisiyle doğrulanabilir olmalıdır. Hata veya önemli değişiklik tespit edildiğinde ilgili içerik güncellenebilir."
+    },
+    {
+      "title": "7. Sahte hesaplar ve ödeme talepleri",
+      "text": "Destek Ol adına açılmış sahte hesap, alan adı, ödeme sayfası veya banka talebi şüphesinde bağlantı veya ekran görüntüsü, hassas finansal bilgi paylaşılmadan info@destekol.org adresine iletilebilir. Parola, tam kart numarası, CVV ve doğrulama kodları gönderilmemelidir."
+    },
+    {
+      "title": "8. İzin talepleri",
+      "text": "Marka, logo, görsel veya içerik kullanım izni talepleri info@destekol.org adresine iletilebilir."
+    }
+  ],
+  "kvkk": [
+    {
+      "title": "KVKK AYDINLATMA METNI",
+      "text": "6698 sayılı Kişisel Verilerin Korunması Kanunu kapsamında web sitesi ve dijital kanallara ilişkin aydınlatma"
+    },
+    {
+      "title": "1. Veri sorumlusu",
+      "text": "Destek Ol, destekol.org web sitesi ve bağlantılı dijital kanallar üzerinden gerçekleştirilen kişisel veri işleme faaliyetleri bakımından veri sorumlusu sıfatıyla hareket eder. İletişim: info@destekol.org. Adres: Taşdelen Mah. Buket Sokak, Dış Kapı No: 1-3, İç Kapı No: 38, Çekmeköy / İstanbul, Türkiye."
+    },
+    {
+      "title": "2. İşlenen kişisel veriler",
+      "text": "Veri grubu\tİçerik\nKimlik/iletişim\tAd-soyad, e-posta, telefon ve başvuru iletişim bilgileri.\nBaşvuru/işlem\tİletişim, gönüllülük, iş birliği, proje, şikâyet, geri bildirim ve bağış işlem bilgileri.\nFinans/ödeme\tBağış tutarı, para birimi, işlem referansı ve ödeme kuruluşunun sağladığı sınırlı işlem verileri.\nTeknik\tIP, tarih-saat, oturum, cihaz/tarayıcı ve güvenlik kayıtları.\nTercih\tÇerez ve iletişim tercihleri.\nÖzel nitelikli veri\tKullanıcı tarafından zorunlu olmaksızın iletilen özel nitelikli veriler, ancak gerekli şartlar oluştuğunda ve uygun tedbirlerle işlenir."
+    },
+    {
+      "title": "3. İşleme amaçları",
+      "text": "Web sitesini işletmek, güvenliği ve erişilebilirliği sağlamak.\nİletişim, gönüllülük, iş birliği, proje ve diğer başvuruları değerlendirmek.\nBağış kanalları aktif olduğunda bağış, muhasebe, mutabakat, iade ve işlem güvenliği süreçlerini yürütmek.\nŞikâyet, etik, safeguarding/PSEA ve çocuk koruma bildirimlerini yönetmek.\nSahtecilik, kötüye kullanım, AML/CFT, yaptırım ve dolandırıcılık risklerini önlemek.\nKanuni yükümlülükleri yerine getirmek ve hukuki hakları korumak.\nİzin verilen hâllerde bülten, duyuru ve bilgilendirme iletişimi yapmak."
+    },
+    {
+      "title": "4. Hukuki sebepler",
+      "text": "Kişisel veriler, somut işleme faaliyetine göre KVKK m.5 ve özel nitelikli veriler bakımından m.6’da düzenlenen hukuki sebeplere dayanılarak işlenir. Bunlar; kanunlarda açıkça öngörülme, sözleşmenin kurulması veya ifasıyla doğrudan ilgili olma, veri sorumlusunun hukuki yükümlülüğünü yerine getirmesi, bir hakkın tesisi/kullanılması/korunması, ilgili kişinin temel hak ve özgürlüklerine zarar vermemek kaydıyla meşru menfaat ve gerekli hâllerde açık rızadır."
+    },
+    {
+      "title": "5. Toplama yöntemleri",
+      "text": "Veriler; web formları, e-posta, doğrudan iletişim, log ve güvenlik sistemleri, çerezler ve benzeri teknolojiler ile bağış kanalları aktif olduğunda ödeme hizmet sağlayıcıları üzerinden otomatik veya kısmen otomatik yollarla elde edilir."
+    },
+    {
+      "title": "6. Aktarım",
+      "text": "Kişisel veriler, yalnızca gerekli olduğu ölçüde; yetkili kamu kurumlarına, banka ve ödeme hizmet sağlayıcılarına, bilişim/barındırma/güvenlik hizmet sağlayıcılarına, hukuk ve mali müşavirlere, denetçilere ve görevi gereği bilgiye ihtiyaç duyan sözleşmeli taraflara aktarılabilir."
+    },
+    {
+      "title": "7. Yurt dışına aktarım",
+      "text": "Yurt dışındaki hizmet sağlayıcılardan yararlanılması hâlinde kişisel verilerin aktarımı KVKK m.9 ve yürürlükteki düzenlemelerde öngörülen şartlara ve uygun güvence mekanizmalarına göre gerçekleştirilir."
+    },
+    {
+      "title": "8. Saklama süresi",
+      "text": "Kişisel veriler, işleme amacının gerektirdiği süre ve ilgili mevzuat, sözleşme, denetim veya uyuşmazlık süreçleri için gerekli süre boyunca saklanır; şartların sona ermesiyle silinir, yok edilir veya anonim hâle getirilir."
+    },
+    {
+      "title": "9. KVKK m.11 kapsamındaki haklarınız",
+      "text": "Kişisel verilerinizin işlenip işlenmediğini öğrenme ve işlenmişse bilgi talep etme.\nİşleme amacını ve amaca uygun kullanılıp kullanılmadığını öğrenme.\nVerilerin yurt içinde veya yurt dışında aktarıldığı üçüncü kişileri bilme.\nEksik veya yanlış işlenen verilerin düzeltilmesini isteme.\nKanuni şartları oluştuğunda verilerin silinmesini veya yok edilmesini isteme.\nDüzeltme veya silme/yok etme işlemlerinin verilerin aktarıldığı üçüncü kişilere bildirilmesini isteme.\nİşlenen verilerin münhasıran otomatik sistemlerle analiz edilmesi sonucu aleyhe bir sonucun ortaya çıkmasına itiraz etme.\nKanuna aykırı işleme nedeniyle zarara uğranması hâlinde zararın giderilmesini talep etme."
+    },
+    {
+      "title": "10. Başvuru yöntemi",
+      "text": "KVKK kapsamındaki taleplerinizi, talebinizi açıkça belirterek info@destekol.org adresine veya yazılı olarak yukarıdaki adrese iletebilirsiniz. Başvurunun size ait olduğunun doğrulanması amacıyla gerekli ve ölçülü ek bilgi talep edilebilir. Başvurular, mevzuatta öngörülen süre ve usule uygun şekilde sonuçlandırılır."
+    }
+  ],
+  "complaints": [
+    {
+      "title": "Şikâyet Ve Geri Bildirim Politikasi",
+      "text": "Erişilebilir başvuru, güvenli inceleme, gizlilik ve hesap verebilirlik esasları"
+    },
+    {
+      "title": "1. Kimler başvurabilir?",
+      "text": "Yararlanıcılar, başvuru sahipleri, bağışçılar, gönüllüler, çalışanlar, partnerler, tedarikçiler, topluluk üyeleri ve diğer üçüncü kişiler Destek Ol’un faaliyetleri, personeli, partnerleri, web sitesi veya hizmetleri hakkında soru, öneri, geri bildirim veya şikâyet iletebilir."
+    },
+    {
+      "title": "2. Başvuru konuları",
+      "text": "Hizmet kalitesi, erişim, gecikme veya iletişim sorunları.\nYararlanıcı seçimi, dağıtım, eksik teslimat veya ayrımcılık iddiası.\nEtik ihlal, çıkar çatışması, rüşvet, dolandırıcılık, usulsüzlük veya fonların amaç dışı kullanımı şüphesi.\nPSEA, çocuk koruma, safeguarding, taciz, şiddet, istismar veya misilleme iddiası.\nKişisel veri, gizlilik veya bilgi güvenliği şikâyeti.\nSite içeriğinde hata, yanıltıcı bilgi veya resmî olmayan ödeme talebi."
+    },
+    {
+      "title": "3. Başvuru kanalları",
+      "text": "Genel başvurular info@destekol.org adresine veya Taşdelen Mah. Buket Sokak, Dış Kapı No: 1-3, İç Kapı No: 38, Çekmeköy / İstanbul adresine iletilebilir. Hassas bir başvurunun genel e-posta hesabını yöneten kişiyle veya yönetimle ilgili olması hâlinde başvuru, kapalı zarf üzerinde “Yönetim Kurulu Dikkatine – GİZLİ” ibaresiyle yazılı adrese gönderilebilir."
+    },
+    {
+      "title": "4. Başvuruda paylaşılması gereken bilgiler",
+      "text": "Mümkünse olayın veya sorunun ne olduğu, tarih veya yaklaşık tarih, ilgili proje/sayfa, varsa ilgili kişi/kurum ve güvenli geri dönüş yöntemi belirtilmelidir. Kanıt sunmak başvuru şartı değildir. Parola, CVV, gereksiz kimlik belgesi kopyası veya olayla ilgisiz hassas veri paylaşılmamalıdır."
+    },
+    {
+      "title": "5. Gizlilik ve misilleme yasağı",
+      "text": "Başvuru bilgileri yalnızca görevi gereği bilmesi gereken yetkili kişilerle paylaşılır. Kanunen zorunlu bildirim veya acil güvenlik gerekleri saklıdır. İyi niyetli şikâyet, ihbar, tanıklık veya incelemeye katılım nedeniyle yardımın kesilmesi, tehdit, dışlama veya başka misilleme uygulanamaz."
+    },
+    {
+      "title": "6. Hassas şikâyetler",
+      "text": "Cinsel sömürü ve istismar, çocuk güvenliği, şiddet, ciddi dolandırıcılık, yaptırım/AML riski veya ciddi veri ihlali içeren bildirimler rutin hizmet şikâyeti olarak ele alınmaz. Öncelikle güvenlik ve acil risk değerlendirilir; dosya yalnızca yetkili koruma, uyum, hukuk veya yönetim kanallarına kısıtlı erişimle yönlendirilir."
+    },
+    {
+      "title": "7. Değerlendirme ve geri dönüş",
+      "text": "Başvuru kayıt altına alınır, konusu ve risk düzeyi belirlenir, çıkar çatışması bulunmayan yetkili kişiye yönlendirilir ve mevcut bilgiler ölçüsünde incelenir. Gerekli olduğunda ek bilgi talep edilir ve uygun düzeltici işlem uygulanır. Başvurunun niteliği ve gizlilik şartları elverdiği ölçüde başvuru sahibine sonuç veya süreç bilgisi verilir."
+    },
+    {
+      "title": "8. Kişisel veriler",
+      "text": "Şikâyet ve geri bildirim kapsamında işlenen kişisel veriler yalnızca başvurunun değerlendirilmesi, güvenlik, hukuki yükümlülük ve gerekli takip amacıyla işlenir ve erişimi sınırlandırılır."
+    }
+  ],
+  "terms": [
+    {
+      "title": "SITE KULLANIM KOŞULLARI",
+      "text": "destekol.org web sitesinin kullanımına ilişkin kurallar"
+    },
+    {
+      "title": "1. Kapsam",
+      "text": "Bu koşullar, destekol.org web sitesinin ziyaret edilmesi, sitedeki içeriklerin kullanılması, form ve başvuruların gönderilmesi ile çevrimiçi bağış kanalları aktif olduğunda bu kanalların kullanılmasına ilişkin kuralları düzenler."
+    },
+    {
+      "title": "2. Site içeriği",
+      "text": "Site; Destek Ol’un insani yardım, kalkınma, proje, şeffaflık, gönüllülük ve iş birliği çalışmalarına ilişkin bilgilendirme sağlar. Sitedeki genel açıklamalar, açıkça aksi belirtilmedikçe sözleşmesel taahhüt, mali getiri, vergi avantajı, akreditasyon veya izin garantisi oluşturmaz."
+    },
+    {
+      "title": "3. Kullanıcı yükümlülükleri",
+      "text": "Siteyi hukuka uygun amaçlarla kullanmak ve üçüncü kişi haklarını ihlal etmemek.\nFormlarda doğru, güncel ve yetkili olunan bilgileri paylaşmak.\nBaşkasının kimliğini veya ödeme aracını yetkisiz kullanmamak.\nZararlı kod, otomatik saldırı, veri kazıma, kimliğe bürünme, sahte bağış talebi veya dolandırıcılık faaliyeti yürütmemek.\nParola, CVV veya tek kullanımlık doğrulama kodu gibi güvenlik bilgilerini Destek Ol’a e-posta veya form yoluyla göndermemek."
+    },
+    {
+      "title": "4. Bağış ve ödeme işlemleri",
+      "text": "Çevrimiçi bağış kanalları faaliyete alındığında bağışın amacı, kampanya kapsamı, varsa kısıtlı fon şartları, kullanılan ödeme sağlayıcısı ve önemli işlem koşulları ilgili sayfada açıklanır. Belirli projeye tahsis edilmiş bağışlar, kampanya şartlarına ve uygulanabilir hukuka aykırı biçimde başka amaçlara yönlendirilmez.\nBağış bir yatırım veya mal/hizmet satın alımı değildir. Bağış işlemlerine ilişkin iptal, iade, teknik hata ve yetkisiz işlem kuralları Bağış, İptal ve İade Politikası’nda düzenlenir."
+    },
+    {
+      "title": "5. Fikri mülkiyet ve içerik kullanımı",
+      "text": "Sitedeki logo, marka, metin, fotoğraf, video, grafik, rapor ve diğer içerikler üzerindeki haklar Destek Ol’a veya ilgili hak sahibine aittir. Kanuni alıntı ve kullanım hakları saklı kalmak üzere, içerikler yazılı izin olmaksızın bağış toplama, ticari tanıtım, ortaklık izlenimi yaratma veya kurum adına temsil yetkisi varmış gibi kullanılamaz."
+    },
+    {
+      "title": "6. Dış bağlantılar",
+      "text": "Site, üçüncü taraf internet sitelerine bağlantı verebilir. Bu bağlantılar bilgilendirme amacı taşır; üçüncü tarafların içerik, güvenlik, gizlilik veya işlem koşulları üzerinde Destek Ol’un kontrolü bulunmayabilir. Kullanıcı, ilgili üçüncü tarafın kendi koşullarını incelemelidir."
+    },
+    {
+      "title": "7. Sorumluluk sınırı",
+      "text": "Destek Ol, sitenin güvenli ve doğru çalışması için makul önlemleri alır. Ancak internet altyapısı, üçüncü taraf hizmetleri, bakım, mücbir sebep veya kullanıcı kaynaklı nedenlerle oluşabilecek kesinti ve hataların tamamen önlenebileceğini garanti etmez. Emredici hukuktan doğan sorumluluklar saklıdır."
+    },
+    {
+      "title": "8. Değişiklikler ve uygulanacak hukuk",
+      "text": "Bu koşullar mevzuat veya site işlevleri değiştiğinde güncellenebilir. Güncel metin destekol.org üzerinde yayımlanır. Koşullar, Türkiye Cumhuriyeti hukuku çerçevesinde uygulanır; emredici yetki kuralları saklıdır."
+    }
+  ]
+}

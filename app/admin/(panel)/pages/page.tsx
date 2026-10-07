@@ -23,7 +23,7 @@ const LOCALES = [
     { code: "fr", flag: "🇫🇷", label: "Français" },
     { code: "tr", flag: "🇹🇷", label: "Türkçe" },
 ];
-const LEGAL_SLUGS = ["privacy", "terms", "refund-policy", "cookie-policy", "aml-policy", "complaints", "license", "financial-transparency", "how-we-use-donations"];
+const LEGAL_SLUGS = ["privacy", "terms", "refund-policy", "cookie-policy", "aml-policy", "complaints", "license", "financial-transparency", "how-we-use-donations", "kvkk"];
 export default function AdminPagesPage() {
     const router = useRouter();
     const searchParams = useSearchParams();

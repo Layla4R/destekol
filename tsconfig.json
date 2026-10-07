@@ -36,7 +36,8 @@
     "types/**/*.d.ts",
     ".next-development/types/**/*.ts",
     ".next-production/types/**/*.ts",
-    ".next-development-*/types/**/*.ts"
+    ".next-development-*/types/**/*.ts",
+    ".next-development-3002/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"
