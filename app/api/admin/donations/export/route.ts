@@ -38,7 +38,7 @@ export async function GET(req: Request) {
     const { data: donations, error } = await query;
     if (error)
         return NextResponse.json({ error: error.message }, { status: 500 });
-    const headers = ["Date", "Donor Name", "Donor Email", "Amount", "Currency", "Campaign", "Gateway", "Frequency", "Status", "Receipt #", "Anonymous"];
+    const headers = ["Date", "Donor Name", "Donor Email", "Amount", "Currency", "Campaign", "Gateway", "Frequency", "Status", "Receipt #", "Anonymous", "Subscription Status", "Refund Status", "Refunded Amount"];
     const rows = (donations || []).map((d: any) => [
         new Date(d.createdAt).toISOString(),
         d.donorName, d.donorEmail, d.amount,
@@ -48,6 +48,7 @@ export async function GET(req: Request) {
         d.frequency === "MONTHLY" ? "Monthly" : "One-time",
         d.status, d.receiptNumber || "",
         d.isAnonymous ? "Yes" : "No",
+        d.subscriptionStatus || '', d.refundStatus || 'NONE', d.refundedAmount || 0,
     ]);
     const csv = [headers, ...rows].map(row => row.map(csvEscape).join(",")).join("\n");
     return new NextResponse("\uFEFF" + csv, {

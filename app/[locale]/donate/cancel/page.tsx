@@ -1,6 +1,6 @@
 import Icon from "@/components/icons";
 import { loadTranslations } from "@/lib/i18n";
-import { getSupabaseOrNull } from "@/lib/supabase";
+
 import Link from "next/link";
 export default async function DonateCancelPage({ params: { locale }, searchParams, }: {
     params: {
@@ -11,19 +11,8 @@ export default async function DonateCancelPage({ params: { locale }, searchParam
     };
 }) {
     const dict = await loadTranslations(locale);
-    const p = locale === "ar" ? "" : `/${locale}`;
-    // Mark pending donation as FAILED on cancel
-    const donationId = searchParams?.donation;
-    if (donationId) {
-        const supabase = getSupabaseOrNull();
-        if (supabase) {
-            await supabase
-                .from("Donation")
-                .update({ status: "FAILED" })
-                .eq("id", donationId)
-                .eq("status", "PENDING");
-        }
-    }
+    const p = `/${locale}`;
+    // Return pages never mutate a financial transaction; provider notifications determine its status.
     const t = (key: string, fallback: string) => dict[key] || fallback;
     return (<div className="min-h-[70vh] flex items-center justify-center bg-section-gradient px-6 py-16">
       <div className="bg-white rounded-2xl shadow-xl border border-line p-10 max-w-md text-center">

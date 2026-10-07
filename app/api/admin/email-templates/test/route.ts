@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
     const demoVars: Record<string, string> = {
         donorName: "John Smith", amount: "$50", receiptNumber: "4R-TEST-0001",
         campaign: "Humanitarian Relief", date: new Date().toLocaleDateString("en-GB"),
-        type: "One-time", donorEmail: email, provider: "Stripe",
+        type: "One-time", donorEmail: email, provider: "Official payment channel",
         senderName: "Test Visitor", senderEmail: email, subject: "Test Inquiry",
         message: "This is a test message from the admin panel.", unsubscribeUrl: `${siteUrl}/unsubscribe`,
         verifyUrl: `${siteUrl}/verify-email?token=test-token-xxx`,

@@ -394,7 +394,7 @@ export default function EmailEditorPage() {
     const demoVars: Record<string, string> = {
         donorName: "John Smith", amount: "$50", receiptNumber: "4R-20260712-A1B2",
         campaign: "Humanitarian Relief", date: "12/07/2026", type: "One-time",
-        donorEmail: "john@example.com", provider: "Stripe",
+        donorEmail: "john@example.com", provider: "Official payment channel",
         senderName: "Jane Doe", senderEmail: "jane@example.com",
         message: "I'd like to ask about the campaign...", subject: "Inquiry",
         email: "user@example.com", unsubscribeUrl: "#",

@@ -18,7 +18,7 @@ export default async function DonorProfilePage({ params }: {
     }
     const supabase = getSupabase();
     const { data: user } = await supabase.from("User").select("*").eq("id", params.id).maybeSingle();
-    // Fetch donations by userId OR donorEmail (PayPal donations may not have userId)
+    // Fetch donations by userId OR donorEmail (guest donations may not have userId)
     const [byUserId, byEmail] = await Promise.all([
         supabase.from("Donation")
             .select("*, campaign:Campaign(id, title, slug)")

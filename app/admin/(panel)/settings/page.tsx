@@ -23,14 +23,7 @@ interface Settings {
     accentColor: string;
     heroSlides: string;
     socialPosition: string;
-    enableStripe: boolean;
-    enablePaypal: boolean;
-    stripeSecretKey: string;
-    stripePublishableKey: string;
-    stripeWebhookSecret: string;
-    paypalClientId: string;
-    paypalClientSecret: string;
-    paypalMode: string;
+
     defaultCurrency: string;
     smtpHost: string;
     smtpPort: number;
@@ -41,6 +34,7 @@ interface Settings {
     smtpSecure: boolean;
 }
 const DEFAULTS: Settings = {
+    defaultCurrency: "usd",
     siteName: "Destekol Charitable Non-Profit Association", logoText: "Destekol",
     logoImage: "", heroImage: "",
     contactEmail: "", contactPhone: "",
@@ -50,9 +44,7 @@ const DEFAULTS: Settings = {
     gaMeasurementId: "", // 🌟 القيمة الافتراضية لحقل غوغل
     primaryColor: "#0069D2", accentColor: "#F00F5A",
     heroSlides: "", socialPosition: "right",
-    enableStripe: true, enablePaypal: true,
-    stripeSecretKey: "", stripePublishableKey: "", stripeWebhookSecret: "",
-    paypalClientId: "", paypalClientSecret: "", paypalMode: "sandbox", defaultCurrency: "usd",
+
     smtpHost: "my.mailbux.com", smtpPort: 587, smtpUser: "", smtpPassword: "",
     smtpFrom: "", smtpFromName: "Destekol Charitable Non-Profit Association", smtpSecure: false,
 };
@@ -230,10 +222,7 @@ export default function AdminSettingsPage() {
     }
     const inp = "w-full rounded-xl border border-line bg-dashbg py-2.5 px-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand/30 text-ink";
     const lbl = "block text-xs text-muted font-semibold uppercase tracking-wider mb-1.5";
-    // Stripe key type detection
-    const stripeMode = settings?.stripeSecretKey?.startsWith("sk_live_") ? "live"
-        : settings?.stripeSecretKey?.startsWith("sk_test_") ? "test"
-            : null;
+
     // Active SMTP provider
     const activeSmtpHost = KNOWN_HOSTS.includes(settings?.smtpHost || "") ? settings?.smtpHost : "__custom__";
     if (loading)
@@ -350,106 +339,7 @@ export default function AdminSettingsPage() {
           </div>
         </section>
 
-        {/* ── Stripe ── */}
-        <section className="bg-white rounded-2xl border border-line p-6 space-y-4">
-          <div className="flex items-center justify-between">
-            <SectionHead icon="wallet">Stripe</SectionHead>
-            <div className="flex items-center gap-2 -mt-3">
-              <span className="text-xs text-muted font-semibold">Enable</span>
-              <Toggle checked={settings.enableStripe} onChange={() => upd("enableStripe", !settings.enableStripe)}/>
-            </div>
-          </div>
-
-          {stripeMode === "live" && (<div className="bg-danger/8 border border-danger/25 rounded-xl p-3 text-xs text-danger font-semibold">
-              🔴 Live mode — real card charges will be processed.
-            </div>)}
-          {stripeMode === "test" && (<div className="bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-700 font-semibold">
-              🧪 Test mode — no real charges. Use test cards only.
-            </div>)}
-          {settings.enableStripe && !settings.stripeSecretKey && (<div className="bg-danger/8 border border-danger/20 rounded-xl p-3 text-xs text-danger font-semibold">
-              ⚠ Stripe is enabled but Secret Key is empty — card payments will fail.
-            </div>)}
-          {settings.enableStripe && settings.stripeSecretKey && !settings.stripePublishableKey && (<div className="bg-danger/8 border border-danger/20 rounded-xl p-3 text-xs text-danger font-semibold">
-              ⚠ Publishable Key is empty — the checkout page will fail to load.
-            </div>)}
-          {!settings.enableStripe && (<div className="bg-warning/8 border border-warning/20 rounded-xl p-3 text-xs text-warning font-semibold">
-              ⚠ Stripe is disabled — card payments will not work.
-            </div>)}
-
-          <div className="bg-blue-50 border border-blue-100 rounded-xl p-3 text-xs text-blue-700">
-            Keys from <a href="https://dashboard.stripe.com/apikeys" target="_blank" rel="noopener" className="underline font-semibold">dashboard.stripe.com/apikeys</a> ·
-            Webhook from <a href="https://dashboard.stripe.com/webhooks" target="_blank" rel="noopener" className="underline font-semibold">dashboard.stripe.com/webhooks</a>
-            <br />Endpoint URL: <code className="bg-blue-100 px-1 rounded">/api/webhooks/stripe</code>
-          </div>
-
-          <div className="grid sm:grid-cols-2 gap-4">
-            <SecretInput label="Secret Key (sk_...)" value={settings.stripeSecretKey} onChange={v => upd("stripeSecretKey", v)} placeholder="sk_live_..."/>
-            <div><label className={lbl}>Publishable Key (pk_...)</label>
-              <input value={settings.stripePublishableKey} onChange={e => upd("stripePublishableKey", e.target.value)} className={inp} placeholder="pk_live_..."/></div>
-          </div>
-          <SecretInput label="Webhook Secret (whsec_...)" value={settings.stripeWebhookSecret} onChange={v => upd("stripeWebhookSecret", v)} placeholder="whsec_..."/>
-        </section>
-
-        {/* ── PayPal ── */}
-        <section className="bg-white rounded-2xl border border-line p-6 space-y-4">
-          <div className="flex items-center justify-between">
-            <SectionHead icon="wallet">PayPal</SectionHead>
-            <div className="flex items-center gap-2 -mt-3">
-              <span className="text-xs text-muted font-semibold">Enable</span>
-              <Toggle checked={settings.enablePaypal} onChange={() => upd("enablePaypal", !settings.enablePaypal)}/>
-            </div>
-          </div>
-
-          {!settings.enablePaypal && (<div className="bg-warning/8 border border-warning/20 rounded-xl p-3 text-xs text-warning font-semibold">
-              ⚠ PayPal is disabled — PayPal payments will not work.
-            </div>)}
-          {settings.enablePaypal && !settings.paypalClientId && (<div className="bg-danger/8 border border-danger/20 rounded-xl p-3 text-xs text-danger font-semibold">
-              ⚠ PayPal is enabled but Client ID is empty — PayPal payments will fail.
-            </div>)}
-
-          <div className="bg-blue-50 border border-blue-100 rounded-xl p-3 text-xs text-blue-700">
-            Credentials from <a href="https://developer.paypal.com/dashboard/applications" target="_blank" rel="noopener" className="underline font-semibold">developer.paypal.com/dashboard</a>
-          </div>
-
-          <div className="grid sm:grid-cols-2 gap-4">
-            <div><label className={lbl}>Client ID</label>
-              <input value={settings.paypalClientId} onChange={e => upd("paypalClientId", e.target.value)} className={inp} placeholder="AaBbCc..."/></div>
-            <SecretInput label="Client Secret" value={settings.paypalClientSecret} onChange={v => upd("paypalClientSecret", v)} placeholder="••••••••"/>
-          </div>
-          <div>
-            <label className={lbl}>Mode</label>
-            <div className="flex gap-4">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input type="radio" name="paypalMode" value="sandbox" checked={settings.paypalMode === "sandbox"} onChange={() => upd("paypalMode", "sandbox")} className="accent-brand"/>
-                <span className="text-sm font-semibold text-muted">Sandbox (testing)</span>
-              </label>
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input type="radio" name="paypalMode" value="live" checked={settings.paypalMode === "live"} onChange={() => upd("paypalMode", "live")} className="accent-brand"/>
-                <span className="text-sm font-bold text-danger">Live (production) ⚠</span>
-              </label>
-            </div>
-            {settings.paypalMode === "live" && (<div className="mt-2 bg-danger/8 border border-danger/20 rounded-xl p-3 text-xs text-danger font-semibold">
-                🔴 Live mode — real money transactions will be processed.
-              </div>)}
-          </div>
-          <div>
-            <label className={lbl}>Default Currency</label>
-            <select value={settings.defaultCurrency} onChange={e => upd("defaultCurrency", e.target.value)} className={inp}>
-              <option value="usd">USD — US Dollar</option>
-              <option value="eur">EUR — Euro</option>
-              <option value="gbp">GBP — British Pound</option>
-              <option value="aed">AED — UAE Dirham</option>
-              <option value="sar">SAR — Saudi Riyal</option>
-              <option value="kwd">KWD — Kuwaiti Dinar</option>
-              <option value="qar">QAR — Qatari Riyal</option>
-              <option value="egp">EGP — Egyptian Pound</option>
-              <option value="try">TRY — Turkish Lira</option>
-              <option value="cad">CAD — Canadian Dollar</option>
-              <option value="aud">AUD — Australian Dollar</option>
-            </select>
-            <p className="text-xs text-muted mt-1">Used for all new donations. Existing donations keep their original currency.</p>
-          </div>
-        </section>
+<section className="bg-white rounded-2xl border border-line p-6"><SectionHead icon="wallet">PayTR</SectionHead><p className="text-sm text-muted">Planned methods: Visa / Mastercard / TROY, Havale / EFT / FAST, and recurring monthly donations. Activation is pending. Merchant credentials must be configured securely on the server. Monthly donations require PayTR Direct API, card storage and Non3D approval.</p></section>
 
         {/* ── Email Server ── */}
         <section className="bg-white rounded-2xl border border-line p-6 space-y-4">

@@ -10,6 +10,10 @@ interface Donation {
     frequency: string;
     status: string;
     provider: string;
+    providerRef?: string;
+    subscriptionStatus?: string | null;
+    refundStatus?: string;
+    refundedAmount?: number;
     receiptNumber?: string;
     createdAt: string;
     campaign?: {
@@ -26,12 +30,19 @@ export default function DonationsClient({ locale, dict: D }: {
     const [donations, setDonations] = useState<Donation[]>([]);
     const [loading, setLoading] = useState(true);
     const [cancelling, setCancelling] = useState<string | null>(null);
+    const [cancelError, setCancelError] = useState('');
+    const paymentCopy = ({
+        ar: { refunded: 'مستردة', partial: 'استرداد جزئي', cancelled: 'الاشتراك ملغى', suspended: 'الاشتراك معلّق', error: 'تعذّر تأكيد إلغاء الاشتراك. حاول مجددًا أو تواصل مع info@destekol.org.' },
+        en: { refunded: 'Refunded', partial: 'Partially refunded', cancelled: 'Subscription cancelled', suspended: 'Subscription suspended', error: 'Cancellation could not be confirmed. Try again or contact info@destekol.org.' },
+        fr: { refunded: 'Remboursé', partial: 'Remboursement partiel', cancelled: 'Abonnement résilié', suspended: 'Abonnement suspendu', error: 'La résiliation n’a pas pu être confirmée. Réessayez ou contactez info@destekol.org.' },
+        tr: { refunded: 'İade edildi', partial: 'Kısmi iade', cancelled: 'Abonelik iptal edildi', suspended: 'Abonelik askıya alındı', error: 'İptal teyit edilemedi. Tekrar deneyin veya info@destekol.org ile iletişime geçin.' },
+    } as Record<string, { refunded: string; partial: string; cancelled: string; suspended: string; error: string }>)[locale];
     const dateLocale = locale === "ar" ? "ar-EG" : locale === "tr" ? "tr-TR" : locale === "fr" ? "fr-FR" : "en-GB";
     const STATUS: Record<string, string> = {
         COMPLETED: D["account.status_completed"] || (locale === "ar" ? "مكتمل" : "Completed"),
         PENDING: D["account.status_pending"] || (locale === "ar" ? "معلق" : "Pending"),
         FAILED: D["account.status_failed"] || (locale === "ar" ? "فاشل" : "Failed"),
-        REFUNDED: D["account.status_refunded"] || (locale === "ar" ? "ملغي" : "Cancelled"), // REFUNDED = subscription cancelled
+        REFUNDED: paymentCopy.refunded,
     };
     const STATUS_CLS: Record<string, string> = { COMPLETED: "bg-success/10 text-success", PENDING: "bg-warning/10 text-warning", FAILED: "bg-danger/10 text-danger", REFUNDED: "bg-muted/10 text-muted" };
     useEffect(() => {
@@ -48,10 +59,14 @@ export default function DonationsClient({ locale, dict: D }: {
         if (!confirm(D["account.cancel_confirm"]))
             return;
         setCancelling(id);
-        const res = await fetch("/api/donor/cancel-subscription", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ donationId: id }) });
-        if (res.ok)
-            setDonations(prev => prev.map(x => x.id === id ? { ...x, status: "REFUNDED" } : x));
-        setCancelling(null);
+        setCancelError('');
+        try {
+            const res = await fetch("/api/donor/cancel-subscription", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ donationId: id }) });
+            const result = await res.json();
+            if (res.ok && result.subscriptionStatus === 'CANCELLED') setDonations(prev => prev.map(x => x.id === id ? { ...x, subscriptionStatus: 'CANCELLED' } : x));
+            else setCancelError(paymentCopy.error);
+        } catch { setCancelError(paymentCopy.error); }
+        finally { setCancelling(null); }
     }
     if (loading)
         return <div className="min-h-[50vh] flex items-center justify-center text-muted">{D["common.loading"]}</div>;
@@ -60,6 +75,7 @@ export default function DonationsClient({ locale, dict: D }: {
         <Link href={`${p}/account`} aria-label={D["account.back_to_account"]} className="text-muted hover:text-ink"><Icon name="arrow-left" size={20}/></Link>
         <h1 className="font-display text-2xl font-extrabold text-ink">{D["account.my_donations"]}</h1>
       </div>
+      {cancelError && <p role="alert" className="mb-5 rounded-xl bg-red-50 p-4 text-red-700">{cancelError}</p>}
       {donations.length === 0 ? (<div className="text-center py-20 bg-white rounded-xl2 border border-line">
           <Icon name="heart" size={48} className="text-line mx-auto mb-4"/>
           <p className="text-muted mb-6">{D["account.no_donations"]}</p>
@@ -76,12 +92,12 @@ export default function DonationsClient({ locale, dict: D }: {
                   {d.receiptNumber && <div className="text-xs text-muted/60 font-mono mt-0.5">{d.receiptNumber}</div>}
                   <div className="flex flex-wrap gap-3 mt-2">
                     {d.status === "COMPLETED" && <a href={`/api/donor/receipt/${d.id}`} className="text-xs text-brand hover:underline flex items-center gap-1 font-semibold"><Icon name="file-text" size={12}/>{D["account.receipt"]}</a>}
-                    {d.status === "COMPLETED" && d.frequency === "MONTHLY" && <button onClick={() => cancelSub(d.id)} disabled={cancelling === d.id} className="text-xs text-danger hover:underline flex items-center gap-1 font-semibold disabled:opacity-50"><Icon name="x" size={12}/>{cancelling === d.id ? "..." : D["account.cancel_sub"]}</button>}
+                    {["COMPLETED", "REFUNDED"].includes(d.status) && d.frequency === "MONTHLY" && d.subscriptionStatus !== "CANCELLED" && d.provider === "PAYTR" && d.subscriptionStatus === "ACTIVE" && <button onClick={() => cancelSub(d.id)} disabled={cancelling === d.id} className="text-xs text-danger hover:underline flex items-center gap-1 font-semibold disabled:opacity-50"><Icon name="x" size={12}/>{cancelling === d.id ? "..." : D["account.cancel_sub"]}</button>}
                   </div>
                 </div>
                 <div className="text-right shrink-0">
-                  <span className={`text-xs font-bold rounded-full px-3 py-1.5 ${STATUS_CLS[d.status] || ""}`}>{STATUS[d.status] || d.status}</span>
-                  <div className="text-xs text-muted mt-2">{new Date(d.createdAt).toLocaleDateString(dateLocale)}</div>
+                  <span className={`text-xs font-bold rounded-full px-3 py-1.5 ${STATUS_CLS[d.status] || ""}`}>{d.refundStatus === "PARTIAL" ? paymentCopy.partial : STATUS[d.status] || d.status}</span>
+                  <div className="text-xs mt-2">{d.subscriptionStatus === "CANCELLED" ? paymentCopy.cancelled : d.subscriptionStatus === "SUSPENDED" ? paymentCopy.suspended : ""}</div>{Number(d.refundedAmount) > 0 && <div className="text-xs text-muted mt-2">{paymentCopy.refunded}: {new Intl.NumberFormat(locale, {style: "currency", currency: d.currency || "USD"}).format(Number(d.refundedAmount))}</div>}<div className="text-xs text-muted mt-2">{new Date(d.createdAt).toLocaleDateString(dateLocale)}</div>
                 </div>
               </div>
             </div>))}

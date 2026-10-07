@@ -116,6 +116,8 @@ export default async function AdminDonationsPage({ searchParams, }: {
                   <span className={`text-xs font-semibold rounded-full px-2.5 py-1 ${STATUS_STYLE[d.status] || "bg-muted/10 text-muted"}`}>
                     {STATUS_LABEL[d.status] || d.status}
                   </span>
+                  {d.subscriptionStatus && <div className="mt-2 text-xs text-muted">Subscription: {d.subscriptionStatus}</div>}
+                  {Number(d.refundedAmount) > 0 && <div className="mt-2 text-xs text-orange-700">{d.refundStatus === 'PARTIAL' ? 'Partial refund' : 'Full refund'}: {formatCurrency(Number(d.refundedAmount), (d.currency || 'usd').toUpperCase())}</div>}
                 </td>
                 <td className="py-3 px-4 text-muted text-xs">
                   {new Date(d.createdAt).toLocaleDateString("en-GB")}

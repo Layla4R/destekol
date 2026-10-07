@@ -1,3 +1,4 @@
+const SETTINGS_FIELDS = ["siteName","logoText","logoImage","primaryColor","accentColor","contactEmail","contactPhone","whatsappNumber","facebookUrl","twitterUrl","instagramUrl","youtubeUrl","linkedinUrl","tiktokUrl","footerTagline","footerDescription","copyrightText","defaultCurrency","smtpHost","smtpPort","smtpUser","smtpPassword","smtpFrom","smtpFromName","smtpSecure","socialPosition","id","updatedAt"];
 import { requireAdmin } from "@/lib/auth";
 import { getSupabase } from "@/lib/supabase";
 import { NextRequest,NextResponse } from "next/server";
@@ -19,8 +20,8 @@ export async function GET(req: Request) {
         settings = created;
     }
     // Mask sensitive keys in response — client should never see raw secrets
-    const masked = { ...settings };
-    const sensitiveKeys = ["stripeSecretKey", "stripeWebhookSecret", "paypalClientSecret", "smtpPassword"];
+    const masked: Record<string, any> = Object.fromEntries(Object.entries(settings || {}).filter(([key]) => SETTINGS_FIELDS.includes(key)));
+    const sensitiveKeys = [   "smtpPassword"];
     for (const k of sensitiveKeys) {
         if (masked[k])
             masked[k] = masked[k].slice(0, 4) + "*".repeat(Math.max(0, masked[k].length - 4));
@@ -38,7 +39,7 @@ export async function PATCH(req: NextRequest) {
     const data: any = {};
     // Skip masked values — if a secret field contains "***" it was masked in GET response
     // and should not overwrite the real value in DB
-    const SENSITIVE = new Set(["stripeSecretKey", "stripeWebhookSecret", "paypalClientSecret", "smtpPassword"]);
+    const SENSITIVE = new Set([   "smtpPassword"]);
     for (const key of [
         "siteName",
         "logoText",
@@ -57,14 +58,14 @@ export async function PATCH(req: NextRequest) {
         "footerTagline",
         "footerDescription",
         "copyrightText",
-        "enableStripe",
-        "enablePaypal",
-        "stripeSecretKey",
-        "stripePublishableKey",
-        "stripeWebhookSecret",
-        "paypalClientId",
-        "paypalClientSecret",
-        "paypalMode",
+
+
+
+
+
+
+
+
         "defaultCurrency",
         // SMTP / MAILBUX
         "smtpHost",
@@ -96,8 +97,8 @@ export async function PATCH(req: NextRequest) {
     }
     const { data: rawSettings } = await supabase.from("SiteSettings").select("*").eq("id", "default").maybeSingle();
     // Mask sensitive keys in PATCH response too
-    const masked = { ...rawSettings };
-    const sensitiveKeys = ["stripeSecretKey", "stripeWebhookSecret", "paypalClientSecret", "smtpPassword"];
+    const masked: Record<string, any> = Object.fromEntries(Object.entries(rawSettings || {}).filter(([key]) => SETTINGS_FIELDS.includes(key)));
+    const sensitiveKeys = [   "smtpPassword"];
     for (const k of sensitiveKeys) {
         if ((masked as any)[k])
             (masked as any)[k] = (masked as any)[k].slice(0, 4) + "*".repeat(Math.max(0, (masked as any)[k].length - 4));

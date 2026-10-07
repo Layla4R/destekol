@@ -11,11 +11,11 @@ const { pickPublicSiteSettings, PUBLIC_SITE_SETTINGS_SELECT } = loaded.exports;
 
 test('serialized public settings exclude credentials and future private fields', () => {
   const row = { logoText: 'Example', logoImage: '/logo.png', accentColor: '#123456', whatsappNumber: null,
-    smtpPassword: 'FAKE_SMTP_SECRET', stripeSecretKey: 'FAKE_STRIPE_SECRET',
-    paypalClientSecret: 'FAKE_PAYPAL_SECRET', futurePrivateKey: 'FAKE_FUTURE_SECRET' };
+    smtpPassword: 'FAKE_SMTP_SECRET', paymentGatewaySecret: 'FAKE_PAYMENT_SECRET',
+    externalServiceSecret: 'FAKE_EXTERNAL_SECRET', futurePrivateKey: 'FAKE_FUTURE_SECRET' };
   const projected = pickPublicSiteSettings(row);
   assert.deepEqual(projected, { logoText: 'Example', logoImage: '/logo.png', accentColor: '#123456', whatsappNumber: null });
-  assert.doesNotMatch(JSON.stringify(projected), /FAKE_|smtpPassword|stripeSecretKey|paypalClientSecret|futurePrivateKey/);
+  assert.doesNotMatch(JSON.stringify(projected), /FAKE_|smtpPassword|paymentGatewaySecret|externalServiceSecret|futurePrivateKey/);
   assert.equal(row.smtpPassword, 'FAKE_SMTP_SECRET');
 });
 
