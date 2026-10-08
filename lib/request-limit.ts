@@ -4,6 +4,8 @@ import { isIP } from 'node:net';
 import { getSupabase } from './supabase';
 export const REQUEST_LIMITS = {
     'donor-login': { limit: 10, seconds: 900 },
+    contact: { limit: 5, seconds: 600 },
+    'contact-status': { limit: 30, seconds: 600 },
     chat: { limit: 20, seconds: 60 },
     'chat-audio': { limit: 10, seconds: 60 },
 } as const;

@@ -1,5 +1,6 @@
 "use client";
 import Script from 'next/script';
+import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { cookieDisclosures } from '@/lib/cookie-disclosures';
 import { useEffect, useState } from 'react';
@@ -12,6 +13,7 @@ const words = {
     tr: { title: 'Çerez tercihleri', text: 'Zorunlu çerezler her zaman aktiftir. Analitik, pazarlama veya harici içerik için tercih yapın.', settings: 'Çerez ayarları', accept: 'Tümünü kabul et', reject: 'Zorunlu olmayanları reddet', save: 'Tercihlerimi kaydet', analytics: 'Analitik', marketing: 'Pazarlama', functional: 'Harici içerik', policy: 'Çerez politikası', details: 'Sağlayıcı, amaç ve süre' },
 };
 export default function CookieBanner({ locale = 'tr', gaId, gtmId, pixelId }: { locale?: string; isDestekol?: boolean; gaId?: string | null; gtmId?: string; pixelId?: string }) {
+    const privateTracking = /\/contact\/track\/?$/.test(usePathname() || '');
     const t = words[locale as keyof typeof words] || words.tr;
     const [consent, setConsent] = useState<CookieConsent | null>(null);
     const [open, setOpen] = useState(false);
@@ -39,8 +41,8 @@ export default function CookieBanner({ locale = 'tr', gaId, gtmId, pixelId }: { 
     const gtm = gtmId && /^GTM-[A-Z0-9]+$/i.test(gtmId) ? gtmId : null;
     const meta = pixelId && /^\d+$/.test(pixelId) ? pixelId : null;
     return <>
-        {trackingAllowed(consent, 'gtm') && gtm ? <Script id="consented-gtm">{`window.dataLayer=window.dataLayer||[];window.dataLayer.push({'gtm.start':Date.now(),event:'gtm.js'});var s=document.createElement('script');s.async=true;s.src='https://www.googletagmanager.com/gtm.js?id=${gtm}';document.head.appendChild(s);`}</Script> : trackingAllowed(consent, 'ga') && ga ? <><Script src={`https://www.googletagmanager.com/gtag/js?id=${ga}`}/><Script id="consented-ga">{`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}window.gtag=gtag;gtag('consent','default',{analytics_storage:'granted',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});gtag('js',new Date());gtag('config','${ga}');`}</Script></> : null}
-        {trackingAllowed(consent, 'meta') && meta && <Script id="consented-meta">{`!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=true;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=true;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('consent','grant');fbq('init','${meta}');fbq('track','PageView');`}</Script>}
+        {!privateTracking && trackingAllowed(consent, 'gtm') && gtm ? <Script id="consented-gtm">{`window.dataLayer=window.dataLayer||[];window.dataLayer.push({'gtm.start':Date.now(),event:'gtm.js'});var s=document.createElement('script');s.async=true;s.src='https://www.googletagmanager.com/gtm.js?id=${gtm}';document.head.appendChild(s);`}</Script> : !privateTracking && trackingAllowed(consent, 'ga') && ga ? <><Script src={`https://www.googletagmanager.com/gtag/js?id=${ga}`}/><Script id="consented-ga">{`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}window.gtag=gtag;gtag('consent','default',{analytics_storage:'granted',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});gtag('js',new Date());gtag('config','${ga}');`}</Script></> : null}
+        {!privateTracking && trackingAllowed(consent, 'meta') && meta && <Script id="consented-meta">{`!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=true;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=true;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('consent','grant');fbq('init','${meta}');fbq('track','PageView');`}</Script>}
         {open && <div role="dialog" aria-modal="true" aria-label={t.title} className="fixed inset-0 z-[100] flex items-end justify-center bg-black/30 p-3 sm:items-center" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
             <div className="max-h-[85vh] w-full max-w-xl overflow-y-auto rounded-2xl bg-white p-6 text-slate-900 shadow-xl">
                 <h2 className="text-lg font-bold mb-3">{t.title}</h2><p className="text-sm mb-4">{t.text}</p>

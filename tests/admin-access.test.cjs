@@ -77,7 +77,9 @@ test('activation logs never include tokens and notification email excludes compl
  for(const line of auth.split('\n').filter(l=>/console\./.test(l)))assert(!/\btoken\b|opts\.email|error\.message|updateError\.message/.test(line));
  const contact=fs.readFileSync('app/api/contact/route.ts','utf8');
  assert.match(contact,/subject: subject\?\.trim\(\) \|\| null,\s*message: message\.trim\(\)/);
- assert.match(contact,/subject: "New message in the admin dashboard",\s*message: "A new message/);
+ const notification=fs.readFileSync('lib/contact-notifications.ts','utf8');
+ assert.match(notification,/subject: 'New message in the admin dashboard',\s*message: `A new message/);
+ assert(!/row\.(message|name|email)/.test(notification));
 });
 test('session roles and permissions come from the current database, not stale JWT claims',async()=>{
  const {SignJWT}=require('jose');const secret=new TextEncoder().encode('test-only-session-secret-1234567890123456');

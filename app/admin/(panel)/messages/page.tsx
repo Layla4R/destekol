@@ -28,7 +28,7 @@ export default async function MessagesPage({ searchParams }: {
     const sort = (searchParams?.sort === "oldest") ? "oldest" : "newest";
     let query = supabase
         .from("ContactMessage")
-        .select("*", { count: "exact" })
+        .select("id,name,email,subject,message,isRead,createdAt,reference,status,notificationStatus,notificationAttempts", { count: "exact" })
         .order("createdAt", { ascending: sort === "oldest" });
     if (!hasPermission(session, "messages.sensitive.view")) query = query.eq("isSensitive", false);
     else await requirePermission("messages.sensitive.view");
@@ -74,6 +74,8 @@ export default async function MessagesPage({ searchParams }: {
                       {!m.isRead && <span className="text-[10px] bg-brand text-white rounded-full px-2 py-0.5 font-bold">NEW</span>}
                     </div>
                     <a href={`mailto:${m.email}`} className="text-sm text-brand hover:underline">{m.email}</a>
+                    <p dir="ltr" className="text-xs text-brand mt-2">{m.reference} · {({RECEIVED:'Received',IN_PROGRESS:'In progress',ANSWERED:'Answered',CLOSED:'Closed'} as Record<string,string>)[m.status] || m.status}</p>
+                    <p className="text-xs text-muted">Email notification: {m.notificationStatus || 'UNKNOWN'} · Attempts: {m.notificationAttempts || 0}</p>
                     {m.subject && <p className="text-sm font-semibold text-ink mt-1">{m.subject}</p>}
                     <p className="text-sm text-muted mt-2 leading-relaxed whitespace-pre-wrap">{m.message}</p>
                   </div>
@@ -85,7 +87,7 @@ export default async function MessagesPage({ searchParams }: {
                   <span className="text-xs text-muted">
                     {new Date(m.createdAt).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}
                   </span>
-                  <MessageActions canEdit={hasPermission(session,"messages.edit")} canDelete={hasPermission(session,"messages.delete")} id={m.id} isRead={m.isRead} email={m.email}/>
+                  <MessageActions canEdit={hasPermission(session,"messages.edit")} canDelete={hasPermission(session,"messages.delete")} status={m.status} notificationStatus={m.notificationStatus} id={m.id} isRead={m.isRead} email={m.email}/>
                 </div>
               </div>
             </div>))}

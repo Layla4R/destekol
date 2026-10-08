@@ -7,6 +7,8 @@ export default function ContactForm({ email, locale = "ar", dict = {} }: {
     dict?: Record<string, string>;
 }) {
     const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+    const [receipt,setReceipt]=useState<{reference:string;trackingUrl:string}|null>(null);
+    const [copied,setCopied]=useState(false);
     const [error, setError] = useState("");
     const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
     const t = (ar: string, en: string, fr: string, tr: string) => locale === "fr" ? fr : locale === "tr" ? tr : locale === "en" ? en : ar;
@@ -18,14 +20,15 @@ export default function ContactForm({ email, locale = "ar", dict = {} }: {
         try {
             const res = await fetch("/api/contact", {
                 method: "POST", headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ ...form, to: email }),
+                body: JSON.stringify({ ...form, locale }),
             });
             const d = await res.json();
-            if (!res.ok) {
+            if (!res.ok || !d.ok || !d.reference || !d.trackingUrl) {
                 setError(d.error || t("حدث خطأ", "Error", "Erreur", "Hata"));
                 setStatus("error");
                 return;
             }
+            setReceipt({reference:d.reference,trackingUrl:d.trackingUrl});
             setStatus("sent");
         }
         catch {
@@ -40,12 +43,19 @@ export default function ContactForm({ email, locale = "ar", dict = {} }: {
           <Icon name="check" size={32}/>
         </div>
         <h3 className="font-display text-xl font-bold text-ink mb-2">
-          {t("تم إرسال رسالتك!", "Message Sent!", "Message Envoyé !", "Mesajınız Gönderildi!")}
+          {t("تم استلام رسالتك!", "Message received!", "Votre message a été reçu !", "Mesajınız alındı!")}
         </h3>
         <p className="text-muted">
           {t("سنرد عليكم في أقرب وقت ممكن.", "We'll get back to you as soon as possible.", "Nous vous répondrons dans les plus brefs délais.", "En kısa sürede size geri döneceğiz.")}
         </p>
-        <button onClick={() => { setStatus("idle"); setForm({ name: "", email: "", subject: "", message: "" }); }} className="mt-6 text-sm text-brand hover:underline">
+        {receipt&&<div className="mt-5 space-y-3">
+          <p className="text-sm text-muted">{t("رقم الطلب", "Request reference", "Référence de la demande", "Talep referans numarası")}</p>
+          <p dir="ltr" className="font-bold text-brand">{receipt.reference}</p>
+          <button type="button" className="block mx-auto font-bold text-brand underline" onClick={()=>window.location.assign(receipt.trackingUrl)}>{t("متابعة الطلب", "Track your request", "Suivre votre demande", "Talebinizi takip edin")}</button>
+          <button type="button" className="text-sm text-brand underline" onClick={async()=>{try{await navigator.clipboard.writeText(new URL(receipt.trackingUrl,window.location.origin).href);setCopied(true);}catch{setCopied(false);}}}>{copied?t("تم النسخ", "Copied", "Copié", "Kopyalandı"):t("نسخ رابط المتابعة", "Copy tracking link", "Copier le lien de suivi", "Takip bağlantısını kopyala")}</button>
+          <p className="text-xs text-muted">{t("احتفظ برابط المتابعة الخاص ولا تشاركه مع الآخرين.", "Keep your private tracking link and do not share it with others.", "Conservez votre lien privé et ne le partagez pas.", "Özel takip bağlantınızı saklayın ve başkalarıyla paylaşmayın.")}</p>
+        </div>}
+        <button onClick={() => { setReceipt(null);setCopied(false);setStatus("idle"); setForm({ name: "", email: "", subject: "", message: "" }); }} className="mt-6 text-sm text-brand hover:underline">
           {t("إرسال رسالة أخرى", "Send another message", "Envoyer un autre message", "Başka bir mesaj gönder")}
         </button>
       </div>);
@@ -91,6 +101,7 @@ export default function ContactForm({ email, locale = "ar", dict = {} }: {
             : t("إرسال الرسالة", "Send Message", "Envoyer le Message", "Mesaj Gönder")}
       </button>
 
+      <a href={`/${locale}/contact/track`} className="block text-center text-sm text-brand underline">{t("متابعة طلب سابق", "Track an existing request", "Suivre une demande existante", "Mevcut talebi takip edin")}</a>
       <p className="text-center text-xs text-muted flex items-center justify-center gap-1">
         <Icon name="shield-check" size={12}/>
         {t("رسالتك محمية ومشفرة", "Your message is secure and encrypted", "Votre message est sécurisé", "Mesajınız güvenli ve şifreli")}

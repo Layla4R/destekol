@@ -1,4 +1,4 @@
-import { getRequestSite,siteEnv } from "@/lib/request-site";
+import { getRequestSite,siteEnv } from "./request-site";
 /**
  * MAILBUX / Gmail SMTP Mailer
  * Uses settings stored in SiteSettings (smtpHost, smtpPort, smtpUser, smtpPassword, ...)
@@ -12,6 +12,7 @@ export interface MailOptions {
     html: string;
     text?: string;
     replyTo?: string;
+    timeoutMs?: number;
 }
 export interface SmtpConfig {
     host: string;
@@ -60,7 +61,7 @@ export async function sendMail(opts: MailOptions): Promise<boolean> {
             console.warn("[mailer] ❌ توقف الإرسال: إعدادات SMTP غير مكتملة.");
             return false;
         }
-        const transporter = buildTransporter(cfg);
+        const transporter = buildTransporter(cfg, opts.timeoutMs);
         const fromField = `"${cfg.fromName}" <${cfg.from}>`;
         const info = await transporter.sendMail({
             from: fromField,
@@ -70,11 +71,13 @@ export async function sendMail(opts: MailOptions): Promise<boolean> {
             html: opts.html,
             text: opts.text || opts.html.replace(/<[^>]*>/g, ""),
         });
-        console.log("[mailer] ✅ تم إرسال البريد الإلكتروني بنجاح:", info.messageId, "إلى:", opts.to);
-        return true;
+        const sent = info.accepted?.length > 0 && !info.rejected?.length;
+        if (sent) console.info('[mailer] SMTP accepted the message.');
+        else console.warn('[mailer] SMTP did not accept all recipients.');
+        return sent;
     }
     catch (err) {
-        console.error("[mailer] ❌ خطأ في سيرفر البريد (SMTP Error):", err);
+        console.error("[mailer] SMTP delivery failed.");
         return false;
     }
 }
@@ -104,8 +107,9 @@ function applyVars(html: string, vars: Record<string, string>): string {
     return html.replace(/\{\{(\w+)\}\}/g, (_, k) => vars[k] ?? `{{${k}}}`);
 }
 /** Build a nodemailer transporter from config. */
-function buildTransporter(cfg: SmtpConfig) {
+function buildTransporter(cfg: SmtpConfig, timeoutMs?: number) {
     return nodemailer.createTransport({
+        ...(timeoutMs ? { connectionTimeout: timeoutMs, greetingTimeout: timeoutMs, socketTimeout: timeoutMs } : {}),
         host: cfg.host,
         port: cfg.port,
         secure: cfg.secure, // false = STARTTLS (port 587), true = SSL (port 465)
@@ -372,7 +376,7 @@ export async function sendContactNotification(opts: {
     const vars = { senderName: opts.senderName, senderEmail: opts.senderEmail, message: opts.message, subject: opts.subject || "", siteUrl };
     const tpl = await loadEmailTemplate("contact_notification");
     if (tpl)
-        return sendMail({ to: opts.adminEmail, subject: applyVars(tpl.subject, vars), html: applyVars(tpl.html, vars), replyTo: opts.senderEmail });
+        return sendMail({ to: opts.adminEmail, subject: applyVars(tpl.subject, vars), html: applyVars(tpl.html, vars), replyTo: opts.senderEmail, timeoutMs: 8000 });
     const html = emailWrapper(`
     <h2 style="color:#0069D2;margin-top:0;">📩 رسالة جديدة</h2>
     <div style="background:#F4F7FD;border-radius:12px;padding:24px;border:1px solid #DDE4F0;margin-bottom:20px;">
@@ -391,6 +395,7 @@ export async function sendContactNotification(opts: {
         subject: `رسالة جديدة من ${opts.senderName}`,
         html,
         replyTo: opts.senderEmail,
+        timeoutMs: 8000,
     });
 }
 /** Newsletter welcome email */
