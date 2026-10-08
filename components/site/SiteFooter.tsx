@@ -410,7 +410,7 @@ export default function SiteFooter({ isDestekol = false, navItems = [], settings
             Contact Column
         =================================================== */}
 
-        <div>
+        <div className="destekol-footer-contact" style={{ textAlign: loc === 'ar' ? 'right' : 'left' }}>
           <h2 className="font-bold text-white/80 mb-5 text-sm tracking-[0.2em] uppercase">
             {d("footer.contact_us", {
             ar: "معلومات التواصل",
@@ -424,30 +424,24 @@ export default function SiteFooter({ isDestekol = false, navItems = [], settings
             <ul className="space-y-3 text-sm text-white/80">
               {/* Email */}
               <li>
-                <a href={`mailto:${contactEmail}`} aria-label={`Send email to ${contactEmail}`} className="flex items-center gap-2 hover:text-white transition">
-                  <Icon name="mail" size={15} className="text-white/80 shrink-0"/>
-
-                  {contactEmail}
+                <a href={`mailto:${contactEmail}`} aria-label={`Send email to ${contactEmail}`} className="block hover:text-white transition">
+                  <bdi dir="ltr">{contactEmail}</bdi>
                 </a>
               </li>
 
-              {settings?.contactAddress && <li dir="ltr" className="leading-relaxed break-words">{settings.contactAddress}</li>}
+              {settings?.contactAddress && <li className="leading-relaxed break-words"><bdi dir="ltr">{settings.contactAddress}</bdi></li>}
 
               {/* Phone */}
               {contactPhone && (<li>
-                  <a href={`tel:${contactPhone}`} aria-label={`Call ${contactPhone}`} className="flex items-center gap-2 hover:text-white transition">
-                    <Icon name="phone" size={15} className="text-white/80 shrink-0"/>
-
-                    <span dir="ltr">{contactPhone}</span>
+                  <a href={`tel:${contactPhone}`} aria-label={`Call ${contactPhone}`} className="block hover:text-white transition">
+                    <bdi dir="ltr">{contactPhone}</bdi>
                   </a>
                 </li>)}
 
               {/* WhatsApp */}
               {whatsappUrl && (<li>
-                  <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" aria-label="Contact us on WhatsApp" className="flex items-center gap-2 hover:text-white transition">
-                    <Icon name="message-circle" size={15} className="text-white/80 shrink-0"/>
-
-                    WhatsApp
+                  <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" aria-label="Contact us on WhatsApp" className="block hover:text-white transition">
+                    <bdi dir="ltr">WhatsApp</bdi>
                   </a>
                 </li>)}
             </ul>
