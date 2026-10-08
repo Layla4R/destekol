@@ -1,4 +1,4 @@
-import { createHash, randomBytes, randomUUID } from 'node:crypto';
+import { randomBytes, randomUUID } from 'node:crypto';
 import { getSupabaseOrNull } from '@/lib/supabase';
 import { notifyContact } from '@/lib/contact-notifications';
 import { enforceRequestLimit } from '@/lib/request-limit';
@@ -18,9 +18,8 @@ export async function POST(req: NextRequest) {
         if (!db) return NextResponse.json({ error: 'Service unavailable.' }, { status: 503 });
         const id = randomUUID();
         const reference = 'DO-' + randomBytes(8).toString('hex').toUpperCase();
-        const token = randomBytes(32).toString('hex');
         const { error } = await db.from('ContactMessage').insert({
-            id, reference, trackingTokenHash: createHash('sha256').update(token).digest('hex'),
+            id, reference,
             name: name.trim(), email: email.trim().toLowerCase(), subject: subject?.trim() || null, message: message.trim(),
         });
         if (error) return NextResponse.json({ error: 'Message could not be saved. Please try again.' }, { status: 503 });
@@ -28,7 +27,7 @@ export async function POST(req: NextRequest) {
         try { await notifyContact(id); } catch { /* Persisted pending/leased notices remain retryable. */ }
         const language = ['ar','en','fr','tr'].includes(locale) ? locale : 'tr';
         return NextResponse.json({ ok: true, reference, status: 'RECEIVED',
-            trackingUrl: `/${language}/contact/track#reference=${reference}&token=${token}` },
+            trackingUrl: `/${language}/contact/track#reference=${reference}` },
             { headers: { 'Cache-Control': 'no-store' } });
     } catch { return NextResponse.json({ error: 'Server error. Please try again.' }, { status: 500 }); }
 }

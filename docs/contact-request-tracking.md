@@ -2,11 +2,13 @@
 
 Success is returned only after the message and pending notification are saved.
 SMTP failure never requires resubmission: it leaves a durable FAILED/PENDING
-notification. The sender receives a random reference and a private tracking link
-in four languages. The token is stored only as SHA-256; the URL fragment is removed
-from browser history on arrival. Tracking is POST-only, rate limited and returns
-only status and dates, never complaint text, names or email. Analytics and pixels
-are suppressed on tracking pages. Keep the private link to revisit the request.
+notification. The sender receives a random 64-bit reference and a tracking link
+in four languages. Status lookup requires only this reference; no separate code
+is requested. Old links containing a token still work. The URL fragment is removed
+on arrival. Tracking is POST-only, rate limited and returns only status and dates,
+never complaint text, names or email. Anyone holding a reference can see this
+minimal status; detailed requests remain restricted to authorized staff.
+Analytics and pixels are suppressed on tracking pages.
 
 Authorized complaints staff can set Received, In progress, Answered or Closed in
 /admin/messages. Reading and processing sensitive requests requires specialist

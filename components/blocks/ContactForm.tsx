@@ -53,7 +53,7 @@ export default function ContactForm({ email, locale = "ar", dict = {} }: {
           <p dir="ltr" className="font-bold text-brand">{receipt.reference}</p>
           <button type="button" className="block mx-auto font-bold text-brand underline" onClick={()=>window.location.assign(receipt.trackingUrl)}>{t("متابعة الطلب", "Track your request", "Suivre votre demande", "Talebinizi takip edin")}</button>
           <button type="button" className="text-sm text-brand underline" onClick={async()=>{try{await navigator.clipboard.writeText(new URL(receipt.trackingUrl,window.location.origin).href);setCopied(true);}catch{setCopied(false);}}}>{copied?t("تم النسخ", "Copied", "Copié", "Kopyalandı"):t("نسخ رابط المتابعة", "Copy tracking link", "Copier le lien de suivi", "Takip bağlantısını kopyala")}</button>
-          <p className="text-xs text-muted">{t("احتفظ برابط المتابعة الخاص ولا تشاركه مع الآخرين.", "Keep your private tracking link and do not share it with others.", "Conservez votre lien privé et ne le partagez pas.", "Özel takip bağlantınızı saklayın ve başkalarıyla paylaşmayın.")}</p>
+          <p className="text-xs text-muted">{t("احتفظ برقم الطلب أو رابط المتابعة للرجوع إليه لاحقًا.", "Keep your request reference or tracking link for future use.", "Conservez la référence de votre demande ou le lien de suivi.", "Daha sonra kullanmak için talep referans numaranızı veya takip bağlantınızı saklayın.")}</p>
         </div>}
         <button onClick={() => { setReceipt(null);setCopied(false);setStatus("idle"); setForm({ name: "", email: "", subject: "", message: "" }); }} className="mt-6 text-sm text-brand hover:underline">
           {t("إرسال رسالة أخرى", "Send another message", "Envoyer un autre message", "Başka bir mesaj gönder")}
