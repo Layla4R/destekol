@@ -705,9 +705,12 @@ body[data-site="destekol"] .home-layout .home-section--stories { margin-top: 14p
 .destekol-newsletter-inner { position: relative; z-index: 1; display: grid; grid-template-columns: 1fr minmax(340px, .9fr); align-items: center; gap: 36px; width: min(100%, 1160px); margin: 0 auto; padding: 8px 0; }
 .destekol-newsletter-copy h2 { margin: 0 0 7px; color: #063962; font-size: clamp(20px, 2vw, 27px); line-height: 1.25; font-weight: 800; }
 .destekol-newsletter-copy p { margin: 0; color: #46677c; font-size: 13px; line-height: 1.7; }
-.destekol-newsletter-inner form { width: 100%; max-width: none; margin: 0; gap: 8px; padding: 5px; background: white; border: 1px solid #dbe9ef; border-radius: 10px; box-shadow: 0 5px 18px #0a517108; }
-.destekol-newsletter-inner .newsletter-email { min-width: 0; border: 0; border-radius: 7px; padding: 11px 12px; color: #063962; background: #fff; font-size: 12px; }
-.destekol-newsletter-inner .newsletter-submit { flex: 0 0 auto; min-height: 40px; padding: 9px 18px; border: 0; border-radius: 8px; background: linear-gradient(135deg, #0a83bc, #066090); font-size: 12px; }
+.destekol-newsletter-inner form { width: 100%; max-width: none; margin: 0; padding: 26px; background: linear-gradient(145deg, #fff 15%, #f4fbfc 100%); border: 1px solid #dbe9ef; border-radius: 22px; box-shadow: 0 12px 32px #0a51710b; }
+.destekol-newsletter-inner .newsletter-email { min-width: 0; min-height: 52px; border: 1px solid #dbe9ef; border-radius: 12px; padding: 13px 16px; color: #063962; background: #fff; font-size: 14px; }
+.newsletter-form .newsletter-submit { min-width: 190px; min-height: 48px; border: 0; background: linear-gradient(110deg, #063962 0%, #087ca4 55%, #159b9e 100%); box-shadow: 0 6px 16px #087ca426; }
+.destekol-newsletter-inner .newsletter-submit { padding: 12px 30px; border-radius: 12px; font-size: 14px; }
+.destekol-newsletter-inner form label { line-height: 1.9; font-size: 12px; }
+.destekol-newsletter-inner form p { line-height: 1.9; color: #58758a; }
 
 .destekol-footer { width: min(calc(100% - 40px), 1440px); margin: 10px auto 24px; overflow: hidden; border: 1px solid #e5eef2; border-radius: 18px; color: #063962; background: #fff !important; box-shadow: 0 8px 28px #0a51710b; }
 .destekol-footer > div:first-child { height: 3px !important; background: linear-gradient(90deg, #d9a750, #098494, #066090) !important; }
@@ -746,9 +749,9 @@ body[data-site="destekol"] .home-layout .home-section--stories { margin-top: 14p
   .destekol-newsletter-inner { grid-template-columns: 1fr; gap: 13px; padding: 4px 0; }
   .destekol-newsletter-copy h2 { font-size: 20px; }
   .destekol-newsletter-copy p { font-size: 12px; }
-  .destekol-newsletter-inner form { gap: 4px; }
+  .destekol-newsletter-inner form { padding: 20px 18px; }
   .destekol-newsletter-inner .newsletter-email { padding-inline: 9px; }
-  .destekol-newsletter-inner .newsletter-submit { padding-inline: 12px; font-size: 11px; }
+  .destekol-newsletter-inner .newsletter-submit { padding-inline: 26px; font-size: 13px; }
   .destekol-footer { width: calc(100% - 24px); margin: 8px auto 14px; border-radius: 14px; }
   .destekol-footer .destekol-footer-main { grid-template-columns: 1fr 1fr; gap: 20px 14px; padding: 22px 18px 18px; }
   .destekol-footer .destekol-footer-main > div:first-child { grid-column: 1 / -1; }
