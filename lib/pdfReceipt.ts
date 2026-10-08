@@ -61,7 +61,7 @@ export async function generateDonationReceiptPDF(opts: {
         ["Amount", amount],
         ["Campaign", opts.campaignTitle || "General Donation"],
         ["Type", freq],
-        ["Gateway", opts.provider],
+        ["Payment", opts.provider === "PAYTR" ? "Online payment" : opts.provider],
         ["Date", opts.donationDate],
         ["Receipt #", receipt],
         ["Status", "COMPLETED ✓"],

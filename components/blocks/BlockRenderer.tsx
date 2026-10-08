@@ -504,7 +504,7 @@ export default function BlockRenderer({ section, context = {}, }: {
               {p.subtitle && <p className="text-slate-500 text-sm sm:text-base">{p.subtitle}</p>}
             </div>
             <CardCarousel grouped={context?.isHomePage === true} enabled={context?.isHomePage === true} locale={locale} href={getLocalizedLink("/campaigns")} className={context?.isHomePage ? "campaign-carousel-one-up items-stretch" : "grid sm:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch"}>
-              {campaigns.map((c) => (<CampaignCard variant={context?.isHomePage ? "destekol" : "default"} currency={(context?.settings?.defaultCurrency || "USD").toUpperCase()} key={c.id} id={c.id} amounts={context.donationAmounts || []} defaultAmount={c.defaultAmount} slug={c.slug} title={c.title} summary={c.summary} coverImage={c.coverImage} goalAmount={c.goalAmount} raisedAmount={c.raisedAmount} donorCount={c.donorCount} category={c.category} country={c.country} locale={locale} dict={dict}/>))}
+              {campaigns.map((c) => (<CampaignCard variant={context?.isHomePage ? "destekol" : "default"} currency={(c.currency || "USD").toUpperCase()} key={c.id} id={c.id} amounts={context.donationAmounts || []} defaultAmount={c.defaultAmount} slug={c.slug} title={c.title} summary={c.summary} coverImage={c.coverImage} goalAmount={c.goalAmount} raisedAmount={c.raisedAmount} donorCount={c.donorCount} category={c.category} country={c.country} locale={locale} dict={dict}/>))}
               {campaigns.length === 0 && (<p className="text-slate-500 col-span-full text-center py-10">{noCampaignsText}</p>)}
             </CardCarousel>
             {!context?.isHomePage && campaigns.length > 0 && (<div className="text-center mt-12">

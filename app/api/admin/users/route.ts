@@ -7,7 +7,7 @@ export async function GET(req: Request) {
  try {
   const session = await requirePermission(donors ? 'users.view' : 'staff.manage', req);
   if (!donors && (session.role !== 'ADMIN' || session.isStaff)) return NextResponse.json({error:'Forbidden'},{status:403});
-  let query = getSupabase().from('User').select('id,name,email,role,emailVerified,totalDonated,donationCount,createdAt,isStaff,permissions,isEvaluation,accessExpiresAt').order('createdAt',{ascending:false}).limit(2000);
+  let query = getSupabase().from('User').select('id,name,email,role,emailVerified,totalDonated,donationTotals,donationCount,createdAt,isStaff,permissions,isEvaluation,accessExpiresAt').order('createdAt',{ascending:false}).limit(2000);
   if (donors) query = query.eq('role','DONOR').eq('isStaff',false);
   const { data, error } = await query;
   if (error) return NextResponse.json({error:'User lookup failed'},{status:503});

@@ -17,7 +17,7 @@ export default async function DonatePage({ params: { locale }, searchParams, }: 
     const donationDict = dict;
     const options = await getDonationOptions(locale);
     const db = getSupabaseOrNull();
-    const campaigns = db ? (await db.from("Campaign").select("id,title,defaultAmount").eq("isActive", true).order("title")).data || [] : [];
+    const campaigns = db ? (await db.from("Campaign").select("id,title,defaultAmount,slug,currency").eq("isActive", true).order("title")).data || [] : [];
     if (db && locale !== 'ar' && campaigns.length) {
         const { data: translations } = await db.from("CampaignTranslation").select("campaignId,title").eq("locale", locale).in("campaignId", campaigns.map(c => c.id));
         for (const campaign of campaigns) campaign.title = translations?.find(t => t.campaignId === campaign.id)?.title || campaign.title;

@@ -1,4 +1,5 @@
 "use client";
+import PayTRSettingsPanel from '@/components/admin/PayTRSettingsPanel';
 import UploadButton from "@/components/admin/UploadButton";
 import Icon from "@/components/icons";
 import { adminFetch } from "@/lib/admin-fetch";
@@ -249,6 +250,7 @@ export default function AdminSettingsPage() {
       </div>
       <p className="text-muted text-sm mb-8">Site info, social links, payment gateways, and email server</p>
 
+      <PayTRSettingsPanel/>
       <form onSubmit={save} className="space-y-6">
 
         {/* ── Site Info ── */}

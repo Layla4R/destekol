@@ -84,7 +84,7 @@ export default function DonationsClient({ locale, dict: D }: {
           {donations.map(d => (<div key={d.id} className="bg-white rounded-xl2 border border-line p-5">
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div className="flex-1 min-w-0">
-                  <div className="font-bold text-ink text-lg">${Number(d.amount).toFixed(2)} <span className="text-muted font-normal text-sm">{d.currency?.toUpperCase()}</span></div>
+                  <div className="font-bold text-ink text-lg">{new Intl.NumberFormat(locale,{style:'currency',currency:d.currency?.toUpperCase()||'USD'}).format(Number(d.amount))}</div>
                   <div className="text-sm text-muted mt-0.5">
                     {d.campaign ? <Link href={`${p}/campaigns/${d.campaign.slug}`} className="text-brand hover:underline">{d.campaign.title}</Link> : D["common.general_donation"]}
                     {" · "}{d.frequency === "MONTHLY" ? D["common.per_month"] : D["common.one_time"]}{" · "}{d.provider}

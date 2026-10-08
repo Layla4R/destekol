@@ -1,4 +1,5 @@
 "use client";
+import {formatDonationTotals,currencyTotals} from '@/lib/currency-totals';
 import Icon from "@/components/icons";
 import { adminFetch } from "@/lib/admin-fetch";
 import { formatCurrency } from "@/lib/format";
@@ -8,6 +9,7 @@ interface Donor {
     name: string;
     email: string;
     totalDonated: number;
+    donationTotals?:Record<string,number>;
     donationCount: number;
     createdAt: string;
     emailVerified: boolean;
@@ -29,7 +31,7 @@ export default function DonorsPage() {
             .then(d => { setDonors(d.users || []); setLoading(false); })
             .catch(() => { setError("Failed to load donors."); setLoading(false); });
     }, []);
-    const totalDonated = donors.reduce((sum, d) => sum + Number(d.totalDonated || 0), 0);
+    const totals=currencyTotals(donors.flatMap(d=>Object.entries(d.donationTotals||{USD:d.totalDonated||0}).map(([currency,amount])=>({currency,amount}))));
     const allFiltered = donors.filter(d => d.name?.toLowerCase().includes(search.toLowerCase()) ||
         d.email?.toLowerCase().includes(search.toLowerCase())).sort((a, b) => Number(b.totalDonated || 0) - Number(a.totalDonated || 0));
     const totalPages = Math.ceil(allFiltered.length / PAGE_SIZE);
@@ -38,7 +40,7 @@ export default function DonorsPage() {
       <div className="flex flex-wrap items-end justify-between gap-4 mb-8">
         <div>
           <h1 className="font-display text-2xl font-extrabold text-ink mb-1">Donor Accounts</h1>
-          <p className="text-muted text-sm">{donors.length} donors shown · ${totalDonated.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} raised by shown donors</p>
+          <p className="text-muted text-sm">{donors.length} donors shown · {formatDonationTotals(totals)} raised by shown donors</p>
         </div>
         <a href="/api/admin/users/export?role=DONOR" className="flex items-center gap-2 border border-line text-muted hover:border-brand hover:text-brand font-semibold rounded-xl px-4 py-2.5 text-sm transition">
           <Icon name="file-text" size={14}/> Export CSV
@@ -71,7 +73,7 @@ export default function DonorsPage() {
                   <td className="py-3 px-4 text-muted text-xs font-mono">{(page - 1) * PAGE_SIZE + i + 1}</td>
                   <td className="py-3 px-4 font-semibold text-ink"><a href={`/admin/donors/${d.id}`} className="hover:text-brand transition">{d.name || "—"}</a></td>
                   <td className="py-3 px-4 text-muted">{d.email}</td>
-                  <td className="py-3 px-4 font-bold text-brand">{formatCurrency(d.totalDonated || 0)}</td>
+                  <td className="py-3 px-4 font-bold text-brand">{formatDonationTotals(d.donationTotals,"en",d.totalDonated||0)}</td>
                   <td className="py-3 px-4 text-muted">{d.donationCount || 0}</td>
                   <td className="py-3 px-4">
                     <span className={`inline-flex items-center gap-1 text-xs font-semibold rounded-full px-2 py-0.5 ${d.emailVerified ? "bg-success/10 text-success" : "bg-warning/10 text-warning"}`}>

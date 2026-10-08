@@ -1,3 +1,4 @@
+import {formatDonationTotals,currencyTotals} from '@/lib/currency-totals';
 import Icon from "@/components/icons";
 import { requirePermission } from "@/lib/admin-access";
 import { hasPermission } from "@/lib/permissions";
@@ -19,7 +20,7 @@ export default async function DonorProfilePage({ params }: {
         redirect("/admin/forbidden");
     }
     const supabase = getSupabase();
-    const { data: user } = await supabase.from("User").select("id,name,email,createdAt,emailVerified,totalDonated,donationCount,lastLoginAt").eq("role", "DONOR").eq("isStaff", false).eq("id", params.id).maybeSingle();
+    const { data: user } = await supabase.from("User").select("id,name,email,createdAt,emailVerified,totalDonated,donationTotals,donationCount,lastLoginAt").eq("role", "DONOR").eq("isStaff", false).eq("id", params.id).maybeSingle();
     await requirePermission("donations.view", undefined, params.id);
     // Fetch donations by userId OR donorEmail (guest donations may not have userId)
     const [byUserId, byEmail] = await Promise.all([
@@ -44,8 +45,7 @@ export default async function DonorProfilePage({ params }: {
     const donations = Array.from(donationMap.values()).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).slice(0, 200);
     if (!user)
         notFound();
-    const totalDonated = (donations || []).filter((d: any) => d.status === "COMPLETED")
-        .reduce((sum: number, d: any) => sum + Number(d.amount), 0);
+    const totals=currencyTotals((donations||[]).filter((d:any)=>!d.isTest && d.status==="COMPLETED"));
     return (<div className="p-6 sm:p-8 max-w-4xl">
       {/* Header */}
       <div className="flex items-center gap-3 mb-6">
@@ -61,7 +61,7 @@ export default async function DonorProfilePage({ params }: {
       {/* Stats */}
       <div className="grid sm:grid-cols-3 gap-4 mb-8">
         <div className="bg-white border border-line rounded-2xl p-5">
-          <div className="text-2xl font-extrabold text-brand mb-1">{formatCurrency(totalDonated)}</div>
+          <div className="text-2xl font-extrabold text-brand mb-1">{formatDonationTotals(totals)}</div>
           <div className="text-xs text-muted">Total Donated</div>
         </div>
         <div className="bg-white border border-line rounded-2xl p-5">

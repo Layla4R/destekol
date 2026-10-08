@@ -445,7 +445,7 @@ export default async function CampaignDetailPage({ params, }: {
               </div>
 
               <div className="p-2">
-                <CampaignCard id={campaign.id} slug={campaign.slug} title={title} summary={summary} coverImage={campaign.coverImage} goalAmount={Number(campaign.goalAmount)} raisedAmount={Number(campaign.raisedAmount)} donorCount={campaign.donorCount} category={campaign.category} locale={locale} dict={dict}/>
+                <CampaignCard currency={campaign.currency||"USD"} id={campaign.id} slug={campaign.slug} title={title} summary={summary} coverImage={campaign.coverImage} goalAmount={Number(campaign.goalAmount)} raisedAmount={Number(campaign.raisedAmount)} donorCount={campaign.donorCount} category={campaign.category} locale={locale} dict={dict}/>
               </div>
             </div>
           </aside>

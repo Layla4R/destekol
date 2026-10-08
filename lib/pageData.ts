@@ -10,6 +10,7 @@ export interface PageData {
     updatedAt?: string;
 }
 export interface CampaignLite {
+    currency?: string;
     id: string;
     slug: string;
     title: string;
@@ -80,7 +81,7 @@ export async function getCampaignsLite(locale = "ar"): Promise<CampaignLite[]> {
     try {
         const { data: campaigns } = await supabase
             .from("Campaign")
-            .select("id, slug, title, summary, description, coverImage, goalAmount, raisedAmount, donorCount, defaultAmount, category, country, isFeatured")
+            .select("id, slug, title, summary, description, coverImage, goalAmount, raisedAmount, donorCount, defaultAmount, category, country, isFeatured, currency")
             .eq("isActive", true)
             .order("isFeatured", { ascending: false })
             .limit(6);

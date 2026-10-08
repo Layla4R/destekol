@@ -8,6 +8,8 @@ export function adminApiPolicy(path: string, method = 'GET'): AccessPolicy | nul
     if (path.startsWith('/api/admin/campaigns')) return { permission: read ? 'campaigns.view' : method === 'DELETE' ? 'campaigns.delete' : path === '/api/admin/campaigns' && method === 'POST' ? 'campaigns.create' : 'campaigns.edit' };
     if (path.startsWith('/api/admin/pages')) return { permission: read ? 'pages.view' : method === 'DELETE' ? 'pages.delete' : path === '/api/admin/pages' && method === 'POST' ? 'pages.create' : 'pages.edit' };
     if (path.startsWith('/api/admin/posts') || path.startsWith('/api/admin/news')) return { permission: read ? 'posts.view' : method === 'DELETE' ? 'posts.delete' : method === 'POST' && path === '/api/admin/posts' ? 'posts.create' : 'posts.edit' };
+    if (path.startsWith('/api/admin/paytr-settings')) return { permission: read ? 'settings.view' : 'settings.edit', ownerOnly:true };
+    if (/^\/api\/admin\/donations\/[^/]+\/refund$/.test(path)) return {permission:'donations.refund'};
     if (path.startsWith('/api/admin/settings/test-smtp')) return { permission: 'settings.edit' };
     if (path.startsWith('/api/admin/settings')) return { permission: read ? 'settings.view' : 'settings.edit' };
     if (path.startsWith('/api/admin/email-templates')) return { permission: read ? 'emails.view' : 'emails.edit' };

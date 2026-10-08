@@ -1,5 +1,5 @@
 "use client";
-import PayTRMethods from "@/components/site/PayTRMethods";
+import PaymentCheckout from "@/components/site/PaymentCheckout";
 import Icon from "@/components/icons";
 import { categoryMeta } from "@/lib/categories";
 import { formatCurrency } from "@/lib/format";
@@ -167,6 +167,7 @@ export default function CampaignCard({ id, slug, title, summary, coverImage, goa
                 amount: finalAmount,
                 frequency,
                 campaignId: id || null,
+                currency,
             };
             const isUpdate = existingIndex >= 0;
             if (isUpdate) {
@@ -410,7 +411,7 @@ export default function CampaignCard({ id, slug, title, summary, coverImage, goa
                   {error}
                 </p>)}
 
-              <PayTRMethods locale={locale} monthly={frequency === "monthly"} onCollapse={() => { setStep("widget"); setError(""); }}/>
+              <PaymentCheckout locale={locale} name={name} email={email} currency={currency} items={[{campaignId:id||null,amount:finalAmount,frequency:frequency.toUpperCase()}]}/>
 
 
 

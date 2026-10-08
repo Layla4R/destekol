@@ -1,3 +1,4 @@
+import DonationRefundAction from '@/components/admin/DonationRefundAction';
 import DonationsFilters from "@/components/admin/DonationsFilters";
 import Icon from "@/components/icons";
 import { requirePermission } from "@/lib/admin-access";
@@ -7,6 +8,7 @@ import { getSupabase } from "@/lib/supabase";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 export const revalidate = 0;
+function refundRemaining(d:any){return Number(d.amount)-(d.isTest?(d.refunds||[]).filter((r:any)=>r.status==='SUCCEEDED').reduce((sum:number,r:any)=>sum+Number(r.amount),0):Number(d.refundedAmount));}
 const STATUS_LABEL: Record<string, string> = {
     PENDING: "Pending", COMPLETED: "Completed", FAILED: "Failed", REFUNDED: "Refunded",
 };
@@ -42,7 +44,7 @@ export default async function AdminDonationsPage({ searchParams, }: {
         .from("Campaign").select("id, title").order("title");
     let query = supabase
         .from("Donation")
-        .select("*, campaign:Campaign(title), userId", { count: "exact" })
+        .select("*, order:PayTROrder(callbackStatus), refunds:DonationRefund(status,amount,providerRefundId,reason), campaign:Campaign(title), userId", { count: "exact" })
         .order("createdAt", { ascending: false });
     if (statusFilter)
         query = query.eq("status", statusFilter);
@@ -118,6 +120,10 @@ export default async function AdminDonationsPage({ searchParams, }: {
                   <span className={`text-xs font-semibold rounded-full px-2.5 py-1 ${STATUS_STYLE[d.status] || "bg-muted/10 text-muted"}`}>
                     {STATUS_LABEL[d.status] || d.status}
                   </span>
+                  {d.refunds?.length>0&&<details className="mt-2 text-xs max-w-xs"><summary>Refund history</summary>{d.refunds.map((r:any)=><p key={r.providerRefundId} className="mt-2 break-words">{r.status}: {formatCurrency(Number(r.amount),(d.currency||'USD').toUpperCase())} · {r.providerRefundId} · {r.reason}</p>)}</details>}
+                  {d.refunds?.filter((r:any)=>r.status==='PENDING').map((r:any)=><p key={r.providerRefundId} className="text-xs text-amber-700">Refund pending reconciliation: {r.providerRefundId}</p>)}
+                  {d.isTest&&<div className="text-xs text-amber-700">Test transaction — excluded from funds</div>}
+                  {d.provider==='PAYTR'&&(d.status==='COMPLETED'||d.isTest&&d.order?.callbackStatus==='success')&&refundRemaining(d)>0&&hasPermission(session,'donations.refund')&&<DonationRefundAction id={d.id} remaining={refundRemaining(d)} currency={d.currency?.toUpperCase()||'USD'}/>}
                   {d.subscriptionStatus && <div className="mt-2 text-xs text-muted">Subscription: {d.subscriptionStatus}</div>}
                   {Number(d.refundedAmount) > 0 && <div className="mt-2 text-xs text-orange-700">{d.refundStatus === 'PARTIAL' ? 'Partial refund' : 'Full refund'}: {formatCurrency(Number(d.refundedAmount), (d.currency || 'usd').toUpperCase())}</div>}
                 </td>

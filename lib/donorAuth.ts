@@ -132,7 +132,7 @@ export async function getCurrentDonor() {
         const supabase = getSupabase();
         const { data: user } = await supabase
             .from("User")
-            .select("id, name, email, emailVerified, country, totalDonated, donationCount, createdAt")
+            .select("id, name, email, emailVerified, country, totalDonated, donationTotals, donationCount, createdAt")
             .eq("id", payload.userId as string)
             .maybeSingle();
         return user || null;

@@ -1,4 +1,5 @@
 "use client";
+import {formatDonationTotals} from '@/lib/currency-totals';
 import Icon from "@/components/icons";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -10,6 +11,7 @@ interface Donor {
     emailVerified: boolean;
     country?: string;
     totalDonated: number;
+    donationTotals?:Record<string,number>;
     donationCount: number;
     createdAt: string;
 }
@@ -98,7 +100,7 @@ export default function AccountClient({ locale, dict: D, }: {
         {[
             {
                 label: D["account.total_donated"] || "إجمالي التبرعات",
-                value: `$${Number(donor.totalDonated || 0).toFixed(2)}`,
+                value: formatDonationTotals(donor.donationTotals,locale,Number(donor.totalDonated||0)),
                 icon: "wallet" as const,
             },
             {

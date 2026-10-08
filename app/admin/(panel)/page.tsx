@@ -27,7 +27,7 @@ export default async function AdminDashboard() {
         // 1. جلب أفضل 5 حملات فقط (لأن الواجهة تعرض 5)
         supabase.from("Campaign").select("id, title, raisedAmount, goalAmount, donorCount, isActive").order("raisedAmount", { ascending: false }).limit(5),
         // 2. توحيد الـ limit مع الموقع لعدم حدوث اختلاف في مجموع المبالغ
-        supabase.from("Donation").select("amount", { count: "exact" }).eq("status", "COMPLETED").limit(50000),
+        supabase.from("Donation").select("amount,refundedAmount", { count: "exact" }).eq("status", "COMPLETED").eq("currency","usd").eq("isTest",false).limit(50000),
         // 3. العدادات السريعة (بدون جلب البيانات كاملة، جلب الـ ID فقط للعد)
         supabase.from("Subscriber").select("id", { count: "exact", head: true }),
         supabase.from("User").select("id", { count: "exact", head: true }).eq("role", "DONOR"),
@@ -36,14 +36,14 @@ export default async function AdminDashboard() {
         // 5. الرسائل غير المقروءة
         supabase.from("ContactMessage").select("id", { count: "exact", head: true }).eq("isRead", false),
         // 6. استعلامات التريند (النمو) مع تقليل حجم البيانات المسترجعة
-        supabase.from("Donation").select("amount").eq("status", "COMPLETED").gte("createdAt", since30),
-        supabase.from("Donation").select("amount").eq("status", "COMPLETED").gte("createdAt", since60).lt("createdAt", since30),
-        supabase.from("Donation").select("amount, createdAt").eq("status", "COMPLETED").gte("createdAt", since7)
+        supabase.from("Donation").select("amount,refundedAmount").eq("status", "COMPLETED").eq("currency","usd").eq("isTest",false).gte("createdAt", since30),
+        supabase.from("Donation").select("amount").eq("status", "COMPLETED").eq("currency","usd").eq("isTest",false).gte("createdAt", since60).lt("createdAt", since30),
+        supabase.from("Donation").select("amount,refundedAmount, createdAt").eq("status", "COMPLETED").eq("currency","usd").eq("isTest",false).gte("createdAt", since7)
     ]);
     const campaigns = campaignsRes.data || [];
     const donationsData = donationsRes.data || [];
     // حساب المجموع بشكل دقيق ومتطابق مع صفحة الموقع
-    const totalRaised = donationsData.reduce((s: number, d: any) => s + Number(d.amount), 0);
+    const totalRaised = donationsData.reduce((s: number, d: any) => s + Math.max(0,Number(d.amount)-Number(d.refundedAmount||0)), 0);
     const totalRaisedTruncated = donationsData.length >= 50000;
     const completedDonationsCount = donationsRes.count || 0;
     const subscribersCount = subscribersRes.count || 0;
@@ -66,7 +66,7 @@ export default async function AdminDashboard() {
     for (const d of recentAmountsRes.data || []) {
         const day = (d.createdAt as string)?.slice(0, 10);
         if (day && byDay[day] !== undefined)
-            byDay[day] += Number(d.amount);
+            byDay[day] += Math.max(0,Number(d.amount)-Number(d.refundedAmount||0));
     }
     const maxDay = Math.max(...Object.values(byDay), 1);
     const cards: {
@@ -77,8 +77,8 @@ export default async function AdminDashboard() {
         link: string;
         trend?: number | null;
     }[] = [
-        { label: "Total Raised", value: formatCurrency(totalRaised), icon: "wallet", color: "brand", link: "/admin/donations", trend: trendPct },
-        { label: "Completed Donations", value: formatNumber(completedDonationsCount), icon: "hand-heart", color: "brand", link: "/admin/donations" },
+        { label: "USD Raised", value: formatCurrency(totalRaised), icon: "wallet", color: "brand", link: "/admin/donations", trend: trendPct },
+        { label: "USD Donations", value: formatNumber(completedDonationsCount), icon: "hand-heart", color: "brand", link: "/admin/donations" },
         { label: "Donor Accounts", value: formatNumber(donorAccounts), icon: "shield-check", color: "brand", link: "/admin/donors" },
         { label: "Newsletter Subscribers", value: formatNumber(subscribersCount), icon: "mail", color: "brand", link: "/admin/subscribers" },
     ];
@@ -93,7 +93,7 @@ export default async function AdminDashboard() {
               {c.trend != null && (<div className={`mt-1.5 text-[10px] font-bold flex items-center gap-0.5 ${c.trend >= 0 ? "text-success" : "text-danger"}`}>
                   {c.trend >= 0 ? "▲" : "▼"} {Math.abs(c.trend)}% vs last 30 days
                 </div>)}
-              {c.label === "Total Raised" && totalRaisedTruncated && (<div className="mt-1 text-[9px] text-warning">⚠ 50k+ donations — figure may be partial</div>)}
+              {c.label === "USD Raised" && totalRaisedTruncated && (<div className="mt-1 text-[9px] text-warning">⚠ 50k+ donations — figure may be partial</div>)}
             </div>
             <div className="w-10 h-10 rounded-xl bg-brand/8 text-brand flex items-center justify-center group-hover:bg-brand/15 transition">
               <Icon name={c.icon} size={18}/>

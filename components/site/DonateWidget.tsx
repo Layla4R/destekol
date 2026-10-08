@@ -1,5 +1,5 @@
 "use client";
-import PayTRMethods from "@/components/site/PayTRMethods";
+import PaymentCheckout from "@/components/site/PaymentCheckout";
 import PrivacyNotice from './PrivacyNotice';
 import Icon from "@/components/icons";
 import { useEffect,useState } from "react";
@@ -18,6 +18,7 @@ export default function DonateWidget({ locale, dict, primaryColor, accentColor, 
     const [custom, setCustom] = useState("");
     const [freq, setFreq] = useState<"ONE_TIME" | "MONTHLY">("ONE_TIME");
     const [step, setStep] = useState<"amount" | "details">("amount");
+    const [locked,setLocked]=useState(false);
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [loading, setLoading] = useState(false);
@@ -123,18 +124,18 @@ export default function DonateWidget({ locale, dict, primaryColor, accentColor, 
                       <span className="text-white/80 text-xs font-medium" suppressHydrationWarning>
                         {freq === "MONTHLY" ? t("donate.monthly", "شهري", "Monthly", "Mensuel", "Aylık") : t("donate.one_time", "مرة واحدة", "One-time", "Unique", "Tek Seferlik")} — <strong className="text-white font-bold">${final}</strong>
                       </span>
-                      <button type="button" onClick={() => { setStep("amount"); setError(""); }} className="text-white/70 hover:text-white text-xs underline">
+                      <button type="button" disabled={locked} onClick={() => { setStep("amount"); setError(""); }} className="text-white/70 hover:text-white text-xs underline">
                         {t("campaigns.edit", "تعديل", "Edit", "Modifier", "Düzenle")}
                       </button>
                     </div>
 
-                    <input value={name} onChange={e => setName(e.target.value)} aria-label={t("donate.name", "الاسم الكامل", "Full Name", "Nom Complet", "Ad Soyad")} placeholder={t("donate.name", "الاسم الكامل", "Full Name", "Nom Complet", "Ad Soyad")} className={inp}/>
-                    <input type="email" value={email} onChange={e => setEmail(e.target.value)} aria-label={t("donate.email", "البريد الإلكتروني", "Email Address", "Adresse Email", "E-posta")} placeholder={t("donate.email", "البريد الإلكتروني", "Email Address", "Adresse Email", "E-posta")} className={inp}/>
+                    <input disabled={locked} value={name} onChange={e => setName(e.target.value)} aria-label={t("donate.name", "الاسم الكامل", "Full Name", "Nom Complet", "Ad Soyad")} placeholder={t("donate.name", "الاسم الكامل", "Full Name", "Nom Complet", "Ad Soyad")} className={inp}/>
+                    <input disabled={locked} type="email" value={email} onChange={e => setEmail(e.target.value)} aria-label={t("donate.email", "البريد الإلكتروني", "Email Address", "Adresse Email", "E-posta")} placeholder={t("donate.email", "البريد الإلكتروني", "Email Address", "Adresse Email", "E-posta")} className={inp}/>
 
                     {error && <p className="text-red-300 text-xs">{error}</p>}
 
                     <PrivacyNotice locale={locale} purpose="donation"/>
-                    <PayTRMethods locale={locale} monthly={freq === "MONTHLY"} onCollapse={() => { setStep("amount"); setError(""); }}/>
+                    <PaymentCheckout onStarted={()=>setLocked(true)} locale={locale} name={name} email={email} currency="USD" items={[{campaignId:null,amount:final,frequency:freq}]}/>
 
 
                   </div>)}

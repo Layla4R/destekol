@@ -2,18 +2,20 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
-export default function PaymentResultActions({ locale, pending, confirmedItem }: { locale: string; pending: boolean; confirmedItem: { campaignId: string | null; amount: number; frequency: string } | null }) {
+export default function PaymentResultActions({ locale, pending, confirmedItem, allocations, donationId }: { donationId?:string; allocations?: {campaignId:string|null;amount:number;frequency:string}[]|null; locale: string; pending: boolean; confirmedItem: { campaignId: string | null; amount: number; frequency: string } | null }) {
     const router = useRouter();
+    useEffect(()=>{if(!pending&&donationId){try{const cache=JSON.parse(sessionStorage.getItem('destekol_payment_request')||'null');if(cache?.donationId===donationId)sessionStorage.removeItem('destekol_payment_request');}catch{}}},[pending,donationId]);
     useEffect(() => {
         if (!confirmedItem) return;
         try {
             const cart = JSON.parse(sessionStorage.getItem('destekol_cart') || '[]');
             if (!Array.isArray(cart)) return;
-            const remaining = cart.filter(item => !(item.campaignId === confirmedItem.campaignId && Number(item.amount) === confirmedItem.amount && String(item.frequency).toUpperCase() === confirmedItem.frequency));
+            const paid=allocations?.length?allocations:[confirmedItem];
+            const remaining = cart.filter(item => !paid.some(p=>(item.campaignId||null)===p.campaignId && Number(item.amount)===Number(p.amount) && String(item.frequency).toUpperCase()===p.frequency));
             sessionStorage.setItem('destekol_cart', JSON.stringify(remaining));
             window.dispatchEvent(new Event('storage'));
         } catch { /* Browser storage may be unavailable. */ }
-    }, [confirmedItem]);
+    }, [confirmedItem,allocations]);
     useEffect(() => {
         if (!pending) return;
         let count = 0;

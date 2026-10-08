@@ -1,0 +1,5 @@
+import {NextRequest,NextResponse} from 'next/server';
+import {hasDonationReturnAccess} from '@/lib/donation-return-access';
+import {getCurrentDonor} from '@/lib/donorAuth';
+import {getSupabase} from '@/lib/supabase';
+export async function GET(req:NextRequest){const id=req.nextUrl.searchParams.get('donation');if(!id)return NextResponse.json({error:'Not found'},{status:404});try{const guest=await hasDonationReturnAccess(id),donor=guest?null:await getCurrentDonor();if(!guest&&!donor)return NextResponse.json({error:'Unauthorized'},{status:401});let query=getSupabase().from('Donation').select('status,isTest,amount,currency,receiptNumber,order:PayTROrder(callbackStatus)').eq('id',id);if(!guest)query=query.eq('donorEmail',donor!.email);const {data,error}=await query.maybeSingle();if(error)throw error;if(!data)return NextResponse.json({error:'Not found'},{status:404});return NextResponse.json({payment:data},{headers:{'Cache-Control':'no-store'}});}catch{return NextResponse.json({error:'Unavailable'},{status:503});}}
