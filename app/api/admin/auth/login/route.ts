@@ -1,3 +1,4 @@
+import { adminLanding } from "@/lib/admin-policy";
 import { createAdminSession } from "@/lib/auth";
 import { getSessionSecret } from "@/lib/session-secret";
 import { getSupabase } from "@/lib/supabase";
@@ -33,7 +34,7 @@ export async function POST(req: NextRequest) {
         const supabase = getSupabase();
         const { data: user, error } = await supabase
             .from("User")
-            .select("id, email, name, role, passwordHash, isStaff, accessExpiresAt")
+            .select("id, email, name, role, passwordHash, isStaff, permissions, accessExpiresAt")
             .eq("email", email)
             .maybeSingle();
         // Allow ADMIN role OR isStaff=true (staff members with EDITOR/VIEWER roles)
@@ -46,7 +47,7 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "Invalid email or password." }, { status: 401 });
         }
         const token = await createAdminSession(user.email, user.role);
-        return NextResponse.json({ ok: true, token });
+        return NextResponse.json({ ok: true, token, redirectTo: adminLanding(user) }, { headers: { "Cache-Control": "no-store" } });
     }
     catch (err: any) {
         if (err.message === "AUTH_CONFIGURATION_ERROR") {

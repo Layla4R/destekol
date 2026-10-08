@@ -1,44 +1,17 @@
 "use client";
 import { useAdminBranding } from "@/components/admin/AdminBranding";
 import Icon from "@/components/icons";
-import { storeAdminToken } from "@/lib/admin-fetch";
+import { clearAdminToken, storeAdminToken } from "@/lib/admin-fetch";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 export default function AdminLogin() {
     const brand = useAdminBranding();
-    const router = useRouter();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
-    // async function submit(e: React.FormEvent) {
-    //   e.preventDefault();
-    //     console.log("1- Submit clicked");
-    //   setError("");
-    //   setLoading(true);
-    //   try {
-    //     const res = await fetch("/api/admin/auth/login", {
-    //       method: "POST",
-    //       headers: { "Content-Type": "application/json" },
-    //       credentials: "include",
-    //       body: JSON.stringify({ email, password }),
-    //     });
-    //         console.log("2- Response status:", res.status);
-    //     const data = await res.json();
-    //     if (!res.ok) throw new Error(data.error || "Sign in failed");
-    //     if (data.token) storeAdminToken(data.token);
-    //     router.push("/admin");
-    //     router.refresh();
-    //   } catch (e: any) {
-    //     setError(e.message);
-    //   } finally {
-    //     setLoading(false);
-    //   }
-    // }
     async function submit(e: React.FormEvent) {
         e.preventDefault();
-        console.log("1- Submit clicked");
         setError("");
         setLoading(true);
         try {
@@ -48,26 +21,16 @@ export default function AdminLogin() {
                 credentials: "include",
                 body: JSON.stringify({ email, password }),
             });
-            console.log("2- Response status:", res.status);
             const data = await res.json();
-            console.log("3- Response data:", data);
-            if (!res.ok)
-                throw new Error(data.error || "Sign in failed");
-            if (data.token) {
-                console.log("4- Storing token");
-                storeAdminToken(data.token);
-            }
-            console.log("5- Before router.push");
-            router.push("/admin");
-            console.log("6- After router.push");
-            router.refresh();
-            console.log("7- After router.refresh");
+            if (!res.ok) throw new Error(data.error || "Sign in failed");
+            clearAdminToken();
+            if (data.token) storeAdminToken(data.token);
+            // Start a fresh document after the session cookie is set. App Router
+            // navigation can retain the unauthenticated layout across role redirects.
+            window.location.replace(data.redirectTo || "/admin");
         }
         catch (e: any) {
-            console.error("ERROR:", e);
             setError(e.message);
-        }
-        finally {
             setLoading(false);
         }
     }
