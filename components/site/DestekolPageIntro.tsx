@@ -36,6 +36,6 @@ export default async function DestekolPageIntro({ locale, title, description, do
           <path fill="white" d="M0 89C176 38 326 95 490 79s302-27 466 3 321-41 484-18v46H0Z"/>
         </svg>
       </section>
-      {achievementProps && <DestekolAchievements data={achievementProps}/>}
+      {achievementProps && <DestekolAchievements data={achievementProps} locale={locale}/>}
     </>);
 }

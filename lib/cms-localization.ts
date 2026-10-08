@@ -5,7 +5,14 @@ const TEXT_FIELDS = new Set([
     "buttonText", "buttonLabel", "cartButtonText", "badgeText", "placeholder",
     "storyEyebrow", "readButtonText", "successText", "errorText", "notice",
     "category", "location", "status", "authorName", "authorRole", "contactHeading", "contactSummary",
+    "sourceName", "methodology",
 ]);
+// Seed only metadata keys so translated editors can update shared facts on legacy blocks.
+function metricDefaults<T>(value: T): T {
+    const section = value as any;
+    if (!section || !['destekol_achievements', 'stats'].includes(section.type) || !Array.isArray(section.props?.items)) return value;
+    return { ...section, props: { ...section.props, items: section.props.items.map((item: any) => ({ metricKind: '', sourceName: '', sourceUrl: '', periodStart: '', periodEnd: '', methodology: '', approvedBy: '', approvedOn: '', publicationApproved: false, ...item })) } };
+}
 function keyOf(value: unknown): string | undefined {
     if (!value || typeof value !== "object") return undefined;
     const row = value as Record<string, unknown>;
@@ -16,6 +23,7 @@ function keyOf(value: unknown): string | undefined {
 }
 /** Base CMS data owns facts, media, links and structure; translations own wording. */
 export function mergeCmsTranslation<T>(base: T, translated: unknown, field = ""): T {
+    base = metricDefaults(base);
     if (Array.isArray(base)) {
         const rows = Array.isArray(translated) ? translated : [];
         return base.map((item, index) => {
@@ -41,6 +49,9 @@ export function mergeCmsTranslation<T>(base: T, translated: unknown, field = "")
 
 /** Only deliberate edits to shared fields propagate from a translated editor. */
 export function applyCmsSharedEdits<T>(base: T, previous: unknown, submitted: unknown, field = ""): T {
+    base = metricDefaults(base);
+    previous = metricDefaults(previous);
+    submitted = metricDefaults(submitted);
     if (["id", "type", "slug", "pageId", "campaignId"].includes(field) || TEXT_FIELDS.has(field.replace(/_(ar|en|fr|tr)$/, ""))) return base;
     if (Array.isArray(base)) {
         const oldRows = Array.isArray(previous) ? previous : [];

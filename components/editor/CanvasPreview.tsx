@@ -101,6 +101,7 @@ export default function CanvasPreview({ section }: {
           {(p.items || []).map((item: any, i: number) => (<div key={i} className="text-center p-4 rounded-xl" style={{ background: "#F0F4FF", border: "1px solid #DDE3F5" }}>
               <div className="font-bold text-2xl" style={{ color: "#0069D2" }}>{item.value}</div>
               <div className="text-xs mt-1" style={{ color: "#6B7280" }}>{item.title}</div>
+              <div className="text-[10px] mt-2 text-slate-500">{item.metricKind === 'TARGET' ? 'هدف مخطط' : item.metricKind === 'ACTUAL' ? 'نتيجة فعلية' : 'نوع المؤشر لم يُدخل بعد'} · {item.publicationApproved && item.sourceName && item.methodology && item.periodStart && item.periodEnd ? 'توثيق مُدخل — راجع اكتمال الحقول' : 'تفاصيل التوثيق غير مكتملة؛ الرقم يبقى ظاهرًا'}</div>
             </div>))}
         </div>
       </div>);

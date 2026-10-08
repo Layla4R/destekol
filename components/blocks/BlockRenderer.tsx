@@ -8,6 +8,7 @@ import Icon from "@/components/icons";
 import CardCarousel from "@/components/site/CardCarousel";
 import CardDescription from "@/components/site/CardDescription";
 import DestekolAchievements from "@/components/site/DestekolAchievements";
+import MetricEvidence from '@/components/site/MetricEvidence';
 import DestekolProjectsSection from "@/components/site/DestekolProjectsSection";
 import DonationWidget from "@/components/site/DonateWidget";
 import HeroSection from "@/components/site/HeroSection";
@@ -89,7 +90,7 @@ export default function BlockRenderer({ section, context = {}, }: {
         case "quick_donate":
             return <HeroSection mode="quick" locale={locale} dict={dict} data={p} isDestekol={context?.isDestekol} primaryColor={primary} accentColor={accent}/>;
         case "destekol_achievements":
-            return <DestekolAchievements data={p}/>;
+            return <DestekolAchievements data={p} locale={locale}/>;
         case "hero":
             return (<HeroSection mode={"hero"} locale={locale} dict={dict} primaryColor={primary} accentColor={accent} data={p} isDestekol={context?.isDestekol}/>);
         case "about_overview":
@@ -370,6 +371,7 @@ export default function BlockRenderer({ section, context = {}, }: {
                     <CountUp value={item.value}/>
                   </div>
                   <div className="text-xs sm:text-sm text-white/80 font-bold uppercase tracking-wider">{item.title}</div>
+                  <MetricEvidence item={item} locale={locale}/>
                 </div>))}
             </div>
           </div>

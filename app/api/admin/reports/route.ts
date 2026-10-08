@@ -1,6 +1,19 @@
 import { requirePermission, accessErrorResponse } from "@/lib/admin-access";
 import { getSupabase } from "@/lib/supabase";
 import { NextRequest,NextResponse } from "next/server";
+// Page through all matching rows: a large limit alone is still capped by PostgREST.
+async function readReportRows(query: () => any) {
+    const data: any[] = [];
+    for (let offset = 0; offset < 200000; offset += 500) {
+        const result = await query().order('id', { ascending: true }).range(offset, offset + 499);
+        if (result.error) return { data: [], error: result.error };
+        data.push(...(result.data || []));
+        if ((result.data || []).length < 500) return { data, error: null };
+    }
+    return { data: [], error: new Error('Report too large; shorten the period') };
+}
+const cents = (value: unknown) => Math.round(Number(value || 0) * 100);
+const netCents = (row: any) => Math.max(0, cents(row.amount) - cents(row.refundedAmount));
 export async function GET(req: NextRequest) {
     try {
         await requirePermission('reports.view',req);
@@ -12,25 +25,28 @@ export async function GET(req: NextRequest) {
     const currency=(url.searchParams.get('currency')||'USD').toUpperCase();
     if(!['USD','TRY','EUR','GBP','RUB'].includes(currency))return NextResponse.json({error:'Invalid currency'},{status:400});
     const supabase = getSupabase();
-    const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
-    const prevSince = new Date(Date.now() - 2 * days * 24 * 60 * 60 * 1000).toISOString();
+    const generatedAt = new Date().toISOString();
+    const since = new Date(Date.parse(generatedAt) - days * 24 * 60 * 60 * 1000).toISOString();
+    const prevSince = new Date(Date.parse(generatedAt) - 2 * days * 24 * 60 * 60 * 1000).toISOString();
     const [current, previous, byGateway, topCampaigns, byDay] = await Promise.all([
         // Current period
-        supabase.from("Donation").select("refundedAmount, amount, frequency, currency").eq("status", "COMPLETED").eq("currency",currency.toLowerCase()).eq("isTest",false).gte("createdAt", since).limit(50000),
+        readReportRows(() => supabase.from("Donation").select("id, refundedAmount, amount, frequency, currency").in("status", ["COMPLETED", "REFUNDED"]).eq("currency",currency.toLowerCase()).eq("isTest",false).gte("createdAt", since).lte('createdAt', generatedAt)),
         // Previous period (for comparison)
-        supabase.from("Donation").select("amount, refundedAmount").eq("status", "COMPLETED").eq("currency",currency.toLowerCase()).eq("isTest",false).gte("createdAt", prevSince).lt("createdAt", since).limit(50000),
+        readReportRows(() => supabase.from("Donation").select("id, amount, refundedAmount").in("status", ["COMPLETED", "REFUNDED"]).eq("currency",currency.toLowerCase()).eq("isTest",false).gte("createdAt", prevSince).lt("createdAt", since)),
         // By gateway
-        supabase.from("Donation").select("provider, amount, refundedAmount").eq("status", "COMPLETED").eq("currency",currency.toLowerCase()).eq("isTest",false).gte("createdAt", since).limit(50000),
+        readReportRows(() => supabase.from("Donation").select("id, provider, amount, refundedAmount").in("status", ["COMPLETED", "REFUNDED"]).eq("currency",currency.toLowerCase()).eq("isTest",false).gte("createdAt", since).lte('createdAt', generatedAt)),
         // Top campaigns
-        supabase.from("Donation").select("campaignId, refundedAmount, amount, allocations:DonationAllocation(campaignId,amount,refundedAmount,campaign:Campaign(title,slug)), campaign:Campaign(title, slug)").eq("status", "COMPLETED").eq("currency",currency.toLowerCase()).eq("isTest",false).gte("createdAt", since).limit(50000),
+        readReportRows(() => supabase.from("Donation").select("id, campaignId, refundedAmount, amount, allocations:DonationAllocation(campaignId,amount,refundedAmount,campaign:Campaign(title,slug)), campaign:Campaign(title, slug)").in("status", ["COMPLETED", "REFUNDED"]).eq("currency",currency.toLowerCase()).eq("isTest",false).gte("createdAt", since).lte('createdAt', generatedAt)),
         // All donations in period for daily chart
-        supabase.from("Donation").select("refundedAmount, amount, createdAt").eq("status", "COMPLETED").eq("currency",currency.toLowerCase()).eq("isTest",false).gte("createdAt", since).order("createdAt").limit(50000),
+        readReportRows(() => supabase.from("Donation").select("id, refundedAmount, amount, createdAt").in("status", ["COMPLETED", "REFUNDED"]).eq("currency",currency.toLowerCase()).eq("isTest",false).gte("createdAt", since).lte('createdAt', generatedAt)),
     ]);
     if([current,previous,byGateway,topCampaigns,byDay].some(r=>r.error))return NextResponse.json({error:'Report unavailable'},{status:503});
     const currentDonations = current.data || [];
     const previousDonations = previous.data || [];
-    const totalRaised = currentDonations.reduce((s: number, d: any) => s + Math.max(0, Number(d.amount) - Number(d.refundedAmount || 0)), 0);
-    const totalPrev = previousDonations.reduce((s: number, d: any) => s + Math.max(0, Number(d.amount) - Number(d.refundedAmount || 0)), 0);
+    const grossDonations = currentDonations.reduce((s: number, d: any) => s + cents(d.amount), 0) / 100;
+    const totalRefunds = currentDonations.reduce((s: number, d: any) => s + cents(d.refundedAmount), 0) / 100;
+    const totalRaised = currentDonations.reduce((s: number, d: any) => s + netCents(d), 0) / 100;
+    const totalPrev = previousDonations.reduce((s: number, d: any) => s + netCents(d), 0) / 100;
     const donationCount = currentDonations.length;
     const monthlyCount = currentDonations.filter((d: any) => d.frequency === "MONTHLY").length;
     // By gateway
@@ -59,8 +75,8 @@ export async function GET(req: NextRequest) {
     const topC = Object.values(campaignMap).sort((a, b) => b.amount - a.amount).slice(0, 5);
     // Daily chart — last N days
     const dailyMap: Record<string, number> = {};
-    const allDays = Array.from({ length: days }, (_, i) => {
-        const d = new Date(Date.now() - (days - 1 - i) * 24 * 60 * 60 * 1000);
+    const allDays = Array.from({ length: days + 1 }, (_, i) => {
+        const d = new Date(Date.parse(since) + i * 24 * 60 * 60 * 1000);
         return d.toISOString().slice(0, 10);
     });
     for (const day of allDays)
@@ -72,7 +88,10 @@ export async function GET(req: NextRequest) {
     }
     const chart = allDays.map(day => ({ day, amount: Math.round(dailyMap[day] * 100) / 100 }));
     return NextResponse.json({
-        period: days, currency,
+        period: days, currency, periodStart: since, periodEnd: generatedAt, generatedAt,
+        source: 'Confirmed non-test Donation records and DonationAllocation records',
+        methodology: 'Donation creation-date cohort. Gross includes completed and fully refunded payments; refunds are their cumulative confirmed refunds at report generation, regardless of refund date. Net = gross minus refunds. No currency conversion. This is not a cash-flow or bank-settlement report.',
+        grossDonations, totalRefunds, netDonations: totalRaised,
         totalRaised: Math.round(totalRaised * 100) / 100,
         totalPrev: Math.round(totalPrev * 100) / 100,
         changePercent: totalPrev > 0 ? Math.round(((totalRaised - totalPrev) / totalPrev) * 100) : null,

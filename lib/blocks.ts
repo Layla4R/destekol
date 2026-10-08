@@ -25,6 +25,17 @@ export interface PageSection {
     type: string;
     props: Record<string, any>;
 }
+const METRIC_FIELDS: FieldDef[] = [
+    { key: 'metricKind', label: 'نوع المؤشر', type: 'select', options: [{ label: 'اختر: هدف أم نتيجة', value: '' }, { label: 'نتيجة فعلية', value: 'ACTUAL' }, { label: 'هدف مخطط', value: 'TARGET' }] },
+    { key: 'sourceName', label: 'اسم المصدر المنشور (دون بيانات شخصية)', type: 'text' },
+    { key: 'sourceUrl', label: 'رابط التقرير العام — اختياري HTTPS', type: 'text' },
+    { key: 'periodStart', label: 'بداية الفترة YYYY-MM-DD', type: 'text' },
+    { key: 'periodEnd', label: 'نهاية الفترة YYYY-MM-DD', type: 'text' },
+    { key: 'methodology', label: 'طريقة الحساب أو أساس تحديد الهدف', type: 'textarea', hint: 'للنسب: البسط ÷ المقام × 100؛ للمستفيدين: أفراد أم أسر وكيف يُمنع التكرار.' },
+    { key: 'approvedBy', label: 'المسؤول عن اعتماد التوثيق (داخلي)', type: 'text' },
+    { key: 'approvedOn', label: 'تاريخ اعتماد التوثيق YYYY-MM-DD', type: 'text' },
+    { key: 'publicationApproved', label: 'اعتماد عرض تفاصيل التوثيق للجمهور', type: 'boolean', hint: 'الأرقام تبقى ظاهرة؛ تظهر تفاصيل المصدر والفترة والنوع بعد اكتمال الحقول واعتمادها.' },
+];
 export const BLOCK_DEFINITIONS: BlockDefinition[] = [
     {
         type: "kindness_box", label: "Destekol — صندوق الخير", description: "اختيار حملات حقيقية وإضافتها إلى السلة", icon: "heart", category: "fundraising",
@@ -34,7 +45,7 @@ export const BLOCK_DEFINITIONS: BlockDefinition[] = [
     {
         type: "destekol_achievements", label: "Destekol — إنجازاتنا", description: "أرقام الإنجازات مع الأيقونات والتمويج", icon: "bar-chart", category: "content",
         defaultProps: { title: "", items: [] },
-        fields: [{ key: "title", label: "اسم القسم", type: "text" }, { key: "items", label: "الإنجازات", type: "list", itemFields: [{ key: "title", label: "العنوان", type: "text" }, { key: "value", label: "الرقم (مثال 20+)", type: "text" }, { key: "icon", label: "الأيقونة", type: "select", options: [{ label: "الدول", value: "globe" }, { label: "المستفيدون", value: "users" }, { label: "التطوع", value: "heart" }, { label: "المشاريع", value: "projects" }] }, { key: "image", label: "صورة أيقونة اختيارية", type: "image" }] }]
+        fields: [{ key: "title", label: "اسم القسم", type: "text" }, { key: "items", label: "الإنجازات", type: "list", itemFields: [{ key: "title", label: "العنوان", type: "text" }, { key: "value", label: "الرقم (مثال 20+)", type: "text" }, ...METRIC_FIELDS, { key: "icon", label: "الأيقونة", type: "select", options: [{ label: "الدول", value: "globe" }, { label: "المستفيدون", value: "users" }, { label: "التطوع", value: "heart" }, { label: "المشاريع", value: "projects" }] }, { key: "image", label: "صورة أيقونة اختيارية", type: "image" }] }]
     },
     {
         type: "quick_donate", label: "Destekol — التبرع السريع", description: "التبرع لمرة واحدة أو شهرياً", icon: "heart", category: "fundraising",
@@ -351,6 +362,7 @@ export const BLOCK_DEFINITIONS: BlockDefinition[] = [
                 itemFields: [
                     { key: "title", label: "Label", type: "text" },
                     { key: "value", label: "Value", type: "text" },
+                    ...METRIC_FIELDS,
                 ],
             },
         ],

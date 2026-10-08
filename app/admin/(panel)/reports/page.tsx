@@ -6,6 +6,14 @@ import { useEffect,useState } from "react";
 interface ReportData {
     period: number;
     currency:string;
+    grossDonations: number;
+    totalRefunds: number;
+    netDonations: number;
+    periodStart: string;
+    periodEnd: string;
+    generatedAt: string;
+    source: string;
+    methodology: string;
     totalRaised: number;
     totalPrev: number;
     changePercent: number | null;
@@ -31,13 +39,16 @@ export default function ReportsPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     useEffect(() => {
+        let active = true;
         setLoading(true);
         setError("");
+        setData(null);
         adminFetch(`/api/admin/reports?period=${period}&currency=${currency}`)
             .then(r => { if (!r.ok)
             throw new Error("Failed"); return r.json(); })
-            .then(d => { setData(d); setLoading(false); })
-            .catch(() => { setError("Failed to load reports. Check your connection."); setLoading(false); });
+            .then(d => { if (active) { setData(d); setLoading(false); } })
+            .catch(() => { if (active) { setError("Failed to load reports. Check your connection."); setLoading(false); } });
+        return () => { active = false; };
     }, [period,currency]);
     const maxChart = data ? Math.max(...data.chart.map(c => c.amount), 1) : 1;
     const sortedGateways = data ? Object.entries(data.byGateway).sort((a, b) => b[1] - a[1]) : [];
@@ -47,16 +58,24 @@ export default function ReportsPage() {
             return;
         function q(v: unknown) {
             const sv = String(v ?? "");
-            return sv.includes(",") ? '"' + sv.replace(/"/g, '""') + '"' : sv;
+            const safe = /^[=+@\-]/.test(sv) ? "'" + sv : sv;
+            return /[,"\r\n]/.test(safe) ? '"' + safe.replace(/"/g, '""') + '"' : safe;
         }
         const lines: string[] = [
             "Destekol Donation Report",
-            `Period: Last ${period} days,Generated: ${new Date().toLocaleDateString("en-GB")}`,
+            `Period Start,${data.periodStart}`,
+            `Period End,${data.periodEnd}`,
+            `Generated,${data.generatedAt}`,
+            `Currency,${data.currency}`,
+            `Source,${q(data.source)}`,
+            `Methodology,${q(data.methodology)}`,
             "",
             "=== Summary ===",
-            `Total Raised,${currency} ${data.totalRaised.toFixed(2)}`,
+            `Gross Donations,${data.currency} ${data.grossDonations.toFixed(2)}`,
+            `Confirmed Refunds,${data.currency} ${data.totalRefunds.toFixed(2)}`,
+            `Net Donations,${data.currency} ${data.netDonations.toFixed(2)}`,
             `Donation Count,${data.donationCount}`,
-            `Monthly Subscriptions,${data.monthlyCount}`,
+            `Monthly Donation Records,${data.monthlyCount}`,
             ...(data.changePercent != null ? [`vs Previous Period,${data.changePercent >= 0 ? "+" : ""}${data.changePercent}%`] : []),
             "",
             "=== By Gateway ===",
@@ -105,12 +124,19 @@ export default function ReportsPage() {
           <p className="text-muted text-sm">Loading reports…</p>
         </div>) : data && (<>
           {/* KPI Cards */}
-          <div className="grid sm:grid-cols-2 xl:grid-cols-4 gap-4">
+          <div className="rounded-xl border border-line bg-white p-4 text-xs text-muted leading-relaxed">
+            <p><strong>Actual recorded results · {data.currency}</strong> · {data.periodStart.slice(0,10)} — {data.periodEnd.slice(0,10)} (UTC)</p>
+            <p>Source: {data.source}. Updated: {new Date(data.generatedAt).toLocaleString('en-GB')}.</p>
+            <p>{data.methodology}</p>
+          </div>
+          <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-4">
             {[
-                { label: "Total Raised", value: `${currency} ${data.totalRaised.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, icon: "wallet" as const,
+                { label: "Gross Donations", value: `${data.currency} ${data.grossDonations.toFixed(2)}`, icon: "wallet" as const, sub: 'Before refunds' },
+                { label: "Confirmed Refunds", value: `${data.currency} ${data.totalRefunds.toFixed(2)}`, icon: "wallet" as const, sub: 'Partial and full; for donations in this period' },
+                { label: "Net Donations", value: `${currency} ${data.totalRaised.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, icon: "wallet" as const,
                     sub: data.changePercent !== null ? `${data.changePercent >= 0 ? "+" : ""}${data.changePercent}% vs prev period` : "" },
                 { label: "Donations", value: data.donationCount.toLocaleString(), icon: "heart" as const, sub: `${data.monthlyCount} recurring` },
-                { label: "Avg Donation", value: data.donationCount > 0 ? `${currency} ${(data.totalRaised / data.donationCount).toFixed(2)}` : currency+" 0", icon: "bar-chart" as const, sub: `over ${data.period} days` },
+                { label: "Average Gross Donation", value: data.donationCount > 0 ? `${currency} ${(data.grossDonations / data.donationCount).toFixed(2)}` : currency+" 0", icon: "bar-chart" as const, sub: `over ${data.period} days` },
                 { label: "Top Gateway", value: topGateway?.[0] || "—", icon: "shield-check" as const,
                     sub: topGateway ? `${currency} ${Number(topGateway?.[1]).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : "" },
             ].map(card => (<div key={card.label} className="bg-white rounded-xl2 border border-line p-5">
@@ -130,7 +156,7 @@ export default function ReportsPage() {
           <div className="grid lg:grid-cols-3 gap-6">
             {/* Daily chart */}
             <div className="lg:col-span-2 bg-white rounded-xl2 border border-line p-6">
-              <h2 className="font-display font-bold text-ink mb-5">Revenue Over Time</h2>
+              <h2 className="font-display font-bold text-ink mb-5">Net Donations by Donation Date (UTC)</h2>
               <div className="flex items-end gap-1 h-48">
                 {data.chart.map((c) => {
                 const pct = Math.max(4, Math.round((c.amount / maxChart) * 100));
