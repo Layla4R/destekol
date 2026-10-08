@@ -48,6 +48,8 @@ test('policy pages render every body paragraph and table cell with correct direc
             }
             assert.ok(!html.includes('24 September 2026'));
             assert.ok(!html.includes('within 24 hours'));
+            assert.ok(html.includes('DESTEK OL İNSANİ YARDIM VE KALKINDIRMA DERNEĞİ'));
+            assert.ok(!html.includes('For Relief Humanitarian Foundation'));
         }
     }
 });

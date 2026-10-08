@@ -5,6 +5,7 @@ import type { PublicSiteSettings } from "@/lib/public-site-settings";
 import Image from "next/image";
 import Link from "next/link";
 import { getPolicyMetadata } from "@/lib/policy-metadata";
+import { DESTEKOL_LEGAL_NAME } from '@/lib/public-contact';
 interface NavItem {
     slug: string;
     title: string;
@@ -215,6 +216,7 @@ export default function SiteFooter({ isDestekol = false, navItems = [], settings
           <p className="text-white/80 text-sm leading-relaxed mb-6">
             {settings?.footerDescription || ""}
           </p>
+          {isDestekol && <p className="mb-5 text-xs leading-relaxed" dir="ltr">{DESTEKOL_LEGAL_NAME}</p>}
 
           {/* =================================================
           Social Media
@@ -460,8 +462,8 @@ export default function SiteFooter({ isDestekol = false, navItems = [], settings
       {(settings?.registrationNumber || settings?.footerTagline || settings?.copyrightText) && <div className="destekol-footer-bottom border-t border-white/10 py-5 px-6 flex flex-wrap items-center justify-between gap-6 text-sm text-white/70">
         {settings?.footerTagline && <span>{settings.footerTagline}</span>}
         {settings?.registrationNumber && (settings.verificationUrl
-          ? <a href={settings.verificationUrl} target="_blank" rel="noopener noreferrer">{settings.registrationNumber}</a>
-          : <span>{settings.registrationNumber}</span>)}
+          ? <a href={settings.verificationUrl} target="_blank" rel="noopener noreferrer" className="underline underline-offset-4">{({ ar: 'رقم التسجيل والتحقق', en: 'Registration and verification', fr: 'Enregistrement et vérification', tr: 'Kayıt ve doğrulama' }[loc])}: <bdi>{settings.registrationNumber}</bdi></a>
+          : <span>{({ ar: 'رقم التسجيل', en: 'Registration number', fr: 'Numéro d’enregistrement', tr: 'Kayıt numarası' }[loc])}: <bdi>{settings.registrationNumber}</bdi></span>)}
         {settings?.copyrightText && <span>{settings.copyrightText}</span>}
       </div>}
     </footer>);

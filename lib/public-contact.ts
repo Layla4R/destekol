@@ -4,6 +4,10 @@ export const OFFICIAL_WHATSAPP_URL = "";
 // Public editorial content only. Never use this on account/customer records.
 export const DESTEKOL_EMAIL = "info@destekol.org";
 export const DESTEKOL_ADDRESS = "TAŞDELEN MAH. BUKET SOKAK DIŞKAPI NO: 1-3, İÇKAPI NO: 38, ÇEKMEKÖY / İSTANBUL, TÜRKİYE";
+export const DESTEKOL_LEGAL_NAME = 'DESTEK OL İNSANİ YARDIM VE KALKINDIRMA DERNEĞİ';
+// Previously published association registration number (also recorded in public/llms.txt).
+export const DESTEKOL_REGISTRATION_NUMBER = '34-283-182';
+export const DESTEKOL_VERIFICATION_URL = 'https://derbis.dernekler.gov.tr/default/anonymous/faaliyet-belgesi-dogrulama-anonim';
 export const officialEmail = (isDestekol: boolean) => DESTEKOL_EMAIL;
 export function normalizePublicContact<T>(value: T, email = OFFICIAL_EMAIL): T {
     if (typeof value === "string") {

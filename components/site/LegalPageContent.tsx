@@ -1,6 +1,7 @@
 import { policies, POLICY_UPDATED_AT } from "@/lib/current-policies";
 import { getPolicyMetadata } from "@/lib/policy-metadata";
 import Link from "next/link";
+import { DESTEKOL_LEGAL_NAME } from '@/lib/public-contact';
 
 const labels: Record<string, { updated: string; contents: string; related: string; contact: string }> = {
     ar: { updated: 'آخر تحديث', contents: 'محتويات السياسة', related: 'السياسات ذات الصلة', contact: 'التواصل الرسمي' },
@@ -19,6 +20,7 @@ export default function LegalPageContent({ slug, locale }: { slug: string; local
     const body = sections.slice(1);
     return <div className="bg-slate-50/50 py-12 border-t border-slate-100" dir={language === 'ar' ? 'rtl' : 'ltr'}>
         <div className="max-w-screen-xl mx-auto px-6">
+            <p className="mb-3 text-sm font-semibold text-slate-700" dir="ltr">{DESTEKOL_LEGAL_NAME}</p>
             <p className="mb-6 text-sm text-slate-500">{copy.updated}: <time dateTime={POLICY_UPDATED_AT}>{date}</time></p>
             <nav aria-label={copy.contents} className="mb-8 flex flex-wrap gap-3">
                 {body.map((section, index) => <a key={section.title} href={`#policy-section-${index}`} className="text-brand underline underline-offset-4">{section.title}</a>)}

@@ -2,7 +2,7 @@ const DESTEKOL_ORGANIZATION_NAMES: Record<string, string> = {
     ar: "جمعية Destekol الخيرية غير الربحية",
     en: "Destekol Charitable Non-Profit Association",
     fr: "Association caritative Destekol à but non lucratif",
-    tr: "Destekol kâr amacı gütmeyen hayır derneği",
+    tr: "DESTEK OL İNSANİ YARDIM VE KALKINDIRMA DERNEĞİ",
 };
 export function getDestekolOrganizationName(locale = "en"): string {
     return DESTEKOL_ORGANIZATION_NAMES[locale] || DESTEKOL_ORGANIZATION_NAMES.en;

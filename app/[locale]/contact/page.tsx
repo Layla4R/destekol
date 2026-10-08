@@ -122,7 +122,7 @@ export default async function ContactPage({ params: { locale }, }: {
     const accentColor = appearance?.accentColor || "var(--color-accent, #F00F5A)";
     const contactProps = sections.find((section: any) => section.type === "contact_form")?.props || {};
     const contactEmail = settings?.contactEmail || contactProps.email || "";
-    const street = contactProps.address || "";
+    const street = contactProps.address?.trim() || DESTEKOL_ADDRESS;
     const locality = contactProps.locality || "";
     const country = contactProps.country || "";
     const contactPhone = settings?.contactPhone || settings?.whatsappNumber || "";
@@ -258,8 +258,8 @@ export default async function ContactPage({ params: { locale }, }: {
                 {t("المقر الرئيسي", "Headquarters", "Siège Social", "Genel Merkez")}
               </span>
               <strong className="text-slate-900 block break-words" itemProp="address" itemScope itemType="http://schema.org/PostalAddress">
-                {<><span itemProp="streetAddress">{street}</span><br /></>}
-                {<><span itemProp="addressLocality">{locality}</span>, <span itemProp="addressCountry">{country}</span></>}
+                <span itemProp="streetAddress" dir="ltr">{street}</span>
+                {(locality || country) && <><br /><span>{[locality, country].filter(Boolean).join(', ')}</span></>}
               </strong>
             </div>
           </div>
