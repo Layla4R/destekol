@@ -13,3 +13,6 @@
 [functions]
   directory = "netlify/functions"
   node_bundler = "esbuild"
+
+[functions."contact-notifications"]
+  schedule = "* * * * *"
