@@ -2,9 +2,10 @@ import tr from '../data/policies/tr.json';
 import ar from '../data/policies/ar';
 import en from '../data/policies/en';
 import fr from '../data/policies/fr';
+import { beneficiaryMediaPolicies, beneficiaryMediaPrivacyReferences } from '../data/policies/beneficiary-media';
 
 export type PolicySection = { title: string; text: string };
-export const POLICY_UPDATED_AT = '2026-10-07';
+export const POLICY_UPDATED_AT = '2026-10-08';
 
 const paymentClarifications: Record<string, { refund: PolicySection; terms: PolicySection }> = {
     tr: {
@@ -28,6 +29,8 @@ const paymentClarifications: Record<string, { refund: PolicySection; terms: Poli
 export const policies: Record<string, Record<string, PolicySection[]>> = Object.fromEntries(
     Object.entries({ tr, ar, en, fr }).map(([locale, documents]) => [locale, {
         ...documents,
+        kvkk: [...documents.kvkk, beneficiaryMediaPolicies[locale as keyof typeof beneficiaryMediaPolicies]],
+        privacy: [...documents.privacy, beneficiaryMediaPrivacyReferences[locale as keyof typeof beneficiaryMediaPrivacyReferences]],
         'refund-policy': [...documents['refund-policy'], paymentClarifications[locale].refund],
         terms: [...documents.terms, paymentClarifications[locale].terms],
         // Preserve both existing URLs for the complete combined policy.

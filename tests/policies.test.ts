@@ -16,7 +16,7 @@ test('all source sections, paragraphs and table cells remain available in every 
         assert.equal(LEGAL_SLUGS.length, 10);
         for (const [slug, source] of Object.entries(original)) {
             const translated = policies[locale][slug];
-            const extra = ['refund-policy', 'terms'].includes(slug) ? 1 : 0;
+            const extra = ['refund-policy', 'terms', 'kvkk', 'privacy'].includes(slug) ? 1 : 0;
             assert.equal(translated.length, source.length + extra, `${locale}/${slug}: sections`);
             for (const [index, section] of source.entries()) {
                 assert.ok(translated[index].title.trim());
@@ -38,7 +38,7 @@ test('policy pages render every body paragraph and table cell with correct direc
         for (const slug of LEGAL_SLUGS) {
             const html = renderToStaticMarkup(React.createElement(LegalPageContent, { locale, slug }));
             assert.ok(html.includes(`dir="${locale === 'ar' ? 'rtl' : 'ltr'}"`));
-            assert.ok(/datetime="2026-10-07"/i.test(html));
+            assert.ok(/datetime="2026-10-08"/i.test(html));
             assert.ok(html.includes(`href="/${locale}/kvkk"`) || slug === 'kvkk');
             for (const section of policies[locale][slug].slice(1)) {
                 for (const cell of section.text.split(/[\n\t]/).filter(Boolean)) {
