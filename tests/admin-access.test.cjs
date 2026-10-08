@@ -13,7 +13,7 @@ function load(file, mocks = {}) {
 const permissions = load('lib/permissions.ts');
 function fixture(session, auditFail = false) {
  const events = [], touched = [], filters = [];
- const query = { select(){return this},order(){return this},limit(){return this},eq(k,v){filters.push([k,v]);return this},ilike(){return this},or(){return this},update(){return this},delete(){return this},async maybeSingle(){return {data:{id:'complaint',isSensitive:true}}},then(resolve){return Promise.resolve(resolve({data:[],error:null}))} };
+ const query = { select(){return this},order(){return this},limit(){return this},eq(k,v){filters.push([k,v]);return this},not(k,op,v){filters.push([k,op,v]);return this},ilike(){return this},or(){return this},update(){return this},delete(){return this},async maybeSingle(){return {data:{id:'complaint',isSensitive:true}}},then(resolve){return Promise.resolve(resolve({data:[],error:null}))} };
  const db = { from(table){if(table==='AdminAuditLog') return {async insert(event){events.push(event);return {error:auditFail?{}:null}}};touched.push(table);return query} };
  const access = load('lib/admin-access.ts', {'./auth':{getAdminSession:async()=>session},'./permissions':permissions,'./admin-policy':load('lib/admin-policy.ts',{'./permissions':permissions}),'./supabase':{getSupabase:()=>db},'./request-site':{getRequestSite:()=>({id:'destekol'})}});
  return {events,touched,filters,db,access};

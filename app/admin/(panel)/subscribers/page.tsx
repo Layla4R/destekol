@@ -23,7 +23,7 @@ export default async function SubscribersPage({ searchParams }: {
     const from = (page - 1) * PAGE_SIZE;
     const supabase = getSupabase();
     const q = searchParams?.q?.trim();
-    let subQuery = supabase.from("Subscriber").select("*", { count: "exact" }).order("createdAt", { ascending: false });
+    let subQuery = supabase.from("Subscriber").select("id,email,createdAt,active,consentAt,consentLocale,consentVersion,unsubscribedAt", { count: "exact" }).order("createdAt", { ascending: false });
     if (q)
         subQuery = subQuery.ilike("email", `%${q}%`);
     const { data: subscribers, count } = await subQuery.range(from, from + PAGE_SIZE - 1);
@@ -56,7 +56,7 @@ export default async function SubscribersPage({ searchParams }: {
                 <th className="text-left py-3 px-4">#</th>
                 <th className="text-left py-3 px-4">Email</th>
                 <th className="text-left py-3 px-4">Subscribed</th>
-                <th className="py-3 px-4"/>
+                <th className="text-left py-3 px-4">Status / Consent</th><th className="py-3 px-4"/>
               </tr>
             </thead>
             <tbody className="divide-y divide-line">
@@ -64,9 +64,9 @@ export default async function SubscribersPage({ searchParams }: {
                   <td className="py-3 px-4 text-muted">{from + i + 1}</td>
                   <td className="py-3 px-4 font-medium text-ink">{sub.email}</td>
                   <td className="py-3 px-4 text-muted">{new Date(sub.createdAt).toLocaleDateString("en-GB")}</td>
-                  <td className="py-3 px-4"><SubscriberDeleteButton id={sub.id}/></td>
+                  <td className="py-3 px-4 text-xs">{sub.unsubscribedAt ? "Unsubscribed" : sub.active && sub.consentAt ? "Subscribed" : "Consent not recorded"}<br/>{sub.consentAt && new Date(sub.consentAt).toLocaleString()} {sub.consentLocale} {sub.consentVersion}</td><td className="py-3 px-4"><SubscriberDeleteButton id={sub.id}/></td>
                 </tr>))}
-              {rows.length === 0 && (<tr><td colSpan={3} className="py-12 text-center text-muted">No subscribers yet.</td></tr>)}
+              {rows.length === 0 && (<tr><td colSpan={5} className="py-12 text-center text-muted">No subscribers yet.</td></tr>)}
             </tbody>
           </table>
         </div>

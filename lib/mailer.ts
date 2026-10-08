@@ -398,28 +398,15 @@ export async function sendContactNotification(opts: {
         timeoutMs: 8000,
     });
 }
-/** Newsletter welcome email */
-export async function sendNewsletterWelcome(to: string): Promise<boolean> {
-    const siteUrl = getRequestSite().url;
-    const vars = { email: to, unsubscribeUrl: `${siteUrl}/unsubscribe?email=${encodeURIComponent(to)}`, siteUrl };
-    const tpl = await loadEmailTemplate("newsletter_welcome");
-    if (tpl)
-        return sendMail({ to, subject: applyVars(tpl.subject, vars), html: applyVars(tpl.html, vars) });
-    const html = emailWrapper(`
-    <h2 style="color:#0069D2;margin-top:0;">مرحباً بك في نشرة Destekol!</h2>
-    <p style="font-size:16px;line-height:1.8;color:#5C6880;">
-      شكراً لاشتراكك في نشرتنا البريدية. ستصلك آخر أخبار حملاتنا الإنسانية وتقارير الأثر الميداني مباشرة في بريدك.
-    </p>
-    <div style="text-align:center;margin:32px 0;">
-      <a href="${siteUrl}/campaigns" style="${btnStyle}">استكشف الحملات الحالية</a>
-    </div>
-    <p style="font-size:12px;color:#aaa;text-align:center;">
-      إلغاء الاشتراك في أي وقت، اضغط <a href="${siteUrl}/unsubscribe?email=${to}" style="color:#0069D2;">هنا</a>
-    </p>
-  `, siteUrl);
-    return sendMail({
-        to,
-        subject: "مرحباً بك في نشرة Destekol الإنسانية",
-        html,
-    });
+/** Newsletter email always includes a signed cancellation link. */
+export async function sendNewsletterWelcome(to:string,unsubscribeUrl:string,locale='tr'):Promise<boolean>{
+ const siteUrl=getRequestSite().url;
+ const t=(ar:string,en:string,fr:string,tr:string)=>locale==='ar'?ar:locale==='en'?en:locale==='fr'?fr:tr;
+ const label=t('إلغاء الاشتراك','Unsubscribe','Se désabonner','Aboneliği iptal et');
+ const footer='<p style="font-size:12px;text-align:center"><a href="'+unsubscribeUrl+'">'+label+'</a></p>';
+ const vars={email:to,unsubscribeUrl,siteUrl};const tpl=await loadEmailTemplate('newsletter_welcome');
+ if(tpl)return sendMail({to,subject:applyVars(tpl.subject,vars),html:applyVars(tpl.html,vars)+footer,timeoutMs:8000});
+ const subject=t('مرحبًا بك في نشرة Destekol','Welcome to the Destekol newsletter','Bienvenue à la newsletter Destekol','Destekol bültenine hoş geldiniz');
+ const text=t('شكرًا لاشتراكك. ستصلك أخبار الجمعية وتحديثات حملاتها. يمكنك إلغاء الاشتراك في أي وقت.','Thank you for subscribing. You will receive our news and campaign updates. You can unsubscribe at any time.','Merci pour votre inscription. Vous recevrez nos actualités et les nouvelles de nos campagnes. Vous pouvez vous désabonner à tout moment.','Abone olduğunuz için teşekkür ederiz. Dernek haberlerini ve kampanya duyurularını alacaksınız. İstediğiniz zaman aboneliğinizi iptal edebilirsiniz.');
+ return sendMail({to,subject,html:emailWrapper('<h2>'+subject+'</h2><p>'+text+'</p>'+footer,siteUrl),timeoutMs:8000});
 }

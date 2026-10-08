@@ -1,4 +1,6 @@
 "use client";
+import NewsletterChoice from './NewsletterChoice';
+import {NEWSLETTER_CONSENT_VERSION} from '@/lib/newsletter-consent';
 import Icon from "@/components/icons";
 import { useEffect,useState } from "react";
 interface NewsletterProps {
@@ -9,6 +11,7 @@ interface NewsletterProps {
     data?: any;
 }
 export default function NewsletterSection({ locale, dict, primaryColor, accentColor, data }: NewsletterProps) {
+    const [consent,setConsent]=useState(false);
     const [email, setEmail] = useState("");
     const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
     const [mounted, setMounted] = useState(false);
@@ -23,17 +26,18 @@ export default function NewsletterSection({ locale, dict, primaryColor, accentCo
     const accent = accentColor || "var(--color-accent, #F00F5A)";
     async function subscribe(e: React.FormEvent) {
         e.preventDefault();
-        if (!email)
+        if (!email || !consent)
             return;
         setStatus("loading");
         try {
             const res = await fetch("/api/newsletter", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email }),
+                body: JSON.stringify({ email,locale,marketingConsent:consent,consentVersion:NEWSLETTER_CONSENT_VERSION }),
             });
-            setStatus(res.ok ? "success" : "error");
-            if (res.ok)
+            const result=await res.json();
+            setStatus(res.ok && result.ok ? "success" : "error");
+            if (res.ok && result.ok)
                 setEmail("");
         }
         catch {
@@ -93,6 +97,7 @@ export default function NewsletterSection({ locale, dict, primaryColor, accentCo
                       </>)}
                   </button>
                 </div>
+                <div className="text-white"><NewsletterChoice locale={locale} checked={consent} onChange={setConsent}/></div>
               </form>)}
 
             {status === "error" && (<p className="mt-3 text-red-200 text-xs font-medium" suppressHydrationWarning>
@@ -103,7 +108,7 @@ export default function NewsletterSection({ locale, dict, primaryColor, accentCo
             <footer className="mt-6 text-white/80 text-[11px] flex items-center justify-center gap-1.5">
               <Icon name="shield-check" size={13}/>
               <span suppressHydrationWarning>
-                {t("newsletter.trust", "لن نشارك بريدك مع أي جهة. يمكنك إلغاء الاشتراك في أي وقت.", "We'll never share your email. Unsubscribe anytime.", "Nous ne partagerons jamais votre email. Désabonnez-vous à tout moment.", "E-postanızı asla paylaşmayacağız. İstediğiniz zaman aboneliği iptal edebilirsiniz.")}
+                {t("newsletter.trust", "يمكنك إلغاء الاشتراك في أي وقت عبر الرابط في رسائلنا.", "You can unsubscribe at any time using the link in our emails.", "Vous pouvez vous désabonner à tout moment via le lien dans nos e-mails.", "E-postalarımızdaki bağlantıyla istediğiniz zaman aboneliğinizi iptal edebilirsiniz.")}
               </span>
             </footer>
 

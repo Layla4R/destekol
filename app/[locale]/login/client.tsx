@@ -1,4 +1,5 @@
 "use client";
+import PrivacyNotice from '@/components/site/PrivacyNotice';
 import { interfaceCopy } from "@/lib/interface-copy";
 
 import Icon from "@/components/icons";
@@ -310,6 +311,7 @@ export default function LoginClient({ locale, dict: D, }: {
     <Icon name="check" size={16} className="text-emerald-600 shrink-0 mt-0.5"/>
     <span>{successMsg}</span>
   </div>)}
+          <PrivacyNotice locale={locale} purpose="account"/>
           <button type="submit" disabled={loading} className="w-full bg-brand hover:bg-brand-dark text-white font-bold rounded-xl py-3.5 transition disabled:opacity-60">
             {loading
             ? "..."

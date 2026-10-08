@@ -1,5 +1,6 @@
 "use client";
 import PayTRMethods from "@/components/site/PayTRMethods";
+import PrivacyNotice from './PrivacyNotice';
 import Icon from "@/components/icons";
 import { useEffect,useState } from "react";
 import { donationOptions } from "@/lib/donation-options";
@@ -132,6 +133,7 @@ export default function DonateWidget({ locale, dict, primaryColor, accentColor, 
 
                     {error && <p className="text-red-300 text-xs">{error}</p>}
 
+                    <PrivacyNotice locale={locale} purpose="donation"/>
                     <PayTRMethods locale={locale} monthly={freq === "MONTHLY"} onCollapse={() => { setStep("amount"); setError(""); }}/>
 
 

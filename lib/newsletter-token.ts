@@ -1,0 +1,5 @@
+import {SignJWT,jwtVerify} from 'jose';
+import {getRequestSite} from './request-site';
+function secret(){const value=process.env.SUPABASE_JWT_SECRET;if(!value)throw new Error('Newsletter signing unavailable');return new TextEncoder().encode(value);}
+export async function newsletterToken(id:string,key:string){return new SignJWT({key}).setProtectedHeader({alg:'HS256'}).setSubject(id).setIssuer('destekol-newsletter').setAudience(getRequestSite().schema).setIssuedAt().sign(secret());}
+export async function verifyNewsletterToken(token:string){const {payload}=await jwtVerify(token,secret(),{algorithms:['HS256'],issuer:'destekol-newsletter',audience:getRequestSite().schema});if(typeof payload.sub!=='string'||typeof payload.key!=='string')throw new Error('Invalid cancellation link');return {id:payload.sub,key:payload.key};}

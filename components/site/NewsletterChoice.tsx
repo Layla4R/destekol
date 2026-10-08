@@ -1,0 +1,3 @@
+import PrivacyNotice from './PrivacyNotice';
+import {newsletterConsentText} from '@/lib/newsletter-consent';
+export default function NewsletterChoice({locale='tr',checked,onChange}:{locale?:string;checked:boolean;onChange:(checked:boolean)=>void}){return <div className="mt-4 text-start text-xs leading-6"><label className="flex items-start gap-2"><input type="checkbox" required checked={checked} onChange={e=>onChange(e.target.checked)} className="mt-1 h-4 w-4 shrink-0 accent-brand"/>{newsletterConsentText[locale]||newsletterConsentText.tr}</label><PrivacyNotice locale={locale} purpose="newsletter"/></div>;}

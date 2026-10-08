@@ -1,4 +1,5 @@
 "use client";
+import PrivacyNotice from '@/components/site/PrivacyNotice';
 import DonationPageHeader from "@/components/site/DonationPageHeader";
 import PayTRMethods from "@/components/site/PayTRMethods";
 import Icon from "@/components/icons";
@@ -42,7 +43,7 @@ export default function DonateClient({ locale, dict: D, initialAmount, initialFr
      <div><label htmlFor="donor-name" className="mb-2 block text-sm font-semibold text-muted">{D['donate.name']} <span className="text-accent">*</span></label><input id="donor-name" autoComplete="name" value={name} onChange={e => setName(e.target.value)} className={input}/></div>
      <div><label htmlFor="donor-email" className="mb-2 block text-sm font-semibold text-muted">{D['donate.email']} <span className="text-accent">*</span></label><input id="donor-email" type="email" autoComplete="email" value={email} onChange={e => setEmail(e.target.value)} className={input}/></div>
      <div className="sm:col-span-2"><label htmlFor="donor-note" className="mb-2 block text-sm font-semibold text-muted">{t.note} <span className="text-xs font-normal">({t.optional})</span></label><textarea id="donor-note" value={msg} onChange={e => setMsg(e.target.value)} rows={2} className={`${input} resize-y`}/></div>
-    </div><label className="mt-4 flex items-center gap-2 text-sm text-muted"><input type="checkbox" checked={anon} onChange={e => setAnon(e.target.checked)} className="h-4 w-4 accent-brand"/>{D['donate.anonymous']}</label><p className="mt-5 flex items-start gap-2 text-xs leading-6 text-muted"><Icon name="shield-check" size={17} className="mt-1 shrink-0 text-brand"/>{t.privacy}</p></section>
+    </div><label className="mt-4 flex items-center gap-2 text-sm text-muted"><input type="checkbox" checked={anon} onChange={e => setAnon(e.target.checked)} className="h-4 w-4 accent-brand"/>{D['donate.anonymous']}</label><p className="mt-5 flex items-start gap-2 text-xs leading-6 text-muted"><Icon name="shield-check" size={17} className="mt-1 shrink-0 text-brand"/>{t.privacy}</p><PrivacyNotice locale={locale} purpose="donation"/></section>
     <section className={panel}>{heading('credit-card', t.payment)}<PayTRMethods locale={locale} monthly={freq === 'MONTHLY'}/></section>
    </div>
    <aside className={`${panel} lg:sticky lg:top-28`} aria-label={t.summary}>{heading('receipt-text', t.summary)}

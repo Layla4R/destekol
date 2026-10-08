@@ -1,4 +1,5 @@
 "use client";
+import PrivacyNotice from '@/components/site/PrivacyNotice';
 import Icon from "@/components/icons";
 import { useState } from "react";
 export default function ContactForm({ email, locale = "ar", dict = {} }: {
@@ -94,6 +95,7 @@ export default function ContactForm({ email, locale = "ar", dict = {} }: {
           <Icon name="x" size={14}/> {error}
         </div>)}
 
+      <PrivacyNotice locale={locale} purpose="contact"/>
       <button type="submit" disabled={status === "sending"} className="w-full bg-brand hover:bg-brand-dark disabled:opacity-60 text-white font-bold rounded-xl py-3.5 transition flex items-center justify-center gap-2">
         <Icon name="send" size={18}/>
         {status === "sending"

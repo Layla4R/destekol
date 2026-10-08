@@ -13,7 +13,7 @@ const words = {
     tr: { title: 'Çerez tercihleri', text: 'Zorunlu çerezler her zaman aktiftir. Analitik, pazarlama veya harici içerik için tercih yapın.', settings: 'Çerez ayarları', accept: 'Tümünü kabul et', reject: 'Zorunlu olmayanları reddet', save: 'Tercihlerimi kaydet', analytics: 'Analitik', marketing: 'Pazarlama', functional: 'Harici içerik', policy: 'Çerez politikası', details: 'Sağlayıcı, amaç ve süre' },
 };
 export default function CookieBanner({ locale = 'tr', gaId, gtmId, pixelId }: { locale?: string; isDestekol?: boolean; gaId?: string | null; gtmId?: string; pixelId?: string }) {
-    const privateTracking = /\/contact\/track\/?$/.test(usePathname() || '');
+    const privateTracking = /\/(?:contact\/track|unsubscribe)\/?$/.test(usePathname() || '');
     const t = words[locale as keyof typeof words] || words.tr;
     const [consent, setConsent] = useState<CookieConsent | null>(null);
     const [open, setOpen] = useState(false);

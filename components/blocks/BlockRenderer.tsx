@@ -657,7 +657,7 @@ export default function BlockRenderer({ section, context = {}, }: {
               {newsletter.title && <h2 className={destekolNewsletter ? "" : "font-display text-2xl sm:text-4xl font-extrabold text-white mb-2 tracking-tight"}>{newsletter.title}</h2>}
               {newsletter.subtitle && <p className={destekolNewsletter ? "" : "text-white/80 mb-8 text-xs sm:text-sm max-w-lg mx-auto"}>{newsletter.subtitle}</p>}
             </div>
-            <NewsletterForm buttonText={newsletter.buttonText} placeholder={newsletter.placeholder} successText={newsletter.successText}/>
+            <NewsletterForm locale={context?.locale || "tr"} buttonText={newsletter.buttonText} placeholder={newsletter.placeholder} successText={newsletter.successText}/>
           </div>
           {destekolNewsletter && <svg className="destekol-newsletter-wave destekol-newsletter-wave--bottom" aria-hidden="true" viewBox="0 0 1440 80" preserveAspectRatio="none"><path d="M0 42c196-59 300 17 492 4 175-12 287-48 474-14s308 37 474-3v51H0Z" fill="currentColor"/></svg>}
         </section>);
