@@ -730,6 +730,17 @@ body[data-site="destekol"] .home-layout .home-section--stories { margin-top: 14p
 .destekol-footer .destekol-footer-bottom { padding: 12px 36px; gap: 14px; color: #597487; background: #f7fafb; border-top: 1px solid #eaf1f4; font-size: 10px; }
 .destekol-footer .destekol-footer-bottom :is(span, a) { color: #597487 !important; }
 .destekol-footer .destekol-footer-bottom a { background: #fff !important; border-color: #dbe7ed !important; border-radius: 8px; padding: 6px 9px; color: #0a5171 !important; font-size: 10px !important; }
+.destekol-footer--ar .destekol-footer-brand { min-width: 0; text-align: right; }
+.destekol-footer--ar .destekol-footer-brand p { text-align: right; overflow-wrap: anywhere; margin-bottom: 24px; }
+.destekol-footer--ar .destekol-footer-brand > a[aria-label$="Home"] { display: block; }
+.destekol-footer--ar .destekol-footer-brand > a[aria-label$="Home"] img { margin-left: auto; margin-right: 0; }
+.destekol-footer--ar h2 { margin-bottom: 20px; }
+.destekol-footer--ar nav > ul > li + li { margin-top: 14px; }
+.destekol-footer--ar nav > ul { line-height: 1.9; }
+.destekol-footer--ar .destekol-footer-contact li + li { margin-top: 18px; }
+@media(min-width:1024px) {
+  .destekol-footer--ar .destekol-footer-main { grid-template-columns: minmax(0,1.3fr) minmax(0,1fr) minmax(0,.95fr) minmax(0,1fr); column-gap: 56px; row-gap: 36px; padding-top: 36px; padding-bottom: 32px; }
+}
 
 @media(max-width:767px) {
   .destekol-story-section { padding: 48px 18px 52px; }

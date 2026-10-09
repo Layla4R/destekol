@@ -183,7 +183,7 @@ export default function SiteFooter({ isDestekol = false, navItems = [], settings
         { slug: 'license', key: 'legal.license', fallbacks: {} },
         { slug: 'kvkk', key: 'legal.kvkk', fallbacks: {} },
     ];
-    return (<footer className={`relative bg-sidebar-gradient text-white mt-auto overflow-hidden${" destekol-footer"}`} role="contentinfo">
+    return (<footer className={`relative bg-sidebar-gradient text-white mt-auto overflow-hidden destekol-footer${loc === 'ar' ? ' destekol-footer--ar' : ''}`} role="contentinfo">
       {/* =====================================================
               Accent line
           ===================================================== */}
@@ -201,7 +201,7 @@ export default function SiteFooter({ isDestekol = false, navItems = [], settings
             Brand Column
         =================================================== */}
 
-        <div className="lg:col-span-1">
+        <div className="lg:col-span-1 destekol-footer-brand">
           <Link href={`${p}/`} aria-label={`${logoText} Home`}>
             {logoSrc ? <Image src={logoSrc} alt={logoText} width={175} height={70} className="h-11 w-auto object-contain mb-4"/> : <span>{logoText}</span>}
           </Link>
