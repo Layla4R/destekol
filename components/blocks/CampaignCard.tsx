@@ -1,5 +1,6 @@
 "use client";
 import PaymentCheckout from "@/components/site/PaymentCheckout";
+import { getMonthlyImpactMessage } from '@/lib/monthly-donation-copy';
 import Icon from "@/components/icons";
 import { categoryMeta } from "@/lib/categories";
 import { formatCurrency } from "@/lib/format";
@@ -215,6 +216,7 @@ export default function CampaignCard({ id, slug, title, summary, coverImage, goa
         <div className="dc-progress" role="progressbar" aria-label={title} aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100}><span style={{ width: pct + "%" }}/></div>
         <div className="dc-totals"><b>{pct}%</b><span><strong>{money(safeRaised)}</strong> / {money(safeGoal)}</span></div>
         <div className="dc-frequency">{(["one_time", "monthly"] as const).map(value => <button key={value} type="button" aria-pressed={frequency === value} onClick={() => setFrequency(value)}>{locale === "tr" && value === "one_time" ? "Bir Kez" : t(value)}</button>)}</div>
+        {frequency === 'monthly' && <p className="mb-3 text-center text-xs leading-6 text-muted" role="status">{getMonthlyImpactMessage(locale)}</p>}
         <div className="dc-amounts">{amounts.map(value => <button key={value} type="button" aria-pressed={custom === "" && amount === value} onClick={() => { setAmount(value); setCustom(""); }}>{money(value)}</button>)}</div>
         <label className="dc-custom"><span>{currencySymbol}</span><input type="number" min="1" step="0.01" value={custom} onChange={e => setCustom(e.target.value)} aria-label={locale === "ar" ? "مبلغ آخر" : locale === "tr" ? "Diğer tutar" : locale === "fr" ? "Autre montant" : "Other amount"} placeholder={locale === "ar" ? "مبلغ آخر" : locale === "tr" ? "Diğer tutar" : locale === "fr" ? "Autre montant" : "Other amount"}/></label>
         <div className="dc-actions"><Link href={donationUrl} onClick={e => { if (!validAmount) e.preventDefault(); }} aria-disabled={!validAmount} className="dc-donate">{labels.support}<Icon name={locale === 'ar' ? 'arrow-left' : 'arrow-right'} size={15}/></Link><button type="button" disabled={!validAmount} onClick={handleAddToCart} className="dc-add"><Icon name={added ? 'check' : 'shopping-bag'} size={15}/>{added ? t('added') : t('add_to_cart')}</button></div>
@@ -303,6 +305,7 @@ export default function CampaignCard({ id, slug, title, summary, coverImage, goa
               </div>
 
               {/* Quick Amounts */}
+              {frequency === 'monthly' && <p className="text-center text-xs leading-6 text-muted" role="status">{getMonthlyImpactMessage(locale)}</p>}
 
               <div className="grid grid-cols-4 gap-1.5">
                 {amounts.map((value) => (<button key={value} type="button" onClick={() => {

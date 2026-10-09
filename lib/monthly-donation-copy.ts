@@ -37,6 +37,9 @@ export const monthlyDonationCopy = {
     },
 };
 export function getMonthlyDonationCopy(locale: string) { return monthlyDonationCopy[locale as keyof typeof monthlyDonationCopy] || monthlyDonationCopy.tr; }
+export function getMonthlyImpactMessage(locale: string) {
+    return ({ ar: 'ساهم شهريًا لاستدامة الأثر.', tr: 'Kalıcı bir etki için her ay destek olun.', en: 'Give monthly to sustain a lasting impact.', fr: 'Faites un don mensuel pour un impact durable.' } as Record<string, string>)[locale] || 'Give monthly to sustain a lasting impact.';
+}
 export function monthlyAmountLabel(amount: number, currency: string, locale: string) {
     return `${new Intl.NumberFormat(locale, { style: 'currency', currency }).format(Number.isFinite(amount) && amount > 0 ? amount : 0)} ${getMonthlyDonationCopy(locale).perMonth}`;
 }

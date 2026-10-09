@@ -1,5 +1,5 @@
 "use client";
-import { getMonthlyDonationCopy } from '@/lib/monthly-donation-copy';
+import { getMonthlyDonationCopy, getMonthlyImpactMessage } from '@/lib/monthly-donation-copy';
 import PrivacyNotice from '@/components/site/PrivacyNotice';
 import DonationPageHeader from "@/components/site/DonationPageHeader";
 import PaymentCheckout from "@/components/site/PaymentCheckout";
@@ -42,6 +42,7 @@ export default function DonateClient({ locale, dict: D, initialAmount, initialFr
     <section className={panel}>{heading('wallet', t.amount)}
      {!selectedCampaign&&currencies.length>1&&<label className="mb-5 block text-sm text-muted">{({ar:'عملة التبرع',en:'Donation currency',fr:'Devise du don',tr:'Bağış para birimi'} as Record<string,string>)[locale]}<select disabled={locked} className={input} value={generalCurrency} onChange={e=>setGeneralCurrency(e.target.value)}>{currencies.map(c=><option key={c} value={c}>{c}</option>)}</select></label>}
      <div className="mb-5 inline-flex max-w-full rounded-xl border border-line bg-[#f7fbfc] p-1">{(['ONE_TIME', 'MONTHLY'] as const).map(value => <button disabled={locked} key={value} type="button" aria-pressed={freq === value} onClick={() => setFreq(value)} className={`rounded-lg px-6 py-2.5 text-sm font-bold transition ${freq === value ? 'bg-brand text-white shadow-sm' : 'text-muted'}`}>{D[value === 'MONTHLY' ? 'donate.monthly' : 'donate.one_time'] || value}</button>)}</div>
+     {freq === 'MONTHLY' && <p className="mb-5 text-sm leading-7 text-muted" role="status">{getMonthlyImpactMessage(locale)}</p>}
      <div className="mb-5 grid grid-cols-2 gap-3 sm:grid-cols-3">{amounts.map(a => <button disabled={locked} key={a} type="button" aria-pressed={final === a && !custom} onClick={() => { setAmount(a); setCustom(''); }} className={`rounded-xl border py-3.5 text-base font-bold transition ${final === a && !custom ? 'border-brand bg-brand text-white shadow-md shadow-brand/15' : 'border-line bg-[#f7fbfc] text-ink hover:border-brand'}`}>{money(a)}</button>)}</div>
      <label htmlFor="donation-amount" className="mb-2 block text-sm font-semibold text-muted">{t.other}</label><div className="relative"><input disabled={locked} id="donation-amount" type="number" min={1} step="0.01" value={custom} onChange={e => setCustom(e.target.value)} placeholder={String(amount)} className={`${input} pe-12`}/><span className="absolute end-4 top-1/2 -translate-y-1/2 font-bold text-brand">{currency}</span></div>
     </section>
