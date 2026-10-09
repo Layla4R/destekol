@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { useEffect,useRef,useState } from "react";
 import ImageUpload from "./ImageUpload";
 import CampaignPlanEditor from './CampaignPlanEditor';
+import CampaignGalleryEditor from './CampaignGalleryEditor';
+import { readCampaignGallery } from '@/lib/campaign-gallery';
 import { readCampaignPlan, type CampaignPlan } from '@/lib/campaign-plan';
 interface CampaignData {
     id?: string;
@@ -25,6 +27,7 @@ interface CampaignData {
     publishedAt?: string;
     projectPlan?: CampaignPlan;
     currency?: string;
+    gallery?: string[];
 }
 const CATEGORIES = ["food", "medical", "shelter", "education", "water", "general"];
 const COUNTRIES = [
@@ -54,6 +57,7 @@ export default function CampaignForm({ initial }: {
         description: initial?.description || "",
         projectPlan: readCampaignPlan(initial?.projectPlan),
         coverImage: initial?.coverImage || "",
+        gallery: readCampaignGallery(initial?.gallery),
         goalAmount: initial?.goalAmount || 10000,
         defaultAmount: initial?.defaultAmount != null ? initial.defaultAmount : 25,
         category: initial?.category || "general",
@@ -201,6 +205,8 @@ export default function CampaignForm({ initial }: {
         <label className={lbl}>Cover Image</label>
         <ImageUpload value={form.coverImage} onChange={v => upd("coverImage", v)}/>
       </div>
+
+      <CampaignGalleryEditor value={form.gallery} onChange={v=>upd('gallery',v)}/>
 
       {/* Toggles */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 border-t border-line">

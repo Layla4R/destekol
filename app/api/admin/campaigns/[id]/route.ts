@@ -3,6 +3,7 @@ import { getSupabase } from "@/lib/supabase";
 import { NextRequest,NextResponse } from "next/server";
 import { prepareCampaignPlan, readCampaignPlan } from '@/lib/campaign-plan';
 import { revalidatePath } from 'next/cache';
+import { validateCampaignGallery } from '@/lib/campaign-gallery';
 export async function GET(req: NextRequest, { params }: {
     params: {
         id: string;
@@ -32,6 +33,10 @@ export async function PATCH(req: NextRequest, { params }: {
     catch(error) { return accessErrorResponse(error); }
     const body = await req.json();
     const data: any = {};
+    if (body.gallery !== undefined) {
+        try { data.gallery = validateCampaignGallery(body.gallery); }
+        catch(error) { return NextResponse.json({error:(error as Error).message},{status:400}); }
+    }
     for (const key of [
         "title", "summary", "description", "category", "coverImage",
         "goalAmount", "raisedAmount", "defaultAmount", "country",

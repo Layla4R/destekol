@@ -1,5 +1,7 @@
 import CampaignCard from '@/components/blocks/CampaignCard';
 import CampaignPlanDetails from '@/components/site/CampaignPlanDetails';
+import CampaignGallery from '@/components/site/CampaignGallery';
+import { readCampaignGallery } from '@/lib/campaign-gallery';
 import Icon from '@/components/icons';
 import { categoryMeta } from '@/lib/categories';
 import { normalizeDestekolBrandCopy } from '@/lib/destekol-brand-copy';
@@ -61,6 +63,7 @@ export default async function CampaignDetailPage({params}:{params:Params}) {
           <section className="campaign-detail-section"><h2>{copy.about}</h2><p>{description}</p></section>
           <CampaignPlanDetails plan={campaign.projectPlan} locale={locale} goal={goal} currency={currency} category={campaign.category}/>
           {campaign.updates?.length>0&&<section className="campaign-detail-section"><h2>{copy.updates}</h2><div className="campaign-detail-updates">{campaign.updates.map((update:any)=><article key={update.id}><time dateTime={update.createdAt}>{new Date(update.createdAt).toLocaleDateString(locale,{timeZone:'UTC'})}</time><h3>{update.title}</h3><p>{update.body}</p></article>)}</div></section>}
+          <CampaignGallery images={readCampaignGallery(campaign.gallery).length ? readCampaignGallery(campaign.gallery) : readCampaignGallery([campaign.coverImage])} title={title} locale={locale}/>
         </div>
       </div>
     </div>

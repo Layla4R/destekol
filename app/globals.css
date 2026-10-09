@@ -41,6 +41,19 @@
 .campaign-budget-scroll thead, .campaign-budget-scroll tfoot { background: #edf7f9; color: #063962; }
 .campaign-detail-updates { display: grid; gap: 20px; }
 .campaign-detail-updates time { font-size: 12px; color: #637f92; }
+.campaign-gallery { min-width: 0; padding-top: 8px; }
+.campaign-gallery h2 { color: #063962; font-size: 24px; font-weight: 800; margin-bottom: 18px; }
+.campaign-gallery-stage { position: relative; aspect-ratio: 16 / 10; overflow: hidden; border-radius: 22px; background: #e7f3f5; isolation: isolate; }
+.campaign-gallery-slide { position: absolute; inset: 0; opacity: 0; transition: opacity .3s ease; }
+.campaign-gallery-slide[data-active="true"] { opacity: 1; z-index: 1; }
+.campaign-gallery-counter { position: absolute; z-index: 2; bottom: 18px; inset-inline-start: 18px; background: #06396299; border: 1px solid #ffffff70; color: white; padding: 5px 12px; border-radius: 999px; font-size: 12px; }
+.campaign-gallery-play { position: absolute; z-index: 2; bottom: 16px; inset-inline-end: 16px; display: grid; place-items: center; width: 46px; height: 46px; border: 3px solid #ffffffa0; border-radius: 50%; background: #06396255; color: white; font-size: 20px; }
+.campaign-gallery-play:focus-visible, .campaign-gallery-thumbnails button:focus-visible { outline: 3px solid #d9a750; outline-offset: 3px; }
+.campaign-gallery-thumbnails { position: relative; display: flex; gap: 10px; overflow-x: auto; padding: 12px 0 5px; scrollbar-width: thin; scroll-behavior: smooth; }
+.campaign-gallery-thumbnails button { position: relative; flex: 0 0 calc((100% - 50px) / 6); aspect-ratio: 1.1; border-radius: 12px; overflow: hidden; opacity: .45; transition: opacity .25s ease; }
+.campaign-gallery-thumbnails button[aria-pressed="true"], .campaign-gallery-thumbnails button:hover { opacity: 1; }
+@media (max-width:767px) { .campaign-gallery h2 { font-size: 21px; } .campaign-gallery-thumbnails button { flex-basis: calc((100% - 20px) / 3); } .campaign-gallery-stage { border-radius: 16px; } }
+@media (prefers-reduced-motion:reduce) { .campaign-gallery-slide, .campaign-gallery-thumbnails button { transition: none; } .campaign-gallery-thumbnails { scroll-behavior: auto; } }
 @media (max-width:1023px) {
   .campaign-detail-page { padding: 18px 16px 40px; }
   .campaign-detail-layout { grid-template-columns: minmax(0,1fr); gap: 22px; }

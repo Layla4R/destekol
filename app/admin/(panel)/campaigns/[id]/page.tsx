@@ -57,6 +57,7 @@ export default async function EditCampaignPage({ params }: {
             authorName: campaign.authorName, authorRole: campaign.authorRole,
             publishedAt: campaign.publishedAt,
             projectPlan: campaign.projectPlan, currency: campaign.currency,
+            gallery: campaign.gallery,
         }}/>
 
       {/* Content Translations */}
