@@ -4,6 +4,53 @@
 @tailwind components;
 @tailwind utilities;
 
+.campaign-detail-page { background: #f4fafc; padding: 24px 24px 64px; }
+.campaign-detail-container { max-width: 1440px; margin: auto; }
+.campaign-detail-breadcrumb { display: flex; flex-wrap: wrap; gap: 9px; font-size: 12px; color: #526f86; margin-bottom: 20px; }
+.campaign-detail-layout { display: grid; grid-template-columns: minmax(0,1fr) minmax(340px,400px); gap: 28px 36px; align-items: start; }
+.campaign-detail-hero { min-width: 0; }
+.campaign-detail-cover { position: relative; aspect-ratio: 16 / 9; overflow: hidden; border-radius: 24px; background: #e5f2f5; }
+.campaign-detail-tags { display: flex; flex-wrap: wrap; gap: 10px; margin: 20px 0 14px; }
+.campaign-detail-tags span, .campaign-phase { display: inline-flex; align-items: center; gap: 7px; padding: 7px 13px; border-radius: 999px; background: #e6f5f6; color: #08677d; font-size: 12px; }
+.campaign-detail-hero h1 { color: #063962; font-weight: 800; font-size: clamp(25px,2.6vw,40px); line-height: 1.35; }
+.campaign-detail-hero > p { margin-top: 14px; color: #526f86; font-size: 16px; line-height: 1.9; }
+.campaign-detail-donation { grid-column: 2; grid-row: 1 / span 2; position: sticky; top: 120px; max-height: calc(100dvh - 140px); overflow-y: auto; border-radius: 24px; scrollbar-width: thin; box-shadow: 0 16px 40px #06396212; }
+.campaign-detail-widget { border: 1px solid #dce9ef; border-radius: 24px; overflow: hidden; background: white; scroll-margin-top: 120px; }
+.campaign-detail-widget > h2 { padding: 17px; background: linear-gradient(110deg,#086c96,#0a5171); color: white; text-align: center; font-size: 17px; font-weight: 700; }
+.campaign-detail-widget .destekol-campaign-card { border: 0; box-shadow: none; border-radius: 0; }
+.campaign-detail-widget .dc-image, .campaign-detail-widget .dc-meta { display: none; }
+.campaign-detail-widget .dc-body { padding: 20px; }
+.campaign-detail-widget .dc-body h3 { min-height: 0; font-size: 16px; }
+.campaign-detail-widget .dc-body > a > p { min-height: 0; margin: 10px 0 16px; }
+.campaign-detail-funding-state { border-top: 1px solid #e4edf2; margin: 0 20px; padding: 12px 0 18px; font-size: 12px; color: #526f86; line-height: 1.8; }
+.campaign-detail-funding-state > span { font-weight: 700; color: #08677d; }
+.campaign-detail-content { grid-column: 1; min-width: 0; display: grid; gap: 24px; }
+.campaign-detail-section { background: white; border: 1px solid #e0ebf1; border-radius: 24px; padding: 28px; }
+.campaign-detail-section > h2 { color: #063962; font-size: 24px; font-weight: 800; margin-bottom: 20px; }
+.campaign-detail-section p { white-space: pre-line; font-size: 15px; line-height: 1.95; color: #526f86; overflow-wrap: anywhere; }
+.campaign-plan-facts { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 16px; margin: 22px 0; padding: 20px; background: #f5fafc; border-radius: 16px; }
+.campaign-plan-facts dt { font-size: 12px; color: #637f92; }
+.campaign-plan-facts dd { color: #063962; font-weight: 700; margin-top: 5px; overflow-wrap: anywhere; }
+.campaign-plan-narrative { display: grid; gap: 24px; }
+.campaign-plan-narrative h3, .campaign-budget-title, .campaign-detail-updates h3 { font-size: 17px; font-weight: 700; color: #063962; margin-bottom: 8px; }
+.campaign-plan-narrative a { font-size: 13px; color: #08677d; text-decoration: underline; }
+.campaign-budget-title { margin-top: 30px; }
+.campaign-budget-scroll { overflow-x: auto; }
+.campaign-budget-scroll table { width: 100%; text-align: start; font-size: 13px; border-collapse: collapse; }
+.campaign-budget-scroll th, .campaign-budget-scroll td { text-align: start; padding: 13px 10px; border-bottom: 1px solid #dce9ef; }
+.campaign-budget-scroll thead, .campaign-budget-scroll tfoot { background: #edf7f9; color: #063962; }
+.campaign-detail-updates { display: grid; gap: 20px; }
+.campaign-detail-updates time { font-size: 12px; color: #637f92; }
+@media (max-width:1023px) {
+  .campaign-detail-page { padding: 18px 16px 40px; }
+  .campaign-detail-layout { grid-template-columns: minmax(0,1fr); gap: 22px; }
+  .campaign-detail-donation { grid-column: 1; grid-row: auto; position: static; max-height: none; overflow: visible; width: 100%; }
+  .campaign-detail-content { grid-column: 1; }
+  .campaign-detail-section { padding: 22px 18px; }
+  .campaign-detail-section > h2 { font-size: 21px; }
+}
+@media (max-width:480px) { .campaign-plan-facts { grid-template-columns: minmax(0,1fr); } }
+
 :root {
   --font-sans: 'IBM Plex Sans Arabic', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   --font-display: 'IBM Plex Sans Arabic', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;

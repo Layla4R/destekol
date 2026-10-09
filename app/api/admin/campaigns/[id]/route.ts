@@ -1,6 +1,8 @@
 import { requireRoutePermission, accessErrorResponse } from "@/lib/admin-access";
 import { getSupabase } from "@/lib/supabase";
 import { NextRequest,NextResponse } from "next/server";
+import { prepareCampaignPlan, readCampaignPlan } from '@/lib/campaign-plan';
+import { revalidatePath } from 'next/cache';
 export async function GET(req: NextRequest, { params }: {
     params: {
         id: string;
@@ -23,8 +25,9 @@ export async function PATCH(req: NextRequest, { params }: {
         id: string;
     };
 }) {
+    let actor;
     try {
-        await requireRoutePermission(req);
+        actor = await requireRoutePermission(req);
     }
     catch(error) { return accessErrorResponse(error); }
     const body = await req.json();
@@ -39,6 +42,13 @@ export async function PATCH(req: NextRequest, { params }: {
             data[key] = body[key];
     }
     const supabase = getSupabase();
+    const {data: current, error: readError} = await supabase.from('Campaign').select('goalAmount, category, projectPlan').eq('id', params.id).maybeSingle();
+    if (readError) return NextResponse.json({error:'Unable to read campaign'}, {status:503});
+    if (!current) return NextResponse.json({error:'Not found'}, {status:404});
+    try {
+        const plan = body.projectPlan !== undefined ? body.projectPlan : {...readCampaignPlan(current.projectPlan), approved:false};
+        data.projectPlan = prepareCampaignPlan(plan, Number(data.goalAmount ?? current.goalAmount), data.category ?? current.category, actor.id);
+    } catch(error) { return NextResponse.json({error:(error as Error).message}, {status:400}); }
     if (body.slug !== undefined) {
         const cleanSlug = String(body.slug).trim().toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9\-_]/g, "");
         if (!cleanSlug)
@@ -58,6 +68,7 @@ export async function PATCH(req: NextRequest, { params }: {
         .single();
     if (error)
         return NextResponse.json({ error: error.message }, { status: 500 });
+    revalidatePath('/[locale]/campaigns/[slug]', 'page');
     return NextResponse.json({ campaign });
 }
 export async function DELETE(req: NextRequest, { params }: {

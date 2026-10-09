@@ -1,6 +1,7 @@
 import { requireRoutePermission, accessErrorResponse } from "@/lib/admin-access";
 import { getSupabase } from "@/lib/supabase";
 import { NextRequest,NextResponse } from "next/server";
+import { prepareCampaignPlan } from '@/lib/campaign-plan';
 export async function GET(req: Request) {
     try {
         await requireRoutePermission(req);
@@ -17,8 +18,9 @@ export async function GET(req: Request) {
     return NextResponse.json({ campaigns });
 }
 export async function POST(req: NextRequest) {
+    let actor;
     try {
-        await requireRoutePermission(req);
+        actor = await requireRoutePermission(req);
     }
     catch(error) { return accessErrorResponse(error); }
     const body = await req.json();
@@ -30,6 +32,9 @@ export async function POST(req: NextRequest) {
     if (!cleanSlug)
         return NextResponse.json({ error: "Invalid slug — use lowercase letters, numbers and hyphens." }, { status: 400 });
     const supabase = getSupabase();
+    let projectPlan;
+    try { projectPlan = prepareCampaignPlan(body.projectPlan, Number(goalAmount), category || 'general', actor.id); }
+    catch (error) { return NextResponse.json({error: (error as Error).message}, {status: 400}); }
     const { data: existing } = await supabase.from("Campaign").select("id").eq("slug", cleanSlug).maybeSingle();
     if (existing)
         return NextResponse.json({ error: "A campaign with this slug already exists." }, { status: 400 });
@@ -40,6 +45,7 @@ export async function POST(req: NextRequest) {
         slug: cleanSlug,
         summary: summary || "",
         description: description || "",
+        projectPlan,
         category: category || "general",
         coverImage: coverImage || null,
         goalAmount,

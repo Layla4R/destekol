@@ -56,6 +56,7 @@ export default async function EditCampaignPage({ params }: {
             isFeatured: campaign.isFeatured, isZakatable: campaign.isZakatable,
             authorName: campaign.authorName, authorRole: campaign.authorRole,
             publishedAt: campaign.publishedAt,
+            projectPlan: campaign.projectPlan, currency: campaign.currency,
         }}/>
 
       {/* Content Translations */}

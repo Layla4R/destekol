@@ -4,6 +4,8 @@ import { adminFetch } from "@/lib/admin-fetch";
 import { useRouter } from "next/navigation";
 import { useEffect,useRef,useState } from "react";
 import ImageUpload from "./ImageUpload";
+import CampaignPlanEditor from './CampaignPlanEditor';
+import { readCampaignPlan, type CampaignPlan } from '@/lib/campaign-plan';
 interface CampaignData {
     id?: string;
     title?: string;
@@ -21,6 +23,8 @@ interface CampaignData {
     authorName?: string;
     authorRole?: string;
     publishedAt?: string;
+    projectPlan?: CampaignPlan;
+    currency?: string;
 }
 const CATEGORIES = ["food", "medical", "shelter", "education", "water", "general"];
 const COUNTRIES = [
@@ -48,6 +52,7 @@ export default function CampaignForm({ initial }: {
         slug: initial?.slug || "",
         summary: initial?.summary || "",
         description: initial?.description || "",
+        projectPlan: readCampaignPlan(initial?.projectPlan),
         coverImage: initial?.coverImage || "",
         goalAmount: initial?.goalAmount || 10000,
         defaultAmount: initial?.defaultAmount != null ? initial.defaultAmount : 25,
@@ -64,7 +69,7 @@ export default function CampaignForm({ initial }: {
     const [error, setError] = useState("");
     const [isDirty, setIsDirty] = useState(false);
     const saveRef = useRef<() => void>();
-    const upd = (k: string, v: any) => { setForm(f => ({ ...f, [k]: v })); setIsDirty(true); };
+    const upd = (k: string, v: any) => { setForm(f => ({ ...f, [k]: v, ...(k !== 'projectPlan' ? {projectPlan: {...f.projectPlan, approved: false, approvedAt: '', approvedBy: ''}} : {}) })); setIsDirty(true); };
     useEffect(() => { saveRef.current = save; });
     useEffect(() => {
         function onBeforeUnload(e: BeforeUnloadEvent) { if (isDirty) {
@@ -188,6 +193,8 @@ export default function CampaignForm({ initial }: {
           </div>
         </div>
       </div>
+
+      <CampaignPlanEditor value={form.projectPlan} onChange={v=>upd('projectPlan',v)} goal={Number(form.goalAmount)} currency={initial?.currency || 'USD'} category={form.category}/>
 
       {/* Cover Image */}
       <div>
