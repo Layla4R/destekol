@@ -2,7 +2,7 @@
 
 Admin → Campaigns → Edit Campaign → **Campaign delivery plan / خطة الحملة**.
 
-The campaign cover is the main image. There is no home-page hero or general achievement strip. The donation panel appears next to the image and stays below the site navigation while scrolling on desktop; its own overflow remains scrollable on shorter screens. Mobile presents the image, donation panel, then campaign information. The existing card controls now start at the campaign default amount (25 when unavailable), with preset amounts.
+The campaign cover is the main image. There is no home-page hero or general achievement strip. The donation panel appears next to the image and stays below the site navigation while scrolling on desktop, without an internal scrollbar or height clipping. Mobile presents the image, donation panel, then campaign information. The existing card controls now start at the campaign default amount (25 when unavailable), with preset amounts.
 
 `Campaign.projectPlan` in the **destekol** schema stores shared quantities/dates/budget and Arabic, Turkish, English and French narratives. No public schema changes. Existing campaigns receive an empty draft; a zero balance is explained as no recorded collected donations, without assuming a prelaunch phase.
 

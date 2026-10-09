@@ -14,7 +14,7 @@
 .campaign-detail-tags span, .campaign-phase { display: inline-flex; align-items: center; gap: 7px; padding: 7px 13px; border-radius: 999px; background: #e6f5f6; color: #08677d; font-size: 12px; }
 .campaign-detail-hero h1 { color: #063962; font-weight: 800; font-size: clamp(25px,2.6vw,40px); line-height: 1.35; }
 .campaign-detail-hero > p { margin-top: 14px; color: #526f86; font-size: 16px; line-height: 1.9; }
-.campaign-detail-donation { grid-column: 2; grid-row: 1 / span 2; position: sticky; top: 120px; max-height: calc(100dvh - 140px); overflow-y: auto; border-radius: 24px; scrollbar-width: thin; box-shadow: 0 16px 40px #06396212; }
+.campaign-detail-donation { grid-column: 2; grid-row: 1 / span 2; position: sticky; top: 120px; border-radius: 24px; box-shadow: 0 16px 40px #06396212; }
 .campaign-detail-widget { border: 1px solid #dce9ef; border-radius: 24px; overflow: hidden; background: white; scroll-margin-top: 120px; }
 .campaign-detail-widget > h2 { padding: 17px; background: linear-gradient(110deg,#086c96,#0a5171); color: white; text-align: center; font-size: 17px; font-weight: 700; }
 .campaign-detail-widget .destekol-campaign-card { border: 0; box-shadow: none; border-radius: 0; }
