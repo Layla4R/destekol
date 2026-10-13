@@ -16,7 +16,7 @@ Open **`/admin/kit`**, or choose **Kit Links** under Content in the existing adm
 
 Settings are stored in the existing tenant-scoped `Page.sections` JSON, in a hidden system record with ID `destekol-kit-links` and slug `kit`. The record is created on the first admin save, is not published as a generic CMS page, and does not appear in the normal Pages list or site navigation. `/kit` reads its resource data on each request through a server-only Supabase client; no credentials are sent to the browser. No schema migration or new table is needed. The standard page editor cannot overwrite the kit settings or claim the reserved `/kit` slug.
 
-There is no need to edit code or redeploy to change saved URLs once this implementation is deployed. Reload the public page after saving. If there is no saved configuration, the defaults in `lib/kit-config.ts` are used. A database outage displays no cards rather than resurrecting deleted defaults; the admin editor reports the load/save error. Legacy `visits` cards are removed on read and save while preserving the other configured URLs: Marketing Kit for Visits is now a visible page heading.
+There is no need to edit code or redeploy to change saved URLs once this implementation is deployed. Reload the public page after saving. If there is no saved configuration, the defaults in `lib/kit-config.ts` are used. A database outage displays no cards rather than resurrecting deleted defaults; the admin editor reports the load/save error. Legacy `visits` cards are removed on read and save while preserving the other configured URLs. The visible page heading now uses the official slogan in the selected language.
 
 ## Files
 
@@ -69,7 +69,7 @@ The existing `NEXT_LOCALE` cookie remembers the language preference. Without a s
 
 ## Banner, slogan and analytics
 
-The official slogans are Making a Lasting Impact, Hayata Kalıcı Bir Etki and أثرٌ للحياة. Each appears once in the banner; the repeated slogan below the logo has been removed for desktop and mobile. The dedicated `public/kit/banner-center.webp` keeps the girl in the central area without a white overlay. Text occupies a separate side panel on desktop and sits below the photo on phones. The original homepage image and official logo are unchanged. Contact always opens in a new tab with `noopener noreferrer`.
+The official slogans are Making a Lasting Impact, Hayata Kalıcı Bir Etki and أثرٌ للحياة. Each appears once as the heading below the logo. The dedicated `public/kit/banner-center.webp` keeps the girl in the central area without a white overlay. The banner is a photo only, without text or a rectangular panel on desktop or phones. The original homepage image and official logo are unchanged. Contact always opens in a new tab with `noopener noreferrer`. Resource rows keep their icon and right-aligned label on the right and their arrow on the left in every language, while Arabic labels retain RTL text direction.
 
 The independent Kit uses Google Analytics directly without the website's cookie dialog. This does use Google's analytics cookies for browser-level user counts. See [Google Analytics integration and verification](google-analytics.md) for events, QR UTMs, Realtime, DebugView and required property settings.
 

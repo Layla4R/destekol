@@ -20,7 +20,7 @@ type KitCopy = {
 export const KIT_COPY: Record<KitLocale, KitCopy> = {
     en: {
         title: "Marketing Kit for Visits | Destekol",
-        pageHeading: "Marketing Kit for Visits",
+        pageHeading: "Making a Lasting Impact",
         description: "Destekol’s official marketing, humanitarian project and partnership materials. One permanent link in English, Turkish and Arabic.",
         heroTitle: "Making a Lasting Impact",
         heroSubtitle: "Humanitarian Action\nfor a More Sustainable World",
@@ -44,7 +44,7 @@ export const KIT_COPY: Record<KitLocale, KitCopy> = {
     },
     tr: {
         title: "Kurumsal Ziyaretler İçin Tanıtım Kiti | Destekol",
-        pageHeading: "Kurumsal Ziyaretler İçin Tanıtım Kiti",
+        pageHeading: "Hayata Kalıcı Bir Etki",
         description: "Destekol’un resmî tanıtım, insani yardım projeleri ve iş birliği materyalleri. İngilizce, Türkçe ve Arapça için tek kalıcı bağlantı.",
         heroTitle: "Hayata Kalıcı Bir Etki",
         heroSubtitle: "Daha Sürdürülebilir Bir Dünya\nİçin İnsani Yardım",
@@ -68,7 +68,7 @@ export const KIT_COPY: Record<KitLocale, KitCopy> = {
     },
     ar: {
         title: "حقيبة التسويق للزيارات | Destekol",
-        pageHeading: "حقيبة التسويق للزيارات",
+        pageHeading: "أثرٌ للحياة",
         description: "المواد الرسمية للتعريف بدستك أول ومشاريعها الإنسانية وفرص الشراكة. رابط دائم واحد بالإنجليزية والتركية والعربية.",
         heroTitle: "أثرٌ للحياة",
         heroSubtitle: "عمل إنساني\nمن أجل عالم أكثر استدامة",

@@ -41,13 +41,6 @@ export default function KitPage({ initialLocale, resources }: { initialLocale: K
                 <header>
                     <div className={styles.banner}>
                         <Image src="/kit/banner-center.webp?v=1" alt="" fill priority sizes="100vw" className={styles.bannerImage} />
-                        <div className={styles.bannerCopy}>
-                          <div className={styles.bannerText}>
-                            <p className={styles.heroTitle}>{copy.heroTitle}</p>
-                            <span className={styles.goldLine} aria-hidden="true" />
-                            <p className={styles.heroSubtitle}>{copy.heroSubtitle}</p>
-                          </div>
-                        </div>
                     </div>
                     <div className={styles.brand}>
                         <div className={styles.logoFrame}>

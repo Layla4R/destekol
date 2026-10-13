@@ -19,11 +19,6 @@
 }
 
 .bannerImage { object-fit: cover; object-position: center 35%; z-index: -1; }
-.bannerCopy { width: 100%; max-width: 1440px; min-height: inherit; display: flex; align-items: center; margin: auto; padding: 32px clamp(20px, 4vw, 64px); text-align: start; }
-.bannerText { width: 30%; padding: 18px; border-radius: 16px; background: #f1f8fbe8; }
-.heroTitle { white-space: pre-line; font-size: 30px; line-height: 1.1; font-weight: 800; }
-.goldLine { display: block; width: 33px; height: 2px; margin: 8px 0 6px; background: #d9a750; }
-.heroSubtitle { white-space: pre-line; font-size: 12px; line-height: 1.4; font-weight: 500; }
 
 .brand { padding: 16px 20px 18px; text-align: center; }
 .logoFrame { position: relative; overflow: hidden; width: min(100%, 380px); height: 94px; margin: 0 auto; }
@@ -72,19 +67,11 @@ a.resource:hover { border-color: #098494; background: #f3fafc; box-shadow: 0 2px
 .card { padding-bottom: 24px; }
 
 .page[dir="rtl"] .resourceText { direction: rtl; }
-.page[dir="rtl"] .heroTitle { line-height: 1.25; }
 
 @media (max-width: 767px) {
-    .banner { min-height: 0; padding-top: 220px; }
-    .bannerImage { height: 220px !important; object-position: center 35%; }
-    .bannerCopy { min-height: 0; padding: 14px 20px; background: #eff7fa; }
-    .bannerText { width: 100%; padding: 0; background: transparent; border-radius: 0; }
-    .heroTitle { font-size: 20px; }
-    .heroSubtitle { font-size: 11px; }
+    .banner { min-height: 220px; }
 }
 @media (max-width: 639px) {
-    .heroTitle { font-size: 17px; }
-    .heroSubtitle { font-size: 9px; }
     .brand { padding: 8px 16px 12px; }
     .logoFrame { width: min(100%, 340px); height: 83px; }
     .description { font-size: 12px; }

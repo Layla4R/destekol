@@ -136,7 +136,7 @@ test('legacy visit-kit cards become a heading without losing configured resource
     assert.deepEqual((await fixture.settings.readKitSettings()).resources.map(row => row.id), saved.map(row => row.id));
 });
 
-test('contact links open safely in a new tab in all languages and the visit kit appears only as the page heading', () => {
+test('contact links open safely in all languages and the official slogan appears once below a photo-only banner', () => {
     const React = require('react');
     const { renderToStaticMarkup } = require('react-dom/server');
     const copy = load('lib/kit-copy.ts');
@@ -154,6 +154,8 @@ test('contact links open safely in a new tab in all languages and the visit kit 
         assert.ok(html.includes('<h1 class="pageTitle">'));
         assert.ok(!html.includes('data-resource="visits"'));
         assert.equal(html.split(copy.KIT_COPY[locale].heroTitle).length - 1, 1);
+        assert.ok(!html.includes('bannerCopy'));
+        assert.ok(!html.includes(copy.KIT_COPY[locale].heroSubtitle));
     }
 });
 
