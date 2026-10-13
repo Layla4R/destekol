@@ -18,7 +18,7 @@ function browser(path = '/kit') {
 function entries(command) { return (window.dataLayer || []).map(row => Array.from(row)).filter(row => row[0] === command); }
 function events(name) { return entries('event').filter(row => row[1] === name); }
 
-test('the standalone kit tracks independently, while the rest of the site requires analytics consent', () => {
+test('the standalone kit tracks independently, while other content pages require analytics consent', () => {
     for (const consent of [null, rejected, accepted]) {
         browser(); ga.syncAnalyticsConsent(consent);
         assert.equal(ga.initializeAnalytics(), true);
@@ -27,12 +27,44 @@ test('the standalone kit tracks independently, while the rest of the site requir
         assert.equal(window[`ga-disable-${ga.GA_MEASUREMENT_ID}`], false);
     }
     for (const consent of [null, rejected]) {
-        browser('/en'); ga.syncAnalyticsConsent(consent);
+        browser('/en/about'); ga.syncAnalyticsConsent(consent);
         assert.equal(ga.initializeAnalytics(), false);
-        ga.trackPageView('/en');
+        ga.trackPageView('/en/about');
         assert.equal(entries('config').length, 0);
         assert.equal(events('page_view').length, 0);
     }
+});
+
+test('all homepages load the tag and send one cookieless view before consent, without enabling extra events', () => {
+    for (const path of ['/', '/ar', '/en/', '/tr', '/fr/']) {
+        for (const consent of [null, rejected]) {
+            browser(path); ga.syncAnalyticsConsent(consent); ga.trackPageView(path); ga.trackPageView(path);
+            assert.equal(entries('config').length, 1, path);
+            assert.equal(events('page_view').length, 1, path);
+            assert.equal(window.__destekolGA4.granted, false);
+            assert.equal(window[`ga-disable-${ga.GA_MEASUREMENT_ID}`], false);
+            assert.equal(entries('consent').at(-1)[2].analytics_storage, 'denied');
+            ga.trackLanguageSelection('en', 'ar', 'site_header'); ga.trackFileDownload('/brochure.pdf');
+            assert.equal(events('language_select').length, 0);
+            assert.equal(events('file_download').length, 0);
+        }
+    }
+});
+
+test('homepage acceptance enables analytics storage and extra events without reconfiguring or repeating the view', () => {
+    browser('/'); ga.syncAnalyticsConsent(null); ga.trackPageView('/');
+    ga.syncAnalyticsConsent(accepted); ga.trackPageView('/');
+    assert.equal(window.__destekolGA4.granted, true);
+    assert.equal(entries('config').length, 1);
+    assert.equal(events('page_view').length, 1);
+    assert.equal(entries('consent').at(-1)[2].analytics_storage, 'granted');
+    assert.equal(entries('consent').at(-1)[2].ad_storage, 'denied');
+    ga.trackLanguageSelection('tr', 'ar', 'site_header'); ga.trackFileDownload('/brochure.pdf');
+    assert.equal(events('language_select').length, 1);
+    assert.equal(events('file_download').length, 1);
+    ga.syncAnalyticsConsent(rejected); ga.trackLanguageSelection('ar', 'en', 'site_header');
+    assert.equal(window.__destekolGA4.granted, false);
+    assert.equal(events('language_select').length, 1);
 });
 
 test('one configuration and one manual view per route, including repeated React effects', () => {
@@ -53,8 +85,8 @@ test('one configuration and one manual view per route, including repeated React 
 
 test('leaving kit restores the website consent gate and cannot reuse the kit authorization', () => {
     browser(); ga.trackPageView('/kit');
-    window.location = new URL('https://destekol.org/en');
-    ga.syncAnalyticsConsent(rejected); ga.trackPageView('/en');
+    window.location = new URL('https://destekol.org/en/about');
+    ga.syncAnalyticsConsent(rejected); ga.trackPageView('/en/about');
     assert.equal(window[`ga-disable-${ga.GA_MEASUREMENT_ID}`], true);
     assert.equal(events('page_view').length, 0); // Revocation purges queued events before the tag loads.
     window.location = new URL('https://destekol.org/kit');
@@ -123,4 +155,31 @@ test('the kit has no cookie banner or consent dependency and keeps its language 
     assert.ok(kit.includes('LANGUAGE_COOKIE'));
 });
 
-test.after(() => { delete global.window; });
+test('the first homepage effect uses saved acceptance instead of temporarily replacing it with null', () => {
+    browser('/en');
+    const effects = [];
+    window.addEventListener = () => {};
+    window.removeEventListener = () => {};
+    global.document = { addEventListener() {}, removeEventListener() {} };
+    const componentModule = { exports: {} };
+    const source = ts.transpileModule(fs.readFileSync('components/site/GoogleAnalytics.tsx', 'utf8'), {
+        compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020, jsx: ts.JsxEmit.ReactJSX, esModuleInterop: true },
+    }).outputText;
+    const mocks = {
+        react: { useState: initial => [initial, () => {}], useEffect: effect => effects.push(effect) },
+        'next/script': { __esModule: true, default: () => null },
+        'next/navigation': { usePathname: () => '/en', useSearchParams: () => new URLSearchParams() },
+        '@/lib/cookie-consent': { readConsent: () => accepted },
+        '@/lib/analytics': ga,
+    };
+    new Function('require', 'module', 'exports', source)(name => name in mocks ? mocks[name] : require(name), componentModule, componentModule.exports);
+    componentModule.exports.default();
+    const cleanups = effects.map(effect => effect());
+    assert.equal(window.__destekolGA4.granted, true);
+    assert.equal(events('page_view').length, 1);
+    assert.equal(entries('consent').at(-1)[2].analytics_storage, 'granted');
+    cleanups.forEach(cleanup => cleanup?.());
+    delete global.document;
+});
+
+test.after(() => { delete global.window; delete global.document; });

@@ -20,9 +20,17 @@ export function isAnalyticsPage(pathname: string): boolean {
         && !/\/(?:contact\/track|donate\/(?:success|cancel))(?:\/|$)/.test(path);
 }
 
-/** The standalone kit measures visits directly; other pages retain the existing consent gate. */
+export function isAnalyticsHomepage(pathname: string): boolean {
+    return /^\/(?:ar|en|tr|fr)?\/?$/.test(pathname);
+}
+
+/** Homepage loads in cookieless mode; Kit measures directly; other pages retain the consent gate. */
 export function analyticsEnabled(pathname: string, consent: CookieConsent | null): boolean {
-    return isAnalyticsPage(pathname) && (pathname === "/kit" || consent?.analytics === true);
+    return isAnalyticsPage(pathname) && (pathname === "/kit" || isAnalyticsHomepage(pathname) || consent?.analytics === true);
+}
+
+function analyticsStorageGranted(pathname: string, consent: CookieConsent | null): boolean {
+    return analyticsEnabled(pathname, consent) && (pathname === "/kit" || consent?.analytics === true);
 }
 
 /** Keep campaign attribution, removing tokens, donor IDs, searches and fragments. */
@@ -61,11 +69,14 @@ export function syncAnalyticsConsent(consent: CookieConsent | null) {
     const { browser, state } = current;
     state.consent = consent;
     const enabled = analyticsEnabled(browser.location.pathname, consent);
+    const granted = analyticsStorageGranted(browser.location.pathname, consent);
     browser[`ga-disable-${GA_MEASUREMENT_ID}`] = !enabled;
-    if (!enabled) {
-        state.lastRoute = null;
+    if (!granted) {
         state.granted = false;
         browser.gtag?.("consent", "update", { analytics_storage: "denied", ad_storage: "denied", ad_user_data: "denied", ad_personalization: "denied" });
+    }
+    if (!enabled) {
+        state.lastRoute = null;
         if (browser.dataLayer) {
             const kept = browser.dataLayer.filter(entry => (entry as ArrayLike<unknown>)?.[0] !== "event");
             browser.dataLayer.splice(0, browser.dataLayer.length, ...kept);
@@ -77,17 +88,18 @@ export function initializeAnalytics(): boolean {
     const current = runtime();
     if (!current || !analyticsEnabled(current.browser.location.pathname, current.state.consent)) return false;
     const { browser, state } = current;
+    const granted = analyticsStorageGranted(browser.location.pathname, state.consent);
     browser[`ga-disable-${GA_MEASUREMENT_ID}`] = false;
     if (state.configured) {
-        if (!state.granted) browser.gtag?.("consent", "update", { analytics_storage: "granted", ad_storage: "denied", ad_user_data: "denied", ad_personalization: "denied" });
-        state.granted = true;
+        if (state.granted !== granted) browser.gtag?.("consent", "update", { analytics_storage: granted ? "granted" : "denied", ad_storage: "denied", ad_user_data: "denied", ad_personalization: "denied" });
+        state.granted = granted;
         return true;
     }
     browser.dataLayer ||= [];
     browser.gtag ||= function () { browser.dataLayer!.push(arguments); };
     state.debug = new URLSearchParams(browser.location.search).get("ga_debug") === "1";
     browser.gtag("consent", "default", { analytics_storage: "denied", ad_storage: "denied", ad_user_data: "denied", ad_personalization: "denied" });
-    browser.gtag("consent", "update", { analytics_storage: "granted", ad_storage: "denied", ad_user_data: "denied", ad_personalization: "denied" });
+    if (granted) browser.gtag("consent", "update", { analytics_storage: "granted", ad_storage: "denied", ad_user_data: "denied", ad_personalization: "denied" });
     browser.gtag("js", new Date());
     browser.gtag("config", GA_MEASUREMENT_ID, {
         send_page_view: false, allow_google_signals: false, allow_ad_personalization_signals: false,
@@ -96,14 +108,14 @@ export function initializeAnalytics(): boolean {
         ...(state.debug ? { debug_mode: true } : {}),
     });
     state.configured = true;
-    state.granted = true;
+    state.granted = granted;
     return true;
 }
 
 export function trackAnalyticsEvent(name: string, parameters: Record<string, string | number | boolean>) {
     const current = runtime();
     if (!current || !analyticsEnabled(current.browser.location.pathname, current.state.consent)
-        || !current.state.configured || !current.state.granted) return;
+        || !current.state.configured || (!current.state.granted && name !== "page_view")) return;
     const payload = {
         ...parameters, send_to: GA_MEASUREMENT_ID,
         page_location: analyticsLocation(current.browser.location.href),

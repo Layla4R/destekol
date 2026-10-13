@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { CONSENT_KEY, CONSENT_EVENT, parseConsent, readConsent, type CookieConsent } from "@/lib/cookie-consent";
 import { GA_MEASUREMENT_ID, analyticsEnabled, initializeAnalytics, syncAnalyticsConsent, trackFileDownload, trackPageView } from "@/lib/analytics";
 
-/** One shared GA tag. The standalone kit is independent of site cookie preferences. */
+/** Homepage loads without analytics storage; Kit measures directly; other pages require consent. */
 export default function GoogleAnalytics() {
     const pathname = usePathname() || "/";
     const query = useSearchParams().toString();
@@ -25,7 +25,6 @@ export default function GoogleAnalytics() {
         return () => { window.removeEventListener(CONSENT_EVENT, changed); window.removeEventListener("storage", storage); };
     }, [pathname]);
     useEffect(() => {
-        syncAnalyticsConsent(consent);
         if (analyticsEnabled(pathname, consent) && initializeAnalytics()) trackPageView(`${pathname}?${query}`);
     }, [pathname, query, consent]);
     useEffect(() => {
