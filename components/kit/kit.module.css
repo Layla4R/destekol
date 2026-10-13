@@ -43,6 +43,7 @@
 .resources ul { display: grid; gap: 10px; list-style: none; padding: 0; margin: 0; }
 .resource {
     display: flex;
+    direction: ltr;
     align-items: center;
     gap: 16px;
     min-height: 64px;
@@ -57,7 +58,7 @@ a.resource:hover { border-color: #098494; background: #f3fafc; box-shadow: 0 2px
 .resource[aria-disabled="true"] { cursor: default; }
 .resource[aria-disabled="true"] .arrow { opacity: .35; }
 .arrow { flex-shrink: 0; }
-.resourceText { flex: 1; min-width: 0; text-align: end; display: flex; flex-direction: column; gap: 1px; }
+.resourceText { flex: 1; min-width: 0; text-align: right; display: flex; flex-direction: column; gap: 1px; }
 .resourceTitle { font-size: 16px; font-weight: 700; line-height: 1.35; overflow-wrap: anywhere; }
 .comingSoon { color: #63718b; font-size: 11px; line-height: 1.2; }
 .icon { width: 40px; height: 40px; flex-shrink: 0; border-radius: 50%; display: grid; place-items: center; }
@@ -70,8 +71,7 @@ a.resource:hover { border-color: #098494; background: #f3fafc; box-shadow: 0 2px
 .footerNote { border-inline-start: 1px solid #c9d9e8; padding-inline-start: 16px; font-size: 11px; line-height: 1.3; color: #63718b; }
 .card { padding-bottom: 24px; }
 
-.page[dir="rtl"] .arrow { transform: scaleX(-1); }
-.page[dir="rtl"] .resource { padding-inline: 20px 16px; }
+.page[dir="rtl"] .resourceText { direction: rtl; }
 .page[dir="rtl"] .heroTitle { line-height: 1.25; }
 
 @media (max-width: 767px) {
@@ -93,7 +93,6 @@ a.resource:hover { border-color: #098494; background: #f3fafc; box-shadow: 0 2px
     .languages button { font-size: 12px; }
     .resources ul { gap: 8px; }
     .resource { min-height: 52px; gap: 9px; padding: 7px 10px 7px 12px; border-radius: 12px; }
-    .page[dir="rtl"] .resource { padding-inline: 12px 10px; }
     .resourceTitle { font-size: 13px; }
     .comingSoon { font-size: 10px; }
     .icon { width: 34px; height: 34px; }
