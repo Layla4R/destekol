@@ -3,6 +3,7 @@ import { LOCALES,LOCALE_NAMES,type Locale } from "@/i18n";
 import { usePathname,useRouter } from "next/navigation";
 import { useState } from "react";
 import FlagIcon from "./FlagIcon";
+import { LANGUAGE_COOKIE } from "@/lib/kit-config";
 export default function LanguageSwitcher({ currentLocale, transparent = false, isDestekol = false }: {
     currentLocale: string;
     transparent?: boolean;
@@ -14,6 +15,7 @@ export default function LanguageSwitcher({ currentLocale, transparent = false, i
     const current = currentLocale as Locale;
     function switchLocale(newLocale: Locale) {
         setOpen(false);
+        document.cookie = `${LANGUAGE_COOKIE}=${newLocale}; Path=/; Max-Age=31536000; SameSite=Lax${location.protocol === "https:" ? "; Secure" : ""}`;
         if (newLocale === current)
             return;
         // Remove ALL locale prefixes from current path

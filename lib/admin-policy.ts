@@ -4,6 +4,7 @@ export function adminApiPolicy(path: string, method = 'GET'): AccessPolicy | nul
     const read = method === 'GET' || method === 'HEAD';
     if (/^\/api\/admin\/auth\/(me|logout)$/.test(path)) return null;
     if (path.startsWith('/api/admin/invites') || path.startsWith('/api/admin/users')) return { permission: 'staff.manage', ownerOnly: true };
+    if (path === '/api/admin/kit') return { permission: read ? 'pages.view' : 'pages.edit' };
     if (path.startsWith('/api/admin/campaigns/export')) return { permission: 'campaigns.export' };
     if (path.startsWith('/api/admin/campaigns')) return { permission: read ? 'campaigns.view' : method === 'DELETE' ? 'campaigns.delete' : path === '/api/admin/campaigns' && method === 'POST' ? 'campaigns.create' : 'campaigns.edit' };
     if (path.startsWith('/api/admin/pages')) return { permission: read ? 'pages.view' : method === 'DELETE' ? 'pages.delete' : path === '/api/admin/pages' && method === 'POST' ? 'pages.create' : 'pages.edit' };
@@ -23,6 +24,7 @@ export function adminPagePolicy(path: string): AccessPolicy | null {
     if (path === '/admin' || path === '/admin/') return { permission: 'audit.view', ownerOnly: true };
     const section = path.split('/')[2];
     const rules: Record<string, AccessPolicy> = {
+        kit: { permission: 'pages.view' },
         pages: { permission: 'pages.view' }, campaigns: { permission: 'campaigns.view' }, posts: { permission: 'posts.view' },
         messages: { permission: 'messages.view' }, donations: { permission: 'donations.view' }, invoices: { permission: 'donations.view' },
         subscribers: { permission: 'subscribers.view' }, donors: { permission: 'users.view' }, reports: { permission: 'reports.view' },

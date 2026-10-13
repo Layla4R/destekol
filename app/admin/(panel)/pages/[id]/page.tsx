@@ -4,6 +4,7 @@ import { requireAdmin } from "@/lib/auth";
 import { PageSection } from "@/lib/blocks";
 import { prepareDestekolHomeSections } from "@/lib/destekol-homepage";
 import { getSupabase } from "@/lib/supabase";
+import { KIT_SETTINGS_ID } from "@/lib/kit-config";
 import { notFound,redirect } from "next/navigation";
 export const revalidate = 0;
 export default async function EditPagePage({ params, searchParams, }: {
@@ -14,6 +15,7 @@ export default async function EditPagePage({ params, searchParams, }: {
         locale?: string;
     };
 }) {
+    if (params.id === KIT_SETTINGS_ID) redirect("/admin/kit");
     try {
         await requireAdmin();
     }

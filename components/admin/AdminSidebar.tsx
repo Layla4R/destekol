@@ -15,6 +15,7 @@ const NAV: {
     { href: "/admin", label: "Dashboard", icon: "bar-chart" },
     // Content
     { href: "/admin/pages", label: "Pages", icon: "layers", group: "Content" },
+    { href: "/admin/kit", label: "Kit Links", icon: "link", group: "Content" },
     { href: "/admin/campaigns", label: "Campaigns", icon: "hand-heart", group: "Content" },
     { href: "/admin/posts", label: "News & Blog", icon: "book-open", group: "Content" },
     // Operations

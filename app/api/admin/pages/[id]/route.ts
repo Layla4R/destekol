@@ -1,5 +1,6 @@
 import { requireRoutePermission, accessErrorResponse } from "@/lib/admin-access";
 import { getSupabase } from "@/lib/supabase";
+import { KIT_SETTINGS_ID } from "@/lib/kit-config";
 import { NextRequest,NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { mergeCmsTranslation } from "@/lib/cms-localization";
@@ -29,6 +30,7 @@ export async function PATCH(req: NextRequest, { params }: {
         await requireRoutePermission(req);
     }
     catch(error) { return accessErrorResponse(error); }
+    if (params.id === KIT_SETTINGS_ID) return NextResponse.json({ error: "Manage these links from Kit Links." }, { status: 400 });
     const body = await req.json();
     const data: any = {};
     if (body.title !== undefined)
@@ -69,6 +71,7 @@ export async function PATCH(req: NextRequest, { params }: {
         if (!cleanSlug) {
             return NextResponse.json({ error: "Invalid slug — use lowercase letters, numbers, and hyphens only." }, { status: 400 });
         }
+        if (cleanSlug === "kit") return NextResponse.json({ error: "The /kit URL is reserved for Kit Links." }, { status: 400 });
         const { data: existing } = await supabase.from("Page").select("id").eq("slug", cleanSlug).maybeSingle();
         if (existing && existing.id !== params.id) {
             return NextResponse.json({ error: `A page with slug "/${cleanSlug}" already exists.` }, { status: 400 });

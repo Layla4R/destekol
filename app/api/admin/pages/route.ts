@@ -1,5 +1,6 @@
 import { requireRoutePermission, accessErrorResponse } from "@/lib/admin-access";
 import { getSupabase } from "@/lib/supabase";
+import { KIT_SETTINGS_ID } from "@/lib/kit-config";
 import { NextRequest,NextResponse } from "next/server";
 export async function GET(req: Request) {
     try {
@@ -9,7 +10,7 @@ export async function GET(req: Request) {
     const supabase = getSupabase();
     // Get pages + their translation status in parallel (not N×3 requests)
     const [pagesRes, transRes] = await Promise.all([
-        supabase.from("Page").select("id,slug,title,description,isPublished,showInMenu,isSystem,order,updatedAt,sections").order("order", { ascending: true }).order("createdAt", { ascending: true }),
+        supabase.from("Page").select("id,slug,title,description,isPublished,showInMenu,isSystem,order,updatedAt,sections").neq("id", KIT_SETTINGS_ID).order("order", { ascending: true }).order("createdAt", { ascending: true }),
         supabase.from("PageTranslation").select("pageId, locale").in("locale", ["en", "fr", "tr"]),
     ]);
     if (pagesRes.error) {
@@ -47,6 +48,7 @@ export async function POST(req: NextRequest) {
     if (!cleanSlug) {
         return NextResponse.json({ error: "Invalid slug — use lowercase letters, numbers, and hyphens only." }, { status: 400 });
     }
+    if (cleanSlug === "kit") return NextResponse.json({ error: "Manage /kit from Kit Links in the admin panel." }, { status: 400 });
     const supabase = getSupabase();
     const { data: existing } = await supabase.from("Page").select("id").eq("slug", cleanSlug).maybeSingle();
     if (existing) {

@@ -12,6 +12,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const locales = LOCALES;
     const now = new Date();
     const urls: MetadataRoute.Sitemap = [];
+    urls.push({
+        url: `${SITE_URL}/kit`, changeFrequency: "monthly", priority: 0.7,
+        alternates: { languages: { en: `${SITE_URL}/kit`, tr: `${SITE_URL}/kit`, ar: `${SITE_URL}/kit`, "x-default": `${SITE_URL}/kit` } },
+    });
     for (const slug of LEGAL_SLUGS) {
         for (const locale of locales) {
             urls.push({ url: `${SITE_URL}/${locale}/${slug}`, lastModified: new Date(`${POLICY_UPDATED_AT}T00:00:00Z`), changeFrequency: 'monthly', priority: 0.5 });
@@ -133,6 +137,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         }
     }
     return urls.map(item => {
+        if (item.url === `${SITE_URL}/kit`) return item;
         const path = new URL(item.url).pathname.replace(/^\/(ar|en|fr|tr)(?=\/|$)/, "");
         return {
             ...item,

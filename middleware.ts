@@ -2,6 +2,7 @@ import { getSessionSecret } from "./lib/session-secret";
 import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 import { siteForHost, isSiteSession, type SiteId } from "./lib/tenant";
+import { getKitLocale, LANGUAGE_COOKIE } from "./lib/kit-config";
 const LOCALES = ["ar", "en", "fr", "tr"];
 const COOKIE_NAME = "destekol_admin_session";
 async function verifyAdminToken(token: string, site: SiteId): Promise<boolean> {
@@ -26,7 +27,8 @@ export async function middleware(req: NextRequest) {
     }
     const defaultLocale = "tr";
     const requestHeaders = new Headers(req.headers);
-    const locale = LOCALES.find(l => pathname === `/${l}` || pathname.startsWith(`/${l}/`))
+    const locale = pathname === "/kit" ? getKitLocale(req.cookies.get(LANGUAGE_COOKIE)?.value)
+        : LOCALES.find(l => pathname === `/${l}` || pathname.startsWith(`/${l}/`))
         || (pathname.startsWith("/admin") ? "ar" : defaultLocale);
     requestHeaders.set("x-app-locale", locale);
     // Always overwrite client-supplied values with the actual route.
@@ -48,6 +50,7 @@ export async function middleware(req: NextRequest) {
     }
     // ── 2. Skip API, static, _next ──────────────────────────────
     if (pathname.startsWith("/api") ||
+        pathname === "/kit" ||
         pathname.startsWith("/_next") ||
         pathname.startsWith("/admin") ||
         pathname.includes(".")) {

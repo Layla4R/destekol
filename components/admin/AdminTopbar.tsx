@@ -6,6 +6,7 @@ import { useEffect,useState } from "react";
 const PAGE_TITLES: Record<string, string> = {
     "/admin": "Dashboard",
     "/admin/pages": "Pages",
+    "/admin/kit": "Kit Links",
     "/admin/campaigns": "Campaigns",
     "/admin/messages": "Contact Messages",
     "/admin/donations": "Donations",
