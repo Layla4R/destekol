@@ -20,17 +20,13 @@ export function isAnalyticsPage(pathname: string): boolean {
         && !/\/(?:contact\/track|donate\/(?:success|cancel))(?:\/|$)/.test(path);
 }
 
-export function isAnalyticsHomepage(pathname: string): boolean {
-    return /^\/(?:ar|en|tr|fr)?\/?$/.test(pathname);
-}
-
-/** Homepage loads in cookieless mode; Kit measures directly; other pages retain the consent gate. */
-export function analyticsEnabled(pathname: string, consent: CookieConsent | null): boolean {
-    return isAnalyticsPage(pathname) && (pathname === "/kit" || isAnalyticsHomepage(pathname) || consent?.analytics === true);
+/** Public pages send cookieless signals immediately; private pages stay excluded. */
+export function analyticsEnabled(pathname: string): boolean {
+    return isAnalyticsPage(pathname);
 }
 
 function analyticsStorageGranted(pathname: string, consent: CookieConsent | null): boolean {
-    return analyticsEnabled(pathname, consent) && (pathname === "/kit" || consent?.analytics === true);
+    return !/^\/kit\/?$/.test(pathname) && analyticsEnabled(pathname) && consent?.analytics === true;
 }
 
 /** Keep campaign attribution, removing tokens, donor IDs, searches and fragments. */
@@ -68,7 +64,7 @@ export function syncAnalyticsConsent(consent: CookieConsent | null) {
     if (!current) return;
     const { browser, state } = current;
     state.consent = consent;
-    const enabled = analyticsEnabled(browser.location.pathname, consent);
+    const enabled = analyticsEnabled(browser.location.pathname);
     const granted = analyticsStorageGranted(browser.location.pathname, consent);
     browser[`ga-disable-${GA_MEASUREMENT_ID}`] = !enabled;
     if (!granted) {
@@ -86,7 +82,7 @@ export function syncAnalyticsConsent(consent: CookieConsent | null) {
 
 export function initializeAnalytics(): boolean {
     const current = runtime();
-    if (!current || !analyticsEnabled(current.browser.location.pathname, current.state.consent)) return false;
+    if (!current || !analyticsEnabled(current.browser.location.pathname)) return false;
     const { browser, state } = current;
     const granted = analyticsStorageGranted(browser.location.pathname, state.consent);
     browser[`ga-disable-${GA_MEASUREMENT_ID}`] = false;
@@ -114,8 +110,8 @@ export function initializeAnalytics(): boolean {
 
 export function trackAnalyticsEvent(name: string, parameters: Record<string, string | number | boolean>) {
     const current = runtime();
-    if (!current || !analyticsEnabled(current.browser.location.pathname, current.state.consent)
-        || !current.state.configured || (!current.state.granted && name !== "page_view")) return;
+    if (!current || !analyticsEnabled(current.browser.location.pathname)
+        || !current.state.configured) return;
     const payload = {
         ...parameters, send_to: GA_MEASUREMENT_ID,
         page_location: analyticsLocation(current.browser.location.href),
@@ -156,6 +152,19 @@ export function trackFileDownload(href: string, parameters: Record<string, strin
     const extension = pathname.match(/\.([a-z0-9]+)$/i)?.[1]?.toLowerCase();
     if (!extension || !["pdf", "doc", "docx", "xls", "xlsx", "ppt", "pptx", "zip"].includes(extension)) return;
     trackAnalyticsEvent("file_download", { ...parameters, link_url: url, file_name: pathname.split("/").pop() || "", file_extension: extension });
+}
+
+/** Record public navigation without collecting link labels or arbitrary query values. */
+export function trackWebsiteLinkClick(href: string) {
+    const current = runtime();
+    const url = analyticsLink(href);
+    if (!current || !url) return;
+    trackAnalyticsEvent("site_link_click", {
+        link_url: url,
+        link_type: new URL(url).origin === current.browser.location.origin ? "internal" : "outbound",
+        site_language: (current.browser.location.pathname.match(/^\/(ar|en|tr|fr)(?:\/|$)/)?.[1]
+            || current.browser.document.documentElement.lang).toUpperCase(),
+    });
 }
 
 export function trackKitResourceClick(resource: KitResource, href: string, locale: KitLocale, title: string) {

@@ -18,25 +18,27 @@ function browser(path = '/kit') {
 function entries(command) { return (window.dataLayer || []).map(row => Array.from(row)).filter(row => row[0] === command); }
 function events(name) { return entries('event').filter(row => row[1] === name); }
 
-test('the standalone kit tracks independently, while other content pages require analytics consent', () => {
+test('public pages track before consent while Kit never inherits analytics storage permission', () => {
     for (const consent of [null, rejected, accepted]) {
         browser(); ga.syncAnalyticsConsent(consent);
         assert.equal(ga.initializeAnalytics(), true);
         ga.trackPageView('/kit');
         assert.equal(events('page_view').length, 1);
         assert.equal(window[`ga-disable-${ga.GA_MEASUREMENT_ID}`], false);
+        assert.equal(window.__destekolGA4.granted, false);
     }
     for (const consent of [null, rejected]) {
         browser('/en/about'); ga.syncAnalyticsConsent(consent);
-        assert.equal(ga.initializeAnalytics(), false);
+        assert.equal(ga.initializeAnalytics(), true);
         ga.trackPageView('/en/about');
-        assert.equal(entries('config').length, 0);
-        assert.equal(events('page_view').length, 0);
+        assert.equal(entries('config').length, 1);
+        assert.equal(events('page_view').length, 1);
+        assert.equal(entries('consent').at(-1)[2].analytics_storage, 'denied');
     }
 });
 
-test('all homepages load the tag and send one cookieless view before consent, without enabling extra events', () => {
-    for (const path of ['/', '/ar', '/en/', '/tr', '/fr/']) {
+test('multilingual public routes send cookieless views and interactions without waiting for consent', () => {
+    for (const path of ['/', '/ar', '/en/', '/tr', '/fr/', '/ar/projects', '/tr/campaigns', '/en/news/example']) {
         for (const consent of [null, rejected]) {
             browser(path); ga.syncAnalyticsConsent(consent); ga.trackPageView(path); ga.trackPageView(path);
             assert.equal(entries('config').length, 1, path);
@@ -45,13 +47,14 @@ test('all homepages load the tag and send one cookieless view before consent, wi
             assert.equal(window[`ga-disable-${ga.GA_MEASUREMENT_ID}`], false);
             assert.equal(entries('consent').at(-1)[2].analytics_storage, 'denied');
             ga.trackLanguageSelection('en', 'ar', 'site_header'); ga.trackFileDownload('/brochure.pdf');
-            assert.equal(events('language_select').length, 0);
-            assert.equal(events('file_download').length, 0);
+            assert.equal(events('language_select').length, 1);
+            assert.equal(events('file_download').length, 1);
+            assert.equal(window.__destekolGA4.granted, false);
         }
     }
 });
 
-test('homepage acceptance enables analytics storage and extra events without reconfiguring or repeating the view', () => {
+test('acceptance grants storage only; revocation restores cookieless signals without repeating the view', () => {
     browser('/'); ga.syncAnalyticsConsent(null); ga.trackPageView('/');
     ga.syncAnalyticsConsent(accepted); ga.trackPageView('/');
     assert.equal(window.__destekolGA4.granted, true);
@@ -64,7 +67,7 @@ test('homepage acceptance enables analytics storage and extra events without rec
     assert.equal(events('file_download').length, 1);
     ga.syncAnalyticsConsent(rejected); ga.trackLanguageSelection('ar', 'en', 'site_header');
     assert.equal(window.__destekolGA4.granted, false);
-    assert.equal(events('language_select').length, 1);
+    assert.equal(events('language_select').length, 2);
 });
 
 test('one configuration and one manual view per route, including repeated React effects', () => {
@@ -83,17 +86,15 @@ test('one configuration and one manual view per route, including repeated React 
     assert.equal(entries('config').length, 1);
 });
 
-test('leaving kit restores the website consent gate and cannot reuse the kit authorization', () => {
-    browser(); ga.trackPageView('/kit');
-    window.location = new URL('https://destekol.org/en/about');
-    ga.syncAnalyticsConsent(rejected); ga.trackPageView('/en/about');
-    assert.equal(window[`ga-disable-${ga.GA_MEASUREMENT_ID}`], true);
-    assert.equal(events('page_view').length, 0); // Revocation purges queued events before the tag loads.
+test('navigating from a consented website page to Kit denies storage, retaining a single shared tag', () => {
+    browser('/en/about'); ga.syncAnalyticsConsent(accepted); ga.trackPageView('/en/about');
+    assert.equal(window.__destekolGA4.granted, true);
     window.location = new URL('https://destekol.org/kit');
     ga.syncAnalyticsConsent(null); ga.trackPageView('/kit');
-    assert.equal(events('page_view').length, 1);
+    assert.equal(events('page_view').length, 2);
     assert.equal(entries('config').length, 1);
-    assert.ok(entries('consent').some(row => row[1] === 'update' && row[2].analytics_storage === 'granted'));
+    assert.equal(window.__destekolGA4.granted, false);
+    assert.equal(entries('consent').at(-1)[2].analytics_storage, 'denied');
 });
 
 test('private and authentication routes never initialize or send analytics', () => {
@@ -139,13 +140,26 @@ test('language selection tracks only real changes; debug mode is explicitly opt-
     assert.ok(!('debug_mode' in entries('config')[0][2]));
 });
 
-test('revoking consent stops events immediately and keeps the dataLayer object intact', () => {
+test('revoking consent denies storage immediately and keeps sending cookieless events on the same dataLayer', () => {
     browser('/en'); ga.syncAnalyticsConsent(accepted); ga.trackPageView('/en');
     const dataLayer = window.dataLayer;
     ga.syncAnalyticsConsent(rejected); ga.trackFileDownload('/report.pdf');
     assert.equal(window.dataLayer, dataLayer);
-    assert.equal(events('file_download').length, 0);
+    assert.equal(events('file_download').length, 1);
     assert.equal(entries('consent').at(-1)[2].analytics_storage, 'denied');
+});
+
+test('website navigation records safe destinations and languages, excluding private and contact identifiers', () => {
+    browser('/tr/projects'); ga.syncAnalyticsConsent(null); ga.initializeAnalytics();
+    ga.trackWebsiteLinkClick('/tr/donate?donor=secret&amount=10');
+    ga.trackWebsiteLinkClick('https://partner.example/about?token=secret');
+    for (const href of ['/en/account', '/admin', '/en/contact/track?token=secret', 'mailto:person@example.com']) ga.trackWebsiteLinkClick(href);
+    assert.equal(events('site_link_click').length, 2);
+    assert.equal(events('site_link_click')[0][2].link_type, 'internal');
+    assert.equal(events('site_link_click')[1][2].link_type, 'outbound');
+    assert.equal(events('site_link_click')[0][2].site_language, 'TR');
+    assert.equal(window.__destekolGA4.granted, false);
+    assert.ok(!JSON.stringify(entries('event')).includes('secret'));
 });
 
 test('the kit has no cookie banner or consent dependency and keeps its language preference', () => {

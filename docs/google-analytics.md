@@ -1,6 +1,6 @@
 # Destekol Google Analytics 4
 
-Measurement ID: **G-KREW1XWX0X**. Production publication was authorized on 13 October 2026. No Google property settings have been changed.
+Measurement ID: **G-KREW1XWX0X**, confirmed by the user and the authenticated Google Web stream. The conflicting typed ID `G-KREW1XWXXJ` is not used. The user approved deployment of this revision on 13 October 2026 after the local build, tests and authenticated Google verification passed. Enhanced measurement settings were updated in the existing Google property to avoid parallel automatic events.
 
 ## Existing tracking audit
 
@@ -8,9 +8,9 @@ The existing `CookieBanner` could conditionally load GA or GTM. The saved `SiteS
 
 ## Standalone Kit behavior
 
-The user clarified that `/kit` is an independent marketing interface and must measure visits and users directly without using the site's cookie-preference dialog. GA therefore loads on `/kit` immediately, even if the site's saved analytics preference is absent or rejected. The page does not read or change the site's saved preferences. **This is ordinary GA measurement using Google's `_ga` cookies; it is not cookieless analytics.** Advertising storage, advertising personalization and Google signals stay disabled.
+The user clarified that tracking must start without waiting for the cookie dialog. GA loads on every eligible public route immediately using advanced Consent Mode. `/kit` remains visually independent, without the main site's header, footer or cookie banner, and does not read or change the main site's saved preferences. On `/kit`, analytics storage always remains denied, including after navigating from a consented main-site page. Page views, resource clicks, language changes, document clicks and promotional video clicks are sent as cookieless signals. Advertising storage, advertising personalization and Google signals stay disabled.
 
-On the main homepage (`/`) and localized homepages (`/ar`, `/en`, `/tr`, `/fr`), the Google tag loads immediately in advanced Consent Mode with analytics storage denied until analytics permission is granted. Before permission, the integration sends only manual cookieless page-view signals; language-selection and document-download events stay disabled. After acceptance, analytics storage and these extra events are enabled. Google's reporting of denied-consent signals depends on processing and modeling eligibility; loading the tag does not guarantee exact user counts before consent. Other public content pages still require analytics permission before loading GA. Leaving Kit restores the appropriate page's consent behavior. Admin, API, authentication, account, private contact tracking, unsubscribe and payment return pages are excluded. The single tag and runtime are reused across App Router navigation; configuration uses `send_page_view: false` and manual route views are deduplicated. Existing public policy text was not changed for this homepage update.
+On the main site, existing analytics acceptance grants analytics storage; an absent or rejected choice leaves storage denied. Refusing cookies does not block cookieless page views and interactions. Existing cookie preference storage, Meta/external-content permissions, visible controls and public policy text are unchanged. Google's reporting of denied-consent signals depends on processing and modeling eligibility; sending a signal does not guarantee exact user counts or that it will appear in reports. Admin, API, authentication, account, private contact tracking, unsubscribe and payment return pages are excluded. The single tag and runtime are reused across App Router navigation; configuration uses `send_page_view: false` and manual route views are deduplicated.
 
 Kit language switches remain on `/kit` and keep the existing `NEXT_LOCALE` preference behavior. No analytics consent choice is written or changed by the Kit page.
 
@@ -22,6 +22,7 @@ Kit language switches remain on `/kit` and keep the existing `NEXT_LOCALE` prefe
 | --- | --- | --- |
 | `page_view` | Initial public page load and client route changes, including `/kit` | `page_location`, `page_title`, `site_language` |
 | `kit_link_click` | Click or middle-click on any active Kit card, including added cards | `link_id`, `link_text`, `link_url`, `site_language` |
+| `site_link_click` | Public main-site navigation or outbound link click | sanitized `link_url`, `link_type`, `site_language` |
 | `language_select` | A different AR, EN or TR selection | `selected_language`, `previous_language`, `selection_location` |
 | `file_download` | Click on a supported document URL, including `.pdf` | `file_name`, `file_extension`, `link_url`, `link_id` for Kit |
 | `promotional_video_click` | Click on the configured promotional video card | `link_id`, `link_text`, `link_url`, `site_language` |
@@ -30,15 +31,15 @@ There are currently six default resource cards because “Marketing Kit for Visi
 
 URLs sent to GA exclude arbitrary queries, fragments, email-style values and private routes. Only safe `utm_source`, `utm_medium`, `utm_campaign`, `utm_term`, `utm_content` and `utm_id` values are retained on the visited page. Form values, user accounts, donation references, consent records and authentication tokens are not included in manual events.
 
-## Google property setup before deployment
+## Google property configuration
 
 In **Admin → Data collection and modification → Data streams → the Destekol Web stream → Enhanced measurement settings**:
 
-1. Under Page views advanced settings, turn off **Page changes based on browser history events**. Initial/manual views are controlled by this integration. Google's default automatic history tracking can duplicate SPA views.
-2. Turn off automatic **File downloads**, because this integration sends `file_download` itself.
-3. Turn off automatic **Outbound clicks** and **Form interactions** so the intended manual event set controls what is collected, without parallel click events or automatic form telemetry.
+1. Under Page views advanced settings, **Page changes based on browser history events** is off. Initial/manual views are controlled by this integration. Google's default automatic history tracking can duplicate SPA views.
+2. Automatic **File downloads** is off, because this integration sends `file_download` itself.
+3. Automatic **Outbound clicks**, **Form interactions** and **Site search** are off so the intended manual event set controls what is collected, without parallel click events, automatic form telemetry or search terms.
 
-These settings have not been changed on your Google account. Register event-scoped custom dimensions in **Admin → Data display → Custom definitions** for `link_id`, `site_language`, `selected_language` and `selection_location` if you want to group long-term reports by those fields. GA processes custom dimensions prospectively.
+These settings were saved and re-opened to confirm persistence on 13 October 2026 in account **Destekol**, property **Destekol Website.** (property ID `558620410`), Web stream **Destekol** (`16118545843`). Page loads, Scrolls and Video engagement remain enabled. Public policy text, consent settings and property access were not changed. Register event-scoped custom dimensions in **Admin → Data display → Custom definitions** for `link_id`, `site_language`, `selected_language` and `selection_location` if you want to group long-term reports by those fields. GA processes custom dimensions prospectively; these definitions have not been created by this update.
 
 ## QR attribution
 
@@ -50,13 +51,17 @@ The page still opens at the same `/kit` route, in all three languages. Customize
 
 ## Verify Realtime, DebugView and users
 
-1. Open GA's Destekol property and **Reports → Realtime**. Visit `/kit` in another browser or tab. Check the page title/location and the `page_view` count, then click active cards and change languages. Expect `kit_link_click`, `language_select` and `promotional_video_click`. A real `.pdf` URL also sends `file_download`.
-2. For DebugView, open `/kit?ga_debug=1` (you may append QR UTMs). Open **Admin → Data display → DebugView**, select the test device, and inspect each event's parameters. The `ga_debug` flag is excluded from the transmitted page URL. Remove it after testing. Development console logs with `[Destekol GA4]` show the same sanitized payloads.
+1. Open GA's Destekol property and **Reports → Realtime**. For an observable reporting test, open a main-site page, accept analytics using the existing dialog and reload it. Check `page_view`, then navigate to a public content page and follow links to check `site_link_click`. This uses analytics storage legitimately granted by that test browser.
+2. For DebugView, open a main-site URL with `?ga_debug=1`, accept analytics and reload, then open **Admin → Data display → DebugView**. Inspect the event parameters. Google does not show events in DebugView when analytics storage consent is denied, so Kit's cookieless events cannot be verified there. Verify their emission and consent flags with Tag Assistant or browser network inspection; Google reporting additionally depends on processing/modeling eligibility. The `ga_debug` flag is excluded from transmitted page URLs. Development console logs with `[Destekol GA4]` show the sanitized payloads.
 3. Use **Reports → Engagement → Pages and screens** filtered to `/kit` for views. For Kit-specific users, use an Exploration filtered by page path `/kit`, with Views, Total users and Active users. Group `kit_link_click` events by `link_id` and `site_language` after registering the custom dimensions.
-4. Confirm that rejecting analytics on a content page prevents its events, while the homepage loads the tag with analytics storage denied and `/kit` measures directly. Accept analytics on the homepage and reload it to test observed user/session measurement and DebugView. On Kit there should be one Google tag and no cookie-preference dialog. Browser blockers or GA internal/developer traffic filters may suppress test data; check those if Realtime or DebugView remains empty.
+4. Confirm that rejecting analytics on public content pages continues sending signals with analytics storage denied. On Kit there should be one Google tag and no cookie-preference dialog. Browser blockers or GA internal/developer traffic filters may suppress test data; check those if Realtime or DebugView remains empty.
 
-The homepage update passed 34 focused tests, including all homepage languages before consent, acceptance and revocation, and the first-render race with a previously accepted preference. No public privacy or cookie policy files were modified for this update.
+This revision passed the production build, TypeScript checking and 35 focused tests on 13 October 2026: multilingual public routes before consent, acceptance and revocation, private-route exclusion, Kit storage isolation, sanitized website links, downloads and videos, and the first-render race with a previously accepted preference. No public privacy or cookie policy files were modified for this update.
 
-Local checks cover direct Kit tracking with absent/rejected site consent, consent isolation when leaving Kit, route views and deduplication, sensitive-route exclusions, sanitized UTM attribution, dynamic links, document/video events, language changes and revocation. The production build, TypeScript and 31 relevant tests passed on 13 October 2026. Browser checks confirmed exactly one Google tag with the supplied ID, no Kit consent dialog, a single initial `page_view`, retained QR UTMs, language selection, and both `kit_link_click` and `promotional_video_click` for the active video. Arabic banner rendering also passed desktop and phone inspection without horizontal overflow. Property-side event receipt and reporting must be confirmed in your authenticated Google account; it has not been claimed as verified here.
+Authenticated property-side verification on 13 October 2026 confirmed **Data flowing** for the exact Measurement ID. Realtime showed the deployed Kit's `page_view`, `language_select` and `user_engagement`. Tag Assistant found one on-page Google tag and a Page View hit for this destination. These live Kit observations describe the previously deployed version; they do not establish reporting of the new denied-storage Kit behavior.
+
+For the revised local code, browser verification found exactly one Google tag on `/en/about` before any cookie choice. After rejecting non-essential cookies, navigating to `/en/projects` emitted `site_link_click` and one route `page_view` in development logs. A separate test at `http://127.0.0.1:3004/en/about?ga_debug=1` granted **Analytics only** using the existing dialog, reloaded, and navigated to Projects. Realtime then showed `site_link_click`; DebugView showed two page views and one `site_link_click`. Inspecting its parameters confirmed the local `/en/about` page location and `site_language=EN`, proving receipt of the revised local implementation rather than merely the production tag. Test events are ordinary website visits and were not submitted through a fabricated Measurement Protocol request.
+
+Kit's new denied-storage signals are covered by emission/consent tests, not claimed as visible in DebugView or as exact unique-user counts. Google explicitly excludes events without Analytics cookie consent from DebugView. Reporting of these signals still depends on processing and modeling eligibility. Existing QR attribution, dynamic resource IDs, supported document/video clicks and language changes are covered by the focused tests.
 
 Official references: [Next.js Script](https://nextjs.org/docs/app/api-reference/components/script), [manual GA4 page views](https://developers.google.com/analytics/devguides/collection/ga4/views), [Google consent mode](https://developers.google.com/tag-platform/security/guides/consent), [DebugView](https://support.google.com/analytics/answer/7201382), [campaign attribution](https://support.google.com/analytics/answer/10917952).
