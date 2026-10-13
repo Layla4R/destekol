@@ -1,8 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
-import { ArrowUpRight, FileText, Folder, Handshake, Leaf, Link as LinkIcon, Mail, Play, Presentation, type LucideIcon } from "lucide-react";
+import { useEffect, useState, type MouseEvent } from "react";
+import { ArrowUpRight, FileText, Folder, Handshake, Leaf, Link as LinkIcon, Mail, Play, type LucideIcon } from "lucide-react";
 import { KIT_LOCALES, KIT_URL, LANGUAGE_COOKIE, getKitResourceUrl, kitResourceOpensNewTab, type KitLinkId, type KitLocale, type KitResource } from "@/lib/kit-config";
 import { KIT_COPY } from "@/lib/kit-copy";
 import { LOCALE_NAMES } from "@/lib/locales";
@@ -10,7 +10,7 @@ import styles from "./kit.module.css";
 import { trackKitResourceClick, trackLanguageSelection } from "@/lib/analytics";
 
 const RESOURCE_ICONS: Record<KitLinkId | "link", LucideIcon> = {
-    visits: Presentation, brochure: FileText, portfolio: Folder,
+    website: LinkIcon, brochure: FileText, portfolio: Folder,
     sustainability: Leaf, video: Play, partnerships: Handshake, contact: Mail, link: LinkIcon,
 };
 
@@ -33,6 +33,26 @@ export default function KitPage({ initialLocale, resources }: { initialLocale: K
         document.title = KIT_COPY[nextLocale].title;
         setLocale(nextLocale);
         document.cookie = `${LANGUAGE_COOKIE}=${nextLocale}; Path=/; Max-Age=31536000; SameSite=Lax${location.protocol === "https:" ? "; Secure" : ""}`;
+    }
+
+    function clickResource(event: MouseEvent<HTMLAnchorElement>, resource: KitResource, href: string, newTab: boolean) {
+        // Preserve native new-tab, modified and download clicks. Only ordinary same-tab
+        // navigation waits briefly for GA, with a fallback if Google is blocked.
+        if (newTab || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey
+            || event.defaultPrevented || event.currentTarget.hasAttribute("download")) {
+            trackKitResourceClick(resource, href, locale);
+            return;
+        }
+        let navigated = false;
+        const navigate = () => {
+            if (navigated) return;
+            navigated = true;
+            clearTimeout(fallback);
+            window.location.assign(href);
+        };
+        const fallback = setTimeout(navigate, 850);
+        if (trackKitResourceClick(resource, href, locale, navigate)) event.preventDefault();
+        else clearTimeout(fallback);
     }
 
     return (
@@ -77,8 +97,8 @@ export default function KitPage({ initialLocale, resources }: { initialLocale: K
                             return <li key={resource.id} data-resource={resource.id}>
                                 {href ? <a href={href} className={styles.resource} target={newTab ? "_blank" : undefined}
                                     rel={newTab ? "noopener noreferrer" : undefined}
-                                    onClick={() => trackKitResourceClick(resource, href, locale, title)}
-                                    onAuxClick={event => { if (event.button === 1) trackKitResourceClick(resource, href, locale, title); }}
+                                    onClick={event => clickResource(event, resource, href, newTab)}
+                                    onAuxClick={event => { if (event.button === 1) trackKitResourceClick(resource, href, locale); }}
                                     aria-label={`${title}${newTab ? ` — ${copy.newTab}` : ""}`}>
                                     {content}
                                 </a> : <div className={styles.resource} role="link" aria-disabled="true"

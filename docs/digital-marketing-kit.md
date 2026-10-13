@@ -73,6 +73,8 @@ The official slogans are Making a Lasting Impact, Hayata Kalıcı Bir Etki and �
 
 The independent Kit loads Google Analytics without the website's cookie dialog, with analytics storage denied and cookieless event signals. Google's reporting of these signals depends on processing and modeling eligibility. See [Google Analytics integration and verification](google-analytics.md) for events, QR UTMs, Realtime, DebugView limitations and required property settings.
 
+The first card is now the official website at `https://destekol.org/`, with the analytics identifier `official_website`. The obsolete visit-kit card and `marketing_kit` tracking identifier are discarded. Other saved links and deletions are preserved. See the [Kit reporting guide](kit-analytics-reporting.md) for `kit_link_name`, `kit_language`, custom dimensions and the `institutional_visits` QR campaign.
+
 ## QR downloads and printing
 
 - PNG: `/kit/destekol-kit-qr.png`

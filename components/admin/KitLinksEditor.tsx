@@ -10,7 +10,7 @@ import { LOCALE_NAMES } from "@/lib/locales";
 
 const fieldClass = "w-full rounded-xl border border-line bg-white px-3 py-2.5 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-brand/30 disabled:bg-dashbg disabled:text-muted";
 const iconLabels: Record<KitLinkId | "link", string> = {
-    visits: "عرض تقديمي", brochure: "مستند", portfolio: "مجلد", sustainability: "ورقة نبات",
+    website: "الموقع الرسمي", brochure: "مستند", portfolio: "مجلد", sustainability: "ورقة نبات",
     video: "فيديو", partnerships: "شراكة", contact: "بريد", link: "رابط",
 };
 

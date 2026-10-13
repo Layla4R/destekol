@@ -113,19 +113,31 @@ test('campaign URLs retain only safe UTMs and never include fragments, email, to
     assert.equal(ga.analyticsLink('mailto:person@example.com'), null);
 });
 
-test('every configured or custom link emits its stable ID and language; PDFs and videos add specific events', () => {
-    browser(); ga.initializeAnalytics();
-    for (const id of ['brochure', 'portfolio', 'sustainability', 'video', 'partnerships', 'contact', 'custom-123']) {
-        ga.trackKitResourceClick({ id }, 'https://destekol.org/document.pdf?token=hidden', 'ar', 'عنوان');
+test('all seven supported resources and custom cards emit one click with stable names in every language', () => {
+    const mapping = { website: 'official_website', brochure: 'brochure', portfolio: 'portfolio', sustainability: 'sustainability_report', video: 'promotional_video', partnerships: 'partnership', contact: 'contact', 'custom-123': 'custom-123' };
+    for (const locale of ['en', 'tr', 'ar']) {
+        browser(); ga.initializeAnalytics();
+        for (const [id, name] of Object.entries(mapping)) {
+            const before = events('kit_link_click').length;
+            ga.trackKitResourceClick({ id }, 'https://destekol.org/document.pdf?token=hidden', locale);
+            assert.equal(events('kit_link_click').length, before + 1);
+            const payload = events('kit_link_click').at(-1)[2];
+            assert.equal(payload.kit_link_name, name);
+            assert.equal(payload.kit_language, locale);
+            assert.equal(payload.link_url, 'https://destekol.org/document.pdf');
+            assert.ok(!('link_text' in payload));
+        }
+        assert.equal(events('file_download').length, 8);
+        assert.equal(events('promotional_video_click').length, 1);
+        assert.equal(events('file_download')[0][2].kit_language, locale);
+        assert.ok(!JSON.stringify(entries('event')).includes('hidden'));
+        const before = events('kit_link_click').length;
+        assert.equal(ga.trackKitResourceClick({ id: 'visits' }, '/old.pdf', locale), false);
+        assert.equal(events('kit_link_click').length, before);
+        assert.ok(!JSON.stringify(entries('event')).includes('marketing_kit'));
     }
-    assert.equal(events('kit_link_click').length, 7);
-    assert.equal(events('file_download').length, 7);
-    assert.equal(events('promotional_video_click').length, 1);
-    assert.equal(events('kit_link_click').at(-1)[2].link_id, 'custom-123');
-    assert.equal(events('kit_link_click')[0][2].site_language, 'AR');
-    assert.ok(!JSON.stringify(entries('event')).includes('hidden'));
     const before = events('file_download').length;
-    ga.trackKitResourceClick({ id: 'brochure' }, 'https://drive.google.com/drive/folders/public', 'tr', 'Broşür');
+    ga.trackKitResourceClick({ id: 'brochure' }, 'https://drive.google.com/drive/folders/public', 'tr');
     assert.equal(events('file_download').length, before); // A folder click is not a PDF download.
 });
 
@@ -135,9 +147,43 @@ test('language selection tracks only real changes; debug mode is explicitly opt-
     ga.trackLanguageSelection('en', 'ar', 'kit');
     assert.equal(events('language_select').length, 1);
     assert.equal(events('language_select')[0][2].selected_language, 'AR');
+    assert.equal(events('language_select')[0][2].kit_language, 'ar');
     assert.equal(events('language_select')[0][2].debug_mode, true);
     browser(); ga.initializeAnalytics();
     assert.ok(!('debug_mode' in entries('config')[0][2]));
+});
+
+test('QR attribution survives en, tr and ar language changes without another page view', () => {
+    const route = '/kit?utm_source=qr&utm_medium=print&utm_campaign=institutional_visits&ga_debug=1';
+    browser(route); ga.trackPageView(route);
+    for (const [previous, selected] of [['en', 'tr'], ['tr', 'ar'], ['ar', 'en']]) {
+        ga.trackLanguageSelection(previous, selected, 'kit');
+        ga.trackLanguageSelection(selected, selected, 'kit');
+        ga.trackKitResourceClick({ id: 'website' }, 'https://destekol.org/', selected);
+        ga.trackPageView(route);
+    }
+    assert.equal(entries('config').length, 1);
+    assert.equal(events('page_view').length, 1);
+    assert.deepEqual(events('language_select').map(row => row[2].kit_language), ['tr', 'ar', 'en']);
+    for (const row of entries('event')) {
+        assert.equal(new URL(row[2].page_location).searchParams.get('utm_campaign'), 'institutional_visits');
+        assert.equal(new URL(row[2].page_location).searchParams.get('utm_source'), 'qr');
+        assert.ok(!row[2].page_location.includes('ga_debug'));
+    }
+    assert.ok(window.location.href.includes('utm_medium=print'));
+});
+
+test('navigation callbacks are attached only to the primary Kit click and invalid URLs are not queued', () => {
+    browser(); ga.initializeAnalytics();
+    const done = () => {};
+    assert.equal(ga.trackKitResourceClick({ id: 'brochure' }, '/brochure.pdf', 'en', done), true);
+    assert.equal(events('kit_link_click')[0][2].event_callback, done);
+    assert.equal(events('kit_link_click')[0][2].event_timeout, 800);
+    assert.ok(!('event_callback' in events('file_download')[0][2]));
+    assert.equal(ga.trackKitResourceClick({ id: 'website' }, 'javascript:alert(1)', 'en'), false);
+    assert.equal(events('kit_link_click').length, 1);
+    browser('/admin/kit');
+    assert.equal(ga.trackKitResourceClick({ id: 'website' }, 'https://destekol.org/', 'en', done), false);
 });
 
 test('revoking consent denies storage immediately and keeps sending cookieless events on the same dataLayer', () => {

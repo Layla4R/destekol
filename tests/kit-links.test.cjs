@@ -63,12 +63,12 @@ test('CMS storage persists all language URLs, edits and removals without creatin
     const fixture = storageFixture();
     assert.equal((await fixture.settings.readKitSettings()).resources.length, defaults().length);
     const resources = config.parseKitResources(defaults());
-    resources[0].url = 'https://destekol.org/visits.pdf';
-    resources[0].localizedUrls.ar = '/kit/visits-ar.pdf';
+    resources[0].url = 'https://destekol.org/resource.pdf';
+    resources[0].localizedUrls.ar = '/kit/resource-ar.pdf';
     await fixture.settings.saveKitSettings(resources);
     const loaded = await fixture.settings.readKitSettings();
-    assert.equal(config.getKitResourceUrl(loaded.resources[0], 'en'), 'https://destekol.org/visits.pdf');
-    assert.equal(config.getKitResourceUrl(loaded.resources[0], 'ar'), '/kit/visits-ar.pdf');
+    assert.equal(config.getKitResourceUrl(loaded.resources[0], 'en'), 'https://destekol.org/resource.pdf');
+    assert.equal(config.getKitResourceUrl(loaded.resources[0], 'ar'), '/kit/resource-ar.pdf');
     assert.equal(fixture.writes[0].value.id, config.KIT_SETTINGS_ID);
     assert.equal(fixture.writes[0].value.isPublished, false);
     assert.equal(fixture.writes[0].value.showInMenu, false);
@@ -122,11 +122,11 @@ test('removing any main card, including all cards, persists after save and reloa
     assert.deepEqual(await fixture.settings.readPublicKitResources(), []);
 });
 
-test('legacy visit-kit cards become a heading without losing configured resource URLs', async () => {
+test('obsolete visit-kit cards are discarded without losing configured resource URLs', async () => {
     const fixture = storageFixture();
     const rows = [{ id: 'visits', tone: 'blue', url: null }, ...defaults()];
-    rows[1].url = 'https://destekol.org/brochure.pdf';
-    rows[2].localizedUrls = { ar: '/kit/portfolio-ar.pdf' };
+    rows.find(row => row.id === 'brochure').url = 'https://destekol.org/brochure.pdf';
+    rows.find(row => row.id === 'portfolio').localizedUrls = { ar: '/kit/portfolio-ar.pdf' };
     fixture.seed({ sections: [{ type: 'kit_links', props: { resources: rows } }] });
     const saved = (await fixture.settings.readKitSettings()).resources;
     assert.equal(saved.some(row => row.id === 'visits'), false);
@@ -156,7 +156,66 @@ test('contact links open safely in all languages and the official slogan appears
         assert.equal(html.split(copy.KIT_COPY[locale].heroTitle).length - 1, 1);
         assert.ok(!html.includes('bannerCopy'));
         assert.ok(!html.includes(copy.KIT_COPY[locale].heroSubtitle));
+        assert.ok(html.includes(copy.KIT_COPY[locale].links.website));
+        assert.match(html, /data-resource="website"[^]*?href="https:\/\/destekol.org\/"[^>]*target="_blank"/);
     }
+});
+
+test('Kit anchors track once and same-tab documents use callback/fallback without breaking modified clicks', () => {
+    const React = require('react');
+    const copy = load('lib/kit-copy.ts');
+    const calls = [], timers = new Map(), navigations = [];
+    let queued = true, timerId = 0;
+    const originals = { window: global.window, setTimeout: global.setTimeout, clearTimeout: global.clearTimeout };
+    global.window = { location: { assign: href => navigations.push(href) } };
+    global.setTimeout = fn => { const id = ++timerId; timers.set(id, fn); return id; };
+    global.clearTimeout = id => timers.delete(id);
+    try {
+        const KitPage = load('components/kit/KitPage.tsx', {
+            react: { ...React, useState: value => [value, () => {}], useEffect() {} },
+            'next/image': { __esModule: true, default: () => null },
+            '@/lib/kit-config': config, '@/lib/kit-copy': copy,
+            '@/lib/locales': { LOCALE_NAMES: { en: 'English', tr: 'Türkçe', ar: 'العربية' } },
+            '@/lib/analytics': { trackKitResourceClick: (...args) => { calls.push(args); return queued; }, trackLanguageSelection() {} },
+            './kit.module.css': { __esModule: true, default: {} },
+        }).default;
+        const resources = [defaults()[0], { id: 'brochure', tone: 'blue', url: '/kit/test.pdf' }, { id: 'sustainability', tone: 'green', url: null }];
+        const tree = KitPage({ initialLocale: 'ar', resources });
+        const nodes = [];
+        function visit(node) { if (!node || typeof node !== 'object') return; nodes.push(node); React.Children.forEach(node.props?.children, visit); }
+        visit(tree);
+        const website = nodes.find(node => node.type === 'a' && node.props.href === 'https://destekol.org/');
+        const pdf = nodes.find(node => node.type === 'a' && node.props.href === '/kit/test.pdf');
+        const event = extra => ({ button: 0, preventDefault() { this.prevented = true; }, currentTarget: { hasAttribute: () => false }, ...extra });
+        website.props.onClick(event());
+        assert.equal(calls.length, 1);
+        assert.equal(calls[0][2], 'ar');
+        assert.equal(calls[0][3], undefined);
+        assert.equal(website.props.target, '_blank');
+        website.props.onAuxClick(event({ button: 2 }));
+        assert.equal(calls.length, 1);
+        website.props.onAuxClick(event({ button: 1 }));
+        assert.equal(calls.length, 2);
+        const ordinary = event(); pdf.props.onClick(ordinary);
+        assert.equal(ordinary.prevented, true);
+        const callback = calls.at(-1)[3];
+        callback(); callback();
+        assert.deepEqual(navigations, ['/kit/test.pdf']);
+        assert.equal(timers.size, 0);
+        pdf.props.onClick(event());
+        const fallback = [...timers.values()][0]; fallback(); calls.at(-1)[3]();
+        assert.equal(navigations.length, 2);
+        for (const extra of [{ ctrlKey: true }, { metaKey: true }, { shiftKey: true }, { altKey: true }, { currentTarget: { hasAttribute: () => true } }]) {
+            const modified = event(extra); pdf.props.onClick(modified);
+            assert.ok(!modified.prevented);
+            assert.equal(calls.at(-1)[3], undefined);
+        }
+        queued = false;
+        const blocked = event(); pdf.props.onClick(blocked);
+        assert.ok(!blocked.prevented);
+        assert.equal(timers.size, 0);
+        assert.ok(nodes.some(node => node.props?.['aria-disabled'] === 'true'));
+    } finally { Object.assign(global, originals); }
 });
 
 test('view-only staff can inspect kit settings but cannot change links through the API', () => {

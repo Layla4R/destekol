@@ -21,13 +21,15 @@ Kit language switches remain on `/kit` and keep the existing `NEXT_LOCALE` prefe
 | Event | Trigger | Useful parameters |
 | --- | --- | --- |
 | `page_view` | Initial public page load and client route changes, including `/kit` | `page_location`, `page_title`, `site_language` |
-| `kit_link_click` | Click or middle-click on any active Kit card, including added cards | `link_id`, `link_text`, `link_url`, `site_language` |
+| `kit_link_click` | Click or middle-click on any active Kit card, including added cards | `kit_link_name`, `kit_language`, sanitized `link_url`; legacy `link_id`, `site_language` |
 | `site_link_click` | Public main-site navigation or outbound link click | sanitized `link_url`, `link_type`, `site_language` |
-| `language_select` | A different AR, EN or TR selection | `selected_language`, `previous_language`, `selection_location` |
+| `language_select` | A different AR, EN or TR selection | `selected_language`, `previous_language`, `selection_location`; `kit_language` on Kit |
 | `file_download` | Click on a supported document URL, including `.pdf` | `file_name`, `file_extension`, `link_url`, `link_id` for Kit |
-| `promotional_video_click` | Click on the configured promotional video card | `link_id`, `link_text`, `link_url`, `site_language` |
+| `promotional_video_click` | Click on the configured promotional video card | `kit_link_name`, `kit_language`, `link_id`, `link_url`, `site_language` |
 
-There are currently six default resource cards because “Marketing Kit for Visits” is the page heading. Tracking covers all configured and custom cards and never restores a removed card. Disabled cards generate no click events. A Drive folder or `/view` destination is a resource click, not a confirmed PDF download. Downloads occurring inside Google Drive and video playback on third-party sites are outside this website's visibility; the integration records the outbound click.
+The supported resource names are `official_website`, `brochure`, `portfolio`, `sustainability_report`, `promotional_video`, `partnership` and `contact`. The official website replaces the obsolete visit-kit resource; `marketing_kit` is not emitted. Custom cards retain their stable `custom-*` ID. The saved list contains the official website followed by the existing five resources; partnership remains removed and sustainability remains disabled. Tracking never restores a removed card. Disabled cards generate no click events. A Drive folder or `/view` destination is a resource click, not a confirmed PDF download. Downloads occurring inside Google Drive and video playback on third-party sites are outside this website's visibility; the integration records the outbound click.
+
+Kit language parameters are lowercase `en`, `tr` or `ar`. Legacy parameters remain for existing reports, while free-form link titles are no longer transmitted. Ordinary same-tab links wait for the documented GA event callback, with an independent 850 ms fallback; external/new-tab, modified and download clicks retain native navigation. See [Kit reporting guide](kit-analytics-reporting.md) for custom dimensions, resource reports and QR traffic.
 
 URLs sent to GA exclude arbitrary queries, fragments, email-style values and private routes. Only safe `utm_source`, `utm_medium`, `utm_campaign`, `utm_term`, `utm_content` and `utm_id` values are retained on the visited page. Form values, user accounts, donation references, consent records and authentication tokens are not included in manual events.
 
@@ -45,7 +47,7 @@ These settings were saved and re-opened to confirm persistence on 13 October 202
 
 Use this optional campaign URL in a new QR code:
 
-`https://destekol.org/kit?utm_source=qr&utm_medium=print&utm_campaign=ngo_visits`
+`https://destekol.org/kit?utm_source=qr&utm_medium=print&utm_campaign=institutional_visits`
 
 The page still opens at the same `/kit` route, in all three languages. Customize the campaign name for each printed batch. Existing QR assets still encode the original plain URL; those untagged scans cannot retrospectively be distinguished from other direct visits. The site does not invent campaign attribution or redirect the QR destination.
 

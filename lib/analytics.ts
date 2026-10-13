@@ -1,8 +1,13 @@
 import type { CookieConsent } from "@/lib/cookie-consent";
-import type { KitLocale, KitResource } from "@/lib/kit-config";
+import type { KitLinkId, KitLocale, KitResource } from "@/lib/kit-config";
 
 export const GA_MEASUREMENT_ID = "G-KREW1XWX0X";
 const UTM_KEYS = ["utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content", "utm_id"];
+const KIT_ANALYTICS_NAMES: Record<KitLinkId, string> = {
+    website: "official_website", brochure: "brochure", portfolio: "portfolio",
+    sustainability: "sustainability_report", video: "promotional_video",
+    partnerships: "partnership", contact: "contact",
+};
 type AnalyticsRuntime = { consent: CookieConsent | null; configured: boolean; granted: boolean; debug: boolean; lastRoute: string | null; previousLocation: string | null };
 type AnalyticsWindow = Window & {
     dataLayer?: unknown[];
@@ -108,17 +113,19 @@ export function initializeAnalytics(): boolean {
     return true;
 }
 
-export function trackAnalyticsEvent(name: string, parameters: Record<string, string | number | boolean>) {
+export function trackAnalyticsEvent(name: string, parameters: Record<string, string | number | boolean>, onComplete?: () => void): boolean {
     const current = runtime();
     if (!current || !analyticsEnabled(current.browser.location.pathname)
-        || !current.state.configured) return;
+        || !current.state.configured) return false;
     const payload = {
         ...parameters, send_to: GA_MEASUREMENT_ID,
         page_location: analyticsLocation(current.browser.location.href),
+        ...(onComplete ? { event_callback: onComplete, event_timeout: 800 } : {}),
         ...(current.state.debug ? { debug_mode: true } : {}),
     };
     current.browser.gtag?.("event", name, payload);
     if (current.state.debug && process.env.NODE_ENV === "development") console.debug("[Destekol GA4]", name, JSON.stringify(payload));
+    return true;
 }
 
 export function trackPageView(routeKey: string) {
@@ -141,7 +148,10 @@ export function trackPageView(routeKey: string) {
 
 export function trackLanguageSelection(previous: string, selected: string, source: "kit" | "site_header") {
     if (previous === selected) return;
-    trackAnalyticsEvent("language_select", { previous_language: previous.toUpperCase(), selected_language: selected.toUpperCase(), selection_location: source });
+    trackAnalyticsEvent("language_select", {
+        previous_language: previous.toUpperCase(), selected_language: selected.toUpperCase(), selection_location: source,
+        ...(source === "kit" ? { kit_language: selected.toLowerCase() } : {}),
+    });
 }
 
 export function trackFileDownload(href: string, parameters: Record<string, string | number> = {}) {
@@ -167,11 +177,19 @@ export function trackWebsiteLinkClick(href: string) {
     });
 }
 
-export function trackKitResourceClick(resource: KitResource, href: string, locale: KitLocale, title: string) {
+export function trackKitResourceClick(resource: KitResource, href: string, locale: KitLocale, onComplete?: () => void): boolean {
+    // Ignore obsolete resources supplied by an old cached page after deployment.
+    if ((resource.id as string) === "visits") return false;
     const linkUrl = analyticsLink(href);
-    const parameters = { link_id: resource.id, link_text: title.slice(0, 100), site_language: locale.toUpperCase(), ...(linkUrl ? { link_url: linkUrl } : {}) };
-    trackAnalyticsEvent("kit_link_click", parameters);
-    trackFileDownload(href, { link_id: resource.id, site_language: locale.toUpperCase() });
+    if (!linkUrl) return false;
+    const parameters = {
+        kit_link_name: KIT_ANALYTICS_NAMES[resource.id as KitLinkId] || resource.id,
+        kit_language: locale,
+        link_id: resource.id, site_language: locale.toUpperCase(), link_url: linkUrl,
+    };
+    const queued = trackAnalyticsEvent("kit_link_click", parameters, onComplete);
+    trackFileDownload(href, { link_id: resource.id, site_language: locale.toUpperCase(), kit_link_name: parameters.kit_link_name, kit_language: locale });
     if (resource.id === "video") trackAnalyticsEvent("promotional_video_click", parameters);
+    return queued;
 }
 

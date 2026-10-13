@@ -9,7 +9,7 @@ export function getKitLocale(value?: string): KitLocale {
     return KIT_LOCALES.includes(value as KitLocale) ? value as KitLocale : "en";
 }
 
-export type KitLinkId = "visits" | "brochure" | "portfolio" | "sustainability" | "video" | "partnerships" | "contact";
+export type KitLinkId = "website" | "brochure" | "portfolio" | "sustainability" | "video" | "partnerships" | "contact";
 export type KitResource = {
     id: KitLinkId | `custom-${string}`;
     tone: "blue" | "green" | "gold";
@@ -23,6 +23,7 @@ export type KitResource = {
 
 // Only verified resources belong here. Keep this order in every language.
 export const KIT_RESOURCES: readonly KitResource[] = [
+    { id: "website", tone: "blue", icon: "link", url: "https://destekol.org/" },
     { id: "brochure", tone: "blue", url: null },
     { id: "portfolio", tone: "green", url: null },
     { id: "sustainability", tone: "green", url: null },
@@ -71,7 +72,7 @@ export function parseKitResources(value: unknown): KitResource[] {
         if (typeof raw !== "string" || raw.length > 2048) throw new Error("الرابط غير صالح أو طويل جدًا.");
         const url = raw.trim();
         if (!url) return null;
-        if (!getKitResourceUrl({ id: "visits", tone: "blue", url }, "en")) {
+        if (!getKitResourceUrl({ id: "website", tone: "blue", url }, "en")) {
             throw new Error("استخدم رابط HTTPS كاملًا أو مسارًا داخل الموقع يبدأ بـ /.");
         }
         return url;
@@ -91,7 +92,7 @@ export function parseKitResources(value: unknown): KitResource[] {
         else lastCoreIndex = coreIndex;
         if (!["blue", "green", "gold"].includes(String(row.tone))) throw new Error("لون الرابط غير صالح.");
         if (row.enabled !== undefined && typeof row.enabled !== "boolean") throw new Error("حالة الرابط غير صالحة.");
-        if (row.icon !== undefined && !["visits", ...KIT_RESOURCES.map(item => item.id), "link"].includes(row.icon as KitLinkId)) {
+        if (row.icon !== undefined && ![...KIT_RESOURCES.map(item => item.id), "link"].includes(row.icon as KitLinkId)) {
             throw new Error("أيقونة الرابط غير صالحة.");
         }
         const localizedUrls: Partial<Record<KitLocale, string | null>> = {};

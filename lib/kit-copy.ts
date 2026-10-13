@@ -33,7 +33,7 @@ export const KIT_COPY: Record<KitLocale, KitCopy> = {
         footer: "One fixed link for all languages",
         noLinks: "Resources will be added here soon.",
         links: {
-            visits: "Marketing Kit for Visits",
+            website: "Official Website",
             brochure: "Organization Brochure",
             portfolio: "Programs & Projects Portfolio",
             sustainability: "Sustainability Report",
@@ -57,7 +57,7 @@ export const KIT_COPY: Record<KitLocale, KitCopy> = {
         footer: "Tüm diller için tek kalıcı bağlantı",
         noLinks: "Kaynaklar yakında buraya eklenecek.",
         links: {
-            visits: "Kurumsal Ziyaretler İçin Tanıtım Kiti",
+            website: "Resmî Web Sitesi",
             brochure: "Kurumsal Tanıtım Broşürü",
             portfolio: "Program ve Proje Portföyü",
             sustainability: "Sürdürülebilirlik Raporu",
@@ -81,7 +81,7 @@ export const KIT_COPY: Record<KitLocale, KitCopy> = {
         footer: "رابط ثابت واحد لجميع اللغات",
         noLinks: "ستُضاف الروابط هنا قريبًا.",
         links: {
-            visits: "حقيبة التسويق للزيارات",
+            website: "الموقع الرسمي",
             brochure: "الكتيّب التعريفي بالمنظمة",
             portfolio: "ملف البرامج والمشاريع",
             sustainability: "تقرير الاستدامة",
