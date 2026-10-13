@@ -4,6 +4,7 @@ import { usePathname,useRouter } from "next/navigation";
 import { useState } from "react";
 import FlagIcon from "./FlagIcon";
 import { LANGUAGE_COOKIE } from "@/lib/kit-config";
+import { trackLanguageSelection } from "@/lib/analytics";
 export default function LanguageSwitcher({ currentLocale, transparent = false, isDestekol = false }: {
     currentLocale: string;
     transparent?: boolean;
@@ -18,6 +19,7 @@ export default function LanguageSwitcher({ currentLocale, transparent = false, i
         document.cookie = `${LANGUAGE_COOKIE}=${newLocale}; Path=/; Max-Age=31536000; SameSite=Lax${location.protocol === "https:" ? "; Secure" : ""}`;
         if (newLocale === current)
             return;
+        trackLanguageSelection(current, newLocale, "site_header");
         // Remove ALL locale prefixes from current path
         let base = pathname;
         for (const loc of LOCALES) {

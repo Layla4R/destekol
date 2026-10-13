@@ -224,7 +224,6 @@ export default async function LocaleLayout({ children, params: { locale }, }: {
     const localeData = LOCALE_METADATA[locale] || LOCALE_METADATA.en;
     const { organizationSchema, websiteSchema } = buildSiteSchemas(locale, settings, localeData, siteUrl, fullName, brandName, isDestekol);
     const pixelId = settings?.facebookPixelId;
-    const gaId = settings?.gaMeasurementId;
     // تحديد الاتجاه تلقائياً بناءً على اللغة
     const dir = locale === "ar" ? "rtl" : "ltr";
     return (<div className="flex min-h-screen flex-col" dir={dir} lang={locale}>
@@ -232,7 +231,7 @@ export default async function LocaleLayout({ children, params: { locale }, }: {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(websiteSchema) }}/>
 
       <SiteHeader isDestekol={isDestekol} navItems={pages} settings={settings} locale={locale} dict={dict} transparent={false}/>
-      <CookieBanner isDestekol={isDestekol} locale={locale} gaId={gaId || process.env.NEXT_PUBLIC_GA_ID} gtmId={process.env.NEXT_PUBLIC_GTM_ID} pixelId={pixelId || undefined}/>
+      <CookieBanner isDestekol={isDestekol} locale={locale} pixelId={pixelId || undefined}/>
 
       <main className="flex-1 pt-20">
         {children}

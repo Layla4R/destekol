@@ -144,6 +144,7 @@ test('contact links open safely in a new tab in all languages and the visit kit 
         'next/image': { __esModule: true, default: ({ src, alt }) => React.createElement('img', { src, alt }) },
         '@/lib/kit-config': config, '@/lib/kit-copy': copy,
         '@/lib/locales': { LOCALE_NAMES: { en: 'English', tr: 'Türkçe', ar: 'العربية' } },
+        '@/lib/analytics': { trackKitResourceClick() {}, trackLanguageSelection() {} },
         './kit.module.css': { __esModule: true, default: new Proxy({}, { get: (_, name) => String(name) }) },
     }).default;
     for (const locale of ['en', 'tr', 'ar']) {
@@ -152,6 +153,7 @@ test('contact links open safely in a new tab in all languages and the visit kit 
         assert.ok(html.includes(copy.KIT_COPY[locale].pageHeading));
         assert.ok(html.includes('<h1 class="pageTitle">'));
         assert.ok(!html.includes('data-resource="visits"'));
+        assert.equal(html.split(copy.KIT_COPY[locale].heroTitle).length - 1, 1);
     }
 });
 

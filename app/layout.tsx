@@ -7,6 +7,8 @@ import type { Metadata,Viewport } from "next";
 import { Alexandria,Cairo,Tajawal } from "next/font/google";
 
 import "./globals.css";
+import { Suspense } from "react";
+import GoogleAnalytics from "@/components/site/GoogleAnalytics";
 const alexandria = Alexandria({
     subsets: ["arabic", "latin"],
     display: "swap",
@@ -164,7 +166,7 @@ export default async function RootLayout({ children, }: {
 
       <body data-site={"destekol"} className="font-sans min-h-screen antialiased bg-cream text-ink">
         {children}
-
+        <Suspense fallback={null}><GoogleAnalytics /></Suspense>
       </body>
     </html>);
 }

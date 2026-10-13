@@ -1,5 +1,6 @@
 "use client";
 import PayTRSettingsPanel from '@/components/admin/PayTRSettingsPanel';
+import { GA_MEASUREMENT_ID } from '@/lib/analytics';
 import UploadButton from "@/components/admin/UploadButton";
 import Icon from "@/components/icons";
 import { adminFetch } from "@/lib/admin-fetch";
@@ -333,9 +334,9 @@ export default function AdminSettingsPage() {
             </div>
             <div>
               <label className={lbl}>Google Analytics 4 ID</label>
-              <input value={settings.gaMeasurementId || ""} onChange={e => upd("gaMeasurementId", e.target.value)} className={inp + " font-mono"} placeholder="G-XXXXXXXXXX"/>
+              <input value={GA_MEASUREMENT_ID} readOnly className={inp + " font-mono"}/>
               <p className="text-[11px] text-muted mt-1">
-                Enter GA4 Measurement ID (e.g. G-ABC123XYZ) for Google tracking.
+                Kit tracks directly. Other website pages require analytics consent. The ID is managed by the site integration.
               </p>
             </div>
           </div>

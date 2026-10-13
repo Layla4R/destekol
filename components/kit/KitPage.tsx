@@ -7,6 +7,7 @@ import { KIT_LOCALES, KIT_URL, LANGUAGE_COOKIE, getKitResourceUrl, kitResourceOp
 import { KIT_COPY } from "@/lib/kit-copy";
 import { LOCALE_NAMES } from "@/lib/locales";
 import styles from "./kit.module.css";
+import { trackKitResourceClick, trackLanguageSelection } from "@/lib/analytics";
 
 const RESOURCE_ICONS: Record<KitLinkId | "link", LucideIcon> = {
     visits: Presentation, brochure: FileText, portfolio: Folder,
@@ -25,6 +26,8 @@ export default function KitPage({ initialLocale, resources }: { initialLocale: K
     }, [locale, direction, copy.title]);
 
     function selectLanguage(nextLocale: KitLocale) {
+        if (locale === nextLocale) return;
+        trackLanguageSelection(locale, nextLocale, "kit");
         document.documentElement.lang = nextLocale;
         document.documentElement.dir = nextLocale === "ar" ? "rtl" : "ltr";
         document.title = KIT_COPY[nextLocale].title;
@@ -51,7 +54,6 @@ export default function KitPage({ initialLocale, resources }: { initialLocale: K
                             <Image src="/kit/destekol-logo.png" alt="Destekol" width={1774} height={887} priority sizes="(max-width: 380px) 85vw, 340px" className={styles.logo} />
                         </div>
                         <p className={styles.description}>{copy.organization}</p>
-                        <p className={styles.tagline}>{copy.tagline}</p>
                         <h1 className={styles.pageTitle}>{copy.pageHeading}</h1>
                     </div>
                 </header>
@@ -82,6 +84,8 @@ export default function KitPage({ initialLocale, resources }: { initialLocale: K
                             return <li key={resource.id} data-resource={resource.id}>
                                 {href ? <a href={href} className={styles.resource} target={newTab ? "_blank" : undefined}
                                     rel={newTab ? "noopener noreferrer" : undefined}
+                                    onClick={() => trackKitResourceClick(resource, href, locale, title)}
+                                    onAuxClick={event => { if (event.button === 1) trackKitResourceClick(resource, href, locale, title); }}
                                     aria-label={`${title}${newTab ? ` — ${copy.newTab}` : ""}`}>
                                     {content}
                                 </a> : <div className={styles.resource} role="link" aria-disabled="true"
