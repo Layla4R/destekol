@@ -36,8 +36,12 @@ export function analyticsEnabled(pathname: string): boolean {
     return isAnalyticsPage(pathname);
 }
 
-function analyticsStorageGranted(pathname: string, consent: CookieConsent | null): boolean {
-    return !/^\/kit\/?$/.test(pathname) && analyticsEnabled(pathname) && consent?.analytics === true;
+function analyticsStorageGranted(
+  pathname: string,
+  consent: CookieConsent | null
+): boolean {
+  return analyticsEnabled(pathname)
+    && consent?.analytics === true;
 }
 
 /** Keep campaign attribution, removing tokens, donor IDs, searches and fragments. */
@@ -78,17 +82,17 @@ export function syncAnalyticsConsent(consent: CookieConsent | null) {
     const enabled = analyticsEnabled(browser.location.pathname);
     const granted = analyticsStorageGranted(browser.location.pathname, consent);
     browser[`ga-disable-${GA_MEASUREMENT_ID}`] = !enabled;
-    if (!granted) {
-        state.granted = false;
-        browser.gtag?.("consent", "update", { analytics_storage: "denied", ad_storage: "denied", ad_user_data: "denied", ad_personalization: "denied" });
-    }
-    if (!enabled) {
-        state.lastRoute = null;
-        if (browser.dataLayer) {
-            const kept = browser.dataLayer.filter(entry => (entry as ArrayLike<unknown>)?.[0] !== "event");
-            browser.dataLayer.splice(0, browser.dataLayer.length, ...kept);
-        }
-    }
+    // if (!granted) {
+    //     state.granted = false;
+    //     browser.gtag?.("consent", "update", { analytics_storage: "denied", ad_storage: "denied", ad_user_data: "denied", ad_personalization: "denied" });
+    // }
+    // if (!enabled) {
+    //     state.lastRoute = null;
+    //     if (browser.dataLayer) {
+    //         const kept = browser.dataLayer.filter(entry => (entry as ArrayLike<unknown>)?.[0] !== "event");
+    //         browser.dataLayer.splice(0, browser.dataLayer.length, ...kept);
+    //     }
+    // }
 }
 
 export function initializeAnalytics(): boolean {

@@ -17,7 +17,7 @@ export default function CookieBanner({ locale = 'tr', pixelId }: { locale?: stri
     const t = words[locale as keyof typeof words] || words.tr;
     const [consent, setConsent] = useState<CookieConsent | null>(null);
     const [open, setOpen] = useState(false);
-    const [choices, setChoices] = useState({ analytics: false, marketing: false, functional: false });
+    const [choices, setChoices] = useState({ analytics: true, marketing: false, functional: false });
     useEffect(() => {
         const existing = readConsent(); setConsent(existing); setOpen(!existing);
         if (existing) setChoices(existing);

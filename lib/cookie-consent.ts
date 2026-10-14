@@ -1,6 +1,6 @@
 export const CONSENT_KEY = 'destekol_cookie_consent';
 export const CONSENT_EVENT = 'destekol:cookie-consent';
-export type CookieConsent = { version: 2; updatedAt: string; analytics: boolean; marketing: boolean; functional: boolean };
+export type CookieConsent = { version: 2; updatedAt: string; analytics: boolean ; marketing: boolean; functional: boolean };
 export function parseConsent(value: string | null): CookieConsent | null {
     try {
         const data = JSON.parse(value || 'null');
