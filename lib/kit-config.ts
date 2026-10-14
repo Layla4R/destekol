@@ -21,7 +21,7 @@ export type KitResource = {
     localizedUrls?: Partial<Record<KitLocale, string | null>>;
 };
 
-// Only verified resources belong here. Keep this order in every language.
+// Only verified resources belong here. This is the default order until an admin saves a custom order.
 export const KIT_RESOURCES: readonly KitResource[] = [
     { id: "website", tone: "blue", icon: "link", url: "https://destekol.org/" },
     { id: "brochure", tone: "blue", url: null },
@@ -52,6 +52,14 @@ export function getKitResourceUrl(resource: KitResource, locale: KitLocale): str
 export const KIT_SETTINGS_ID = "destekol-kit-links";
 export const KIT_MAX_RESOURCES = 40;
 
+export function moveKitResource(resources: readonly KitResource[], index: number, offset: -1 | 1): KitResource[] {
+    const destination = index + offset;
+    if (index < 0 || destination < 0 || destination >= resources.length) return [...resources];
+    const reordered = [...resources];
+    [reordered[index], reordered[destination]] = [reordered[destination], reordered[index]];
+    return reordered;
+}
+
 export function kitResourceOpensNewTab(resource: KitResource, href: string): boolean {
     return resource.id === "contact" || href.startsWith("https://");
 }
@@ -64,8 +72,6 @@ export function parseKitResources(value: unknown): KitResource[] {
     // The old visit-kit card is now the page heading. Preserve all other saved URLs.
     const rows = value.filter(row => row?.id !== "visits");
     const coreIds = KIT_RESOURCES.map(resource => resource.id);
-    let lastCoreIndex = -1;
-    let customStarted = false;
     const ids = new Set<string>();
     function checkedUrl(raw: unknown): string | null {
         if (raw === null || raw === undefined || raw === "") return null;
@@ -83,13 +89,10 @@ export function parseKitResources(value: unknown): KitResource[] {
         const id = row.id;
         const coreIndex = coreIds.indexOf(id as KitResource["id"]);
         const custom = typeof id === "string" && /^custom-[a-z0-9-]{1,60}$/.test(id);
-        if (typeof id !== "string" || ids.has(id) || (coreIndex < 0 && !custom)
-            || (coreIndex >= 0 && (customStarted || coreIndex <= lastCoreIndex))) {
-            throw new Error("ترتيب أو معرفات الروابط غير صالحة.");
+        if (typeof id !== "string" || ids.has(id) || (coreIndex < 0 && !custom)) {
+            throw new Error("معرفات الروابط غير صالحة.");
         }
         ids.add(id);
-        if (custom) customStarted = true;
-        else lastCoreIndex = coreIndex;
         if (!["blue", "green", "gold"].includes(String(row.tone))) throw new Error("لون الرابط غير صالح.");
         if (row.enabled !== undefined && typeof row.enabled !== "boolean") throw new Error("حالة الرابط غير صالحة.");
         if (row.icon !== undefined && ![...KIT_RESOURCES.map(item => item.id), "link"].includes(row.icon as KitLinkId)) {

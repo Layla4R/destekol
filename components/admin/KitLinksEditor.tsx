@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ArrowUpRight, Plus, Save, Trash2, Link as LinkIcon } from "lucide-react";
+import { ArrowDown, ArrowUp, ArrowUpRight, Plus, Save, Trash2, Link as LinkIcon } from "lucide-react";
 import { adminFetch } from "@/lib/admin-fetch";
 import { useToast } from "@/components/admin/Toast";
-import { KIT_LOCALES, KIT_MAX_RESOURCES, getKitResourceUrl, parseKitResources, type KitLinkId, type KitLocale, type KitResource } from "@/lib/kit-config";
+import { KIT_LOCALES, KIT_MAX_RESOURCES, getKitResourceUrl, moveKitResource, parseKitResources, type KitLinkId, type KitLocale, type KitResource } from "@/lib/kit-config";
 import { KIT_COPY } from "@/lib/kit-copy";
 import { LOCALE_NAMES } from "@/lib/locales";
 
@@ -50,6 +50,11 @@ export default function KitLinksEditor({ canEdit }: { canEdit: boolean }) {
 
     function update(id: KitResource["id"], values: Partial<KitResource>) {
         setResources(previous => previous.map(resource => resource.id === id ? { ...resource, ...values } : resource));
+        setDirty(true);
+        setError("");
+    }
+    function move(index: number, offset: -1 | 1) {
+        setResources(previous => moveKitResource(previous, index, offset));
         setDirty(true);
         setError("");
     }
@@ -109,7 +114,11 @@ export default function KitLinksEditor({ canEdit }: { canEdit: boolean }) {
                                     <h2 className="flex items-center gap-3 text-base font-bold text-ink"><span className="grid h-8 w-8 place-items-center rounded-full bg-brand/10 text-sm text-brand">{index + 1}</span>{heading}</h2>
                                     <div className="flex items-center gap-4">
                                         <label className="flex items-center gap-2 text-xs font-medium text-muted"><input type="checkbox" checked={resource.enabled !== false} onChange={event => update(resource.id, { enabled: event.target.checked })} className="h-4 w-4 accent-teal-700" />تفعيل الرابط</label>
-                                        <button type="button" aria-label={`حذف ${heading}`} title="حذف الرابط" onClick={() => { setResources(previous => previous.filter(item => item.id !== resource.id)); setDirty(true); setError(""); }} className="inline-flex min-h-9 items-center gap-1.5 rounded-lg px-2 text-xs font-semibold text-red-600 hover:bg-red-50"><Trash2 size={16} />حذف</button>
+                                        <div className="flex items-center gap-1">
+                                            <button type="button" aria-label={`رفع ${heading}`} title="نقل الرابط للأعلى" disabled={index === 0} onClick={() => move(index, -1)} className="grid h-9 w-9 place-items-center rounded-lg text-brand hover:bg-brand/10 disabled:cursor-not-allowed disabled:opacity-35"><ArrowUp size={17} /></button>
+                                            <button type="button" aria-label={`خفض ${heading}`} title="نقل الرابط للأسفل" disabled={index === resources.length - 1} onClick={() => move(index, 1)} className="grid h-9 w-9 place-items-center rounded-lg text-brand hover:bg-brand/10 disabled:cursor-not-allowed disabled:opacity-35"><ArrowDown size={17} /></button>
+                                            <button type="button" aria-label={`حذف ${heading}`} title="حذف الرابط" onClick={() => { setResources(previous => previous.filter(item => item.id !== resource.id)); setDirty(true); setError(""); }} className="inline-flex min-h-9 items-center gap-1.5 rounded-lg px-2 text-xs font-semibold text-red-600 hover:bg-red-50"><Trash2 size={16} />حذف</button>
+                                        </div>
                                     </div>
                                 </div>
                                 <label className="mb-1.5 block text-xs font-semibold text-muted" htmlFor={`${resource.id}-url`}>الرابط العام لجميع اللغات</label>

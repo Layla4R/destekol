@@ -21,26 +21,37 @@ test('language-specific URLs override shared links and cleared/disabled links st
     assert.equal(config.getKitResourceUrl({ ...resource, enabled: false }, 'ar'), null);
 });
 
-test('unsafe links, invalid types, duplicate IDs and reordered core items are rejected before saving', () => {
+test('unsafe links, invalid types and duplicate IDs are rejected before saving', () => {
     for (const url of ['javascript:alert(1)', 'data:text/html,evil', '//evil.invalid/file', '/\\evil.invalid', 'http://example.invalid', 'https://user:password@example.invalid']) {
         const rows = defaults(); rows[0].url = url;
         assert.throws(() => config.parseKitResources(rows), /HTTPS/);
     }
     const rows = defaults(); rows[0].url = { url: 'https://destekol.org' };
     assert.throws(() => config.parseKitResources(rows));
-    assert.throws(() => config.parseKitResources(defaults().reverse()));
+    assert.deepEqual(config.parseKitResources(defaults().reverse()).map(row => row.id), defaults().reverse().map(row => row.id));
     assert.equal(config.parseKitResources(defaults().slice(1)).length, defaults().length - 1);
     assert.deepEqual(config.parseKitResources([]), []);
     assert.throws(() => config.parseKitResources([...defaults(), { id: 'custom-1', tone: 'blue', url: null, titles: { en: 'First' } }, { id: 'custom-1', tone: 'blue', url: null, titles: { en: 'Second' } }]));
 });
 
-test('additional links support titles, safe URLs and a fixed position after the remaining main items', () => {
+test('additional links support titles, safe URLs and positions among the main items', () => {
     const custom = { id: 'custom-1', tone: 'green', icon: 'link', url: ' https://destekol.org/en/about ', titles: { en: 'About us', ar: 'من نحن' } };
     const rows = config.parseKitResources([...defaults(), custom]);
     assert.equal(rows.at(-1).url, 'https://destekol.org/en/about');
     assert.equal(rows.at(-1).titles.ar, 'من نحن');
     assert.deepEqual(rows.slice(0, -1).map(row => row.id), defaults().map(row => row.id));
     assert.throws(() => config.parseKitResources([...defaults(), { ...custom, titles: {} }]));
+    assert.deepEqual(config.parseKitResources([custom, ...defaults()]).map(row => row.id), ['custom-1', ...defaults().map(row => row.id)]);
+});
+
+test('up and down controls reorder one resource while preserving IDs and boundary positions', () => {
+    const original = defaults();
+    const moved = config.moveKitResource(original, 0, 1);
+    assert.deepEqual(moved.map(row => row.id).slice(0, 3), ['brochure', 'website', 'portfolio']);
+    assert.deepEqual(config.moveKitResource(moved, 1, -1).map(row => row.id), original.map(row => row.id));
+    assert.deepEqual(config.moveKitResource(original, 0, -1), original);
+    assert.deepEqual(config.moveKitResource(original, original.length - 1, 1), original);
+    assert.deepEqual(original.map(row => row.id), defaults().map(row => row.id));
 });
 
 function storageFixture() {
@@ -120,6 +131,16 @@ test('removing any main card, including all cards, persists after save and reloa
     assert.deepEqual((await fixture.settings.readKitSettings()).resources.map(row => row.id), remaining.map(row => row.id));
     await fixture.settings.saveKitSettings([]);
     assert.deepEqual(await fixture.settings.readPublicKitResources(), []);
+});
+
+test('reordered core and custom links persist and render in the same order', async () => {
+    const fixture = storageFixture();
+    const custom = { id: 'custom-1', tone: 'blue', icon: 'link', url: 'https://destekol.org/en/about', titles: { en: 'About' } };
+    const rows = [custom, ...defaults().reverse()];
+    await fixture.settings.saveKitSettings(config.parseKitResources(rows));
+    const saved = await fixture.settings.readKitSettings();
+    assert.deepEqual(saved.resources.map(row => row.id), rows.map(row => row.id));
+    assert.deepEqual((await fixture.settings.readPublicKitResources()).map(row => row.id), rows.map(row => row.id));
 });
 
 test('obsolete visit-kit cards are discarded without losing configured resource URLs', async () => {
