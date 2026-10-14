@@ -8,6 +8,12 @@ const KIT_ANALYTICS_NAMES: Record<KitLinkId, string> = {
     sustainability: "sustainability_report", video: "promotional_video",
     partnerships: "partnership", contact: "contact",
 };
+// These saved admin records were repurposed without changing their persistent IDs.
+// Keep reporting names tied to record identity, independent of URLs, titles or order.
+const SAVED_KIT_ANALYTICS_NAMES: Record<string, string> = {
+    brochure: "official_website",
+    "custom-e52da41f-1a6a-4472-9227-d1389735cae0": "brochure",
+};
 type AnalyticsRuntime = { consent: CookieConsent | null; configured: boolean; granted: boolean; debug: boolean; lastRoute: string | null; previousLocation: string | null };
 type AnalyticsWindow = Window & {
     dataLayer?: unknown[];
@@ -183,7 +189,8 @@ export function trackKitResourceClick(resource: KitResource, href: string, local
     const linkUrl = analyticsLink(href);
     if (!linkUrl) return false;
     const parameters = {
-        kit_link_name: KIT_ANALYTICS_NAMES[resource.id as KitLinkId] || resource.id,
+        kit_link_name: SAVED_KIT_ANALYTICS_NAMES[resource.id]
+            || KIT_ANALYTICS_NAMES[resource.id as KitLinkId] || resource.id,
         kit_language: locale,
         link_id: resource.id, site_language: locale.toUpperCase(), link_url: linkUrl,
     };

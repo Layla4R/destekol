@@ -27,7 +27,7 @@ Kit language switches remain on `/kit` and keep the existing `NEXT_LOCALE` prefe
 | `file_download` | Click on a supported document URL, including `.pdf` | `file_name`, `file_extension`, `link_url`, `link_id` for Kit |
 | `promotional_video_click` | Click on the configured promotional video card | `kit_link_name`, `kit_language`, `link_id`, `link_url`, `site_language` |
 
-The supported resource names are `official_website`, `brochure`, `portfolio`, `sustainability_report`, `promotional_video`, `partnership` and `contact`. The official website replaces the obsolete visit-kit resource; `marketing_kit` is not emitted. Custom cards retain their stable `custom-*` ID. The saved list contains the official website followed by the existing five resources; partnership remains removed and sustainability remains disabled. Tracking never restores a removed card. Disabled cards generate no click events. A Drive folder or `/view` destination is a resource click, not a confirmed PDF download. Downloads occurring inside Google Drive and video playback on third-party sites are outside this website's visibility; the integration records the outbound click.
+The supported resource names are `official_website`, `brochure`, `portfolio`, `sustainability_report`, `promotional_video`, `partnership` and `contact`. The official website replaces the obsolete visit-kit resource; `marketing_kit` is not emitted. Two existing admin records have historic IDs: `brochure` is currently the official website card, and `custom-e52da41f-1a6a-4472-9227-d1389735cae0` is the brochure card. Analytics maps these records to their correct semantic names without changing their URLs, titles or order. Other custom cards retain their stable `custom-*` ID. Partnership support remains available for a future admin addition; tracking never restores a removed card. Disabled or URL-less cards generate no click events. A Drive folder or `/view` destination is a resource click, not a confirmed PDF download. Downloads occurring inside Google Drive and video playback on third-party sites are outside this website's visibility; the integration records the outbound click.
 
 Kit language parameters are lowercase `en`, `tr` or `ar`. Legacy parameters remain for existing reports, while free-form link titles are no longer transmitted. Ordinary same-tab links wait for the documented GA event callback, with an independent 850 ms fallback; external/new-tab, modified and download clicks retain native navigation. See [Kit reporting guide](kit-analytics-reporting.md) for custom dimensions, resource reports and QR traffic.
 
@@ -41,7 +41,7 @@ In **Admin → Data collection and modification → Data streams → the Desteko
 2. Automatic **File downloads** is off, because this integration sends `file_download` itself.
 3. Automatic **Outbound clicks**, **Form interactions** and **Site search** are off so the intended manual event set controls what is collected, without parallel click events, automatic form telemetry or search terms.
 
-These settings were saved and re-opened to confirm persistence on 13 October 2026 in account **Destekol**, property **Destekol Website.** (property ID `558620410`), Web stream **Destekol** (`16118545843`). Page loads, Scrolls and Video engagement remain enabled. Public policy text, consent settings and property access were not changed. Register event-scoped custom dimensions in **Admin → Data display → Custom definitions** for `link_id`, `site_language`, `selected_language` and `selection_location` if you want to group long-term reports by those fields. GA processes custom dimensions prospectively; these definitions have not been created by this update.
+These settings were saved and re-opened to confirm persistence on 13 October 2026 in account **Destekol**, property **Destekol Website.** (property ID `558620410`), Web stream **Destekol** (`16118545843`). Page loads, Scrolls and Video engagement remain enabled. Public policy text and consent settings were not changed. Event-scoped custom dimensions **Kit Link Name** (`kit_link_name`) and **Kit Language** (`kit_language`) were created on 14 October 2026. The **Destekol Kit — Analytics** exploration contains read-only shared tabs for link clicks, language selections and the `institutional_visits` QR campaign. GA processes custom dimensions prospectively; old events may show `(not set)`.
 
 ## QR attribution
 
@@ -49,7 +49,7 @@ Use this optional campaign URL in a new QR code:
 
 `https://destekol.org/kit?utm_source=qr&utm_medium=print&utm_campaign=institutional_visits`
 
-The page still opens at the same `/kit` route, in all three languages. Customize the campaign name for each printed batch. Existing QR assets still encode the original plain URL; those untagged scans cannot retrospectively be distinguished from other direct visits. The site does not invent campaign attribution or redirect the QR destination.
+The page still opens at the same `/kit` route, in all three languages. Untagged scans cannot retrospectively be distinguished from other direct visits. The site does not invent campaign attribution or redirect the QR destination. Verify the final printed QR asset with a physical phone before distribution.
 
 ## Verify Realtime, DebugView and users
 

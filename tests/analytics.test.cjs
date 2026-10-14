@@ -113,8 +113,15 @@ test('campaign URLs retain only safe UTMs and never include fragments, email, to
     assert.equal(ga.analyticsLink('mailto:person@example.com'), null);
 });
 
-test('all seven supported resources and custom cards emit one click with stable names in every language', () => {
-    const mapping = { website: 'official_website', brochure: 'brochure', portfolio: 'portfolio', sustainability: 'sustainability_report', video: 'promotional_video', partnerships: 'partnership', contact: 'contact', 'custom-123': 'custom-123' };
+test('saved Kit records, future partnership and custom cards emit one click with stable names in every language', () => {
+    const mapping = {
+        website: 'official_website',
+        brochure: 'official_website', // Current saved website card retains its old CMS ID.
+        'custom-e52da41f-1a6a-4472-9227-d1389735cae0': 'brochure',
+        portfolio: 'portfolio', sustainability: 'sustainability_report',
+        video: 'promotional_video', partnerships: 'partnership', contact: 'contact',
+        'custom-123': 'custom-123',
+    };
     for (const locale of ['en', 'tr', 'ar']) {
         browser(); ga.initializeAnalytics();
         for (const [id, name] of Object.entries(mapping)) {
@@ -123,11 +130,12 @@ test('all seven supported resources and custom cards emit one click with stable 
             assert.equal(events('kit_link_click').length, before + 1);
             const payload = events('kit_link_click').at(-1)[2];
             assert.equal(payload.kit_link_name, name);
+            assert.equal(payload.link_id, id);
             assert.equal(payload.kit_language, locale);
             assert.equal(payload.link_url, 'https://destekol.org/document.pdf');
             assert.ok(!('link_text' in payload));
         }
-        assert.equal(events('file_download').length, 8);
+        assert.equal(events('file_download').length, Object.keys(mapping).length);
         assert.equal(events('promotional_video_click').length, 1);
         assert.equal(events('file_download')[0][2].kit_language, locale);
         assert.ok(!JSON.stringify(entries('event')).includes('hidden'));
