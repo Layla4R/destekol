@@ -88,10 +88,10 @@ export function syncAnalyticsConsent(consent: CookieConsent | null) {
     // }
     // if (!enabled) {
     //     state.lastRoute = null;
-    //     if (browser.dataLayer) {
-    //         const kept = browser.dataLayer.filter(entry => (entry as ArrayLike<unknown>)?.[0] !== "event");
-    //         browser.dataLayer.splice(0, browser.dataLayer.length, ...kept);
-    //     }
+        if (browser.dataLayer) {
+            const kept = browser.dataLayer.filter(entry => (entry as ArrayLike<unknown>)?.[0] !== "event");
+            browser.dataLayer.splice(0, browser.dataLayer.length, ...kept);
+        }
     // }
 }
 
@@ -102,14 +102,14 @@ export function initializeAnalytics(): boolean {
     const granted = analyticsStorageGranted(browser.location.pathname, state.consent);
     browser[`ga-disable-${GA_MEASUREMENT_ID}`] = false;
     if (state.configured) {
-        if (state.granted !== granted) browser.gtag?.("consent", "update", { analytics_storage: granted ? "granted" : "denied", ad_storage: "denied", ad_user_data: "denied", ad_personalization: "denied" });
+        if (state.granted !== granted) browser.gtag?.("consent", "update", { analytics_storage:"granted", ad_storage: "denied", ad_user_data: "denied", ad_personalization: "denied" });
         state.granted = granted;
         return true;
     }
     browser.dataLayer ||= [];
     browser.gtag ||= function () { browser.dataLayer!.push(arguments); };
     state.debug = new URLSearchParams(browser.location.search).get("ga_debug") === "1";
-    browser.gtag("consent", "default", { analytics_storage: "denied", ad_storage: "denied", ad_user_data: "denied", ad_personalization: "denied" });
+    browser.gtag("consent", "default", { analytics_storage: "granted", ad_storage: "denied", ad_user_data: "denied", ad_personalization: "denied" });
     if (granted) browser.gtag("consent", "update", { analytics_storage: "granted", ad_storage: "denied", ad_user_data: "denied", ad_personalization: "denied" });
     browser.gtag("js", new Date());
     browser.gtag("config", GA_MEASUREMENT_ID, {
