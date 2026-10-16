@@ -5,10 +5,10 @@ import { useEffect, useState } from 'react';
 import { CONSENT_KEY, CONSENT_EVENT, readConsent, trackingAllowed, clearTrackingCookies, type CookieConsent } from '@/lib/cookie-consent';
 
 const words = {
-    ar: { label: 'إشعار ملفات تعريف الارتباط', text: 'نستخدم ملفات تعريف الارتباط لتحسين تجربتك على موقعنا. يمكنك قبولها أو رفض الملفات غير الضرورية.', accept: 'قبول', reject: 'رفض' },
-    en: { label: 'Cookie notice', text: 'We use cookies to improve your experience on our website. You can accept them or reject non-essential cookies.', accept: 'Accept', reject: 'Reject' },
-    fr: { label: 'Avis relatif aux cookies', text: 'Nous utilisons des cookies pour améliorer votre expérience sur notre site. Vous pouvez les accepter ou refuser les cookies non nécessaires.', accept: 'Accepter', reject: 'Refuser' },
-    tr: { label: 'Çerez bildirimi', text: 'Web sitemizdeki deneyiminizi iyileştirmek için çerezler kullanıyoruz. Çerezleri kabul edebilir veya zorunlu olmayanları reddedebilirsiniz.', accept: 'Kabul et', reject: 'Reddet' },
+    ar: { label: 'إشعار ملفات تعريف الارتباط', intro: 'نحن نظهر هذه الرسالة لأننا نحترم خصوصيتك', emphasis: 'نستخدم ملفات تعريف الارتباط لتقديم تجربة مستخدم أفضل 😊', accept: 'قبول', reject: 'رفض' },
+    en: { label: 'Cookie notice', intro: 'We show this message because we respect your privacy', emphasis: 'We use cookies to provide a better user experience 😊', accept: 'Accept', reject: 'Reject' },
+    fr: { label: 'Avis relatif aux cookies', intro: 'Nous affichons ce message parce que nous respectons votre vie privée', emphasis: 'Nous utilisons des cookies pour vous offrir une meilleure expérience utilisateur 😊', accept: 'Accepter', reject: 'Refuser' },
+    tr: { label: 'Çerez bildirimi', intro: 'Gizliliğinize saygı duyduğumuz için bu mesajı gösteriyoruz', emphasis: 'Daha iyi bir kullanıcı deneyimi sunmak için çerez kullanıyoruz 😊', accept: 'Kabul et', reject: 'Reddet' },
 };
 const closeLabels = { ar: 'إغلاق', en: 'Close', fr: 'Fermer', tr: 'Kapat' };
 type Choices = Pick<CookieConsent, 'analytics' | 'marketing' | 'functional'>;
@@ -41,7 +41,7 @@ export default function CookieBanner({ locale = 'tr', pixelId }: { locale?: stri
         {open && <div role="dialog" aria-modal="true" aria-label={t.label} className="fixed inset-0 z-[100] flex items-end justify-center bg-black/30 p-3 sm:items-center" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
             <div className="max-h-[85vh] w-full max-w-xl overflow-y-auto rounded-2xl bg-white p-6 text-slate-900 shadow-xl">
                 <div className="flex justify-end"><button type="button" aria-label={closeLabels[locale as keyof typeof closeLabels] || closeLabels.tr} className="text-2xl leading-none" onClick={() => setOpen(false)}>×</button></div>
-                <p className="mb-5 text-sm">{t.text}</p>
+                <p className="mb-5 text-sm">{t.intro}<strong className="mt-2 block">{t.emphasis}</strong></p>
                 <div className="grid grid-cols-2 gap-3"><button type="button" className="rounded-lg border border-brand py-3 text-sm font-bold" onClick={() => save({ analytics: false, marketing: false, functional: false })}>{t.reject}</button><button type="button" className="rounded-lg border border-brand py-3 text-sm font-bold" onClick={() => save({ analytics: true, marketing: true, functional: true })}>{t.accept}</button></div>
             </div>
         </div>}
