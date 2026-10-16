@@ -1,35 +1,32 @@
 "use client";
 import Script from 'next/script';
 import { usePathname } from 'next/navigation';
-import Link from 'next/link';
-import { cookieDisclosures } from '@/lib/cookie-disclosures';
 import { useEffect, useState } from 'react';
 import { CONSENT_KEY, CONSENT_EVENT, readConsent, trackingAllowed, clearTrackingCookies, type CookieConsent } from '@/lib/cookie-consent';
 
 const words = {
-    ar: { title: 'تفضيلات ملفات تعريف الارتباط', text: 'نستخدم ملفات تعريف الارتباط لتحسين تجربتك على موقعنا. يمكنك قبولها أو رفض الملفات غير الضرورية.', settings: 'إعدادات ملفات الارتباط', accept: 'قبول الكل', reject: 'رفض غير الضرورية', save: 'حفظ اختياري', analytics: 'التحليلات', marketing: 'التسويق', functional: 'المحتوى الخارجي', policy: 'سياسة ملفات تعريف الارتباط', details: 'المزوّد والغرض والمدة' },
-    en: { title: 'Cookie preferences', text: 'We use cookies to improve your experience on our website. You can accept them or reject non-essential cookies.', settings: 'Cookie settings', accept: 'Accept all', reject: 'Reject non-essential', save: 'Save my choices', analytics: 'Analytics', marketing: 'Marketing', functional: 'External content', policy: 'Cookie policy', details: 'Provider, purpose and duration' },
-    fr: { title: 'Préférences de cookies', text: 'Nous utilisons des cookies pour améliorer votre expérience sur notre site. Vous pouvez les accepter ou refuser les cookies non nécessaires.', settings: 'Paramètres des cookies', accept: 'Tout accepter', reject: 'Refuser les non nécessaires', save: 'Enregistrer mes choix', analytics: 'Analyse', marketing: 'Marketing', functional: 'Contenu externe', policy: 'Politique relative aux cookies', details: 'Fournisseur, finalité et durée' },
-    tr: { title: 'Çerez tercihleri', text: 'Web sitemizdeki deneyiminizi iyileştirmek için çerezler kullanıyoruz. Çerezleri kabul edebilir veya zorunlu olmayanları reddedebilirsiniz.', settings: 'Çerez ayarları', accept: 'Tümünü kabul et', reject: 'Zorunlu olmayanları reddet', save: 'Tercihlerimi kaydet', analytics: 'Analitik', marketing: 'Pazarlama', functional: 'Harici içerik', policy: 'Çerez politikası', details: 'Sağlayıcı, amaç ve süre' },
+    ar: { label: 'إشعار ملفات تعريف الارتباط', text: 'نستخدم ملفات تعريف الارتباط لتحسين تجربتك على موقعنا. يمكنك قبولها أو رفض الملفات غير الضرورية.', accept: 'قبول', reject: 'رفض' },
+    en: { label: 'Cookie notice', text: 'We use cookies to improve your experience on our website. You can accept them or reject non-essential cookies.', accept: 'Accept', reject: 'Reject' },
+    fr: { label: 'Avis relatif aux cookies', text: 'Nous utilisons des cookies pour améliorer votre expérience sur notre site. Vous pouvez les accepter ou refuser les cookies non nécessaires.', accept: 'Accepter', reject: 'Refuser' },
+    tr: { label: 'Çerez bildirimi', text: 'Web sitemizdeki deneyiminizi iyileştirmek için çerezler kullanıyoruz. Çerezleri kabul edebilir veya zorunlu olmayanları reddedebilirsiniz.', accept: 'Kabul et', reject: 'Reddet' },
 };
 const closeLabels = { ar: 'إغلاق', en: 'Close', fr: 'Fermer', tr: 'Kapat' };
+type Choices = Pick<CookieConsent, 'analytics' | 'marketing' | 'functional'>;
 export default function CookieBanner({ locale = 'tr', pixelId }: { locale?: string; isDestekol?: boolean; pixelId?: string }) {
     const privateTracking = /\/(?:contact\/track|unsubscribe)\/?$/.test(usePathname() || '');
     const t = words[locale as keyof typeof words] || words.tr;
     const [consent, setConsent] = useState<CookieConsent | null>(null);
     const [open, setOpen] = useState(false);
-    const [choices, setChoices] = useState({ analytics: true, marketing: false, functional: false });
     useEffect(() => {
         const existing = readConsent(); setConsent(existing); setOpen(!existing);
-        if (existing) setChoices(existing);
         const sync = (event: StorageEvent) => { if (event.key === CONSENT_KEY) window.location.reload(); };
         window.addEventListener('storage', sync);
         return () => window.removeEventListener('storage', sync);
     }, []);
-    function save(selected: typeof choices) {
+    function save(selected: Choices) {
         const next: CookieConsent = { version: 2, updatedAt: new Date().toISOString(), ...selected };
         try { localStorage.setItem(CONSENT_KEY, JSON.stringify(next)); } catch { /* Apply choices for this visit. */ }
-        const changed = consent && ['analytics', 'marketing', 'functional'].some(key => consent[key as keyof typeof choices] !== selected[key as keyof typeof choices]);
+        const changed = consent && ['analytics', 'marketing', 'functional'].some(key => consent[key as keyof Choices] !== selected[key as keyof Choices]);
         const w = window as any;
         if (!selected.marketing) w.fbq?.('consent', 'revoke');
         if (!selected.analytics) w.gtag?.('consent', 'update', { analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied' });
@@ -41,13 +38,11 @@ export default function CookieBanner({ locale = 'tr', pixelId }: { locale?: stri
     const meta = pixelId && /^\d+$/.test(pixelId) ? pixelId : null;
     return <>
         {!privateTracking && trackingAllowed(consent, 'meta') && meta && <Script id="consented-meta">{`!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=true;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=true;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('consent','grant');fbq('init','${meta}');fbq('track','PageView');`}</Script>}
-        {open && <div role="dialog" aria-modal="true" aria-label={t.title} className="fixed inset-0 z-[100] flex items-end justify-center bg-black/30 p-3 sm:items-center" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
+        {open && <div role="dialog" aria-modal="true" aria-label={t.label} className="fixed inset-0 z-[100] flex items-end justify-center bg-black/30 p-3 sm:items-center" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
             <div className="max-h-[85vh] w-full max-w-xl overflow-y-auto rounded-2xl bg-white p-6 text-slate-900 shadow-xl">
-                <div className="mb-3 flex items-start justify-between gap-3"><h2 className="text-lg font-bold">{t.title}</h2><button type="button" aria-label={closeLabels[locale as keyof typeof closeLabels] || closeLabels.tr} className="text-2xl leading-none" onClick={() => setOpen(false)}>×</button></div><p className="text-sm mb-4">{t.text}</p>
-                <div className="space-y-3 mb-4">{(['analytics', 'marketing', 'functional'] as const).map(category => <label key={category} className="flex items-center gap-3"><input type="checkbox" checked={choices[category]} onChange={e => setChoices({ ...choices, [category]: e.target.checked })}/>{t[category]}</label>)}</div>
-                <details className="mb-4 text-xs leading-relaxed"><summary className="cursor-pointer font-bold">{t.details}</summary>{(cookieDisclosures[locale] || cookieDisclosures.tr).map(text => <p key={text} className="mt-2">{text}</p>)}<p className="mt-2"><a className="underline" href="https://policies.google.com/technologies/cookies" target="_blank" rel="noreferrer">Google / YouTube / Maps</a> · <a className="underline" href="https://www.facebook.com/privacy/policies/cookies/" target="_blank" rel="noreferrer">Meta</a></p></details>
-                <Link href={`/${locale}/cookie-policy`} className="text-sm text-brand underline">{t.policy}</Link>
-                <div className="mt-5 grid grid-cols-2 gap-3"><button className="rounded-lg border border-brand py-3 text-sm font-bold" onClick={() => save({ analytics: false, marketing: false, functional: false })}>{t.reject}</button><button className="rounded-lg border border-brand py-3 text-sm font-bold" onClick={() => save({ analytics: true, marketing: true, functional: true })}>{t.accept}</button><button className="col-span-2 rounded-lg bg-brand py-3 text-sm font-bold text-white" onClick={() => save(choices)}>{t.save}</button></div>
+                <div className="flex justify-end"><button type="button" aria-label={closeLabels[locale as keyof typeof closeLabels] || closeLabels.tr} className="text-2xl leading-none" onClick={() => setOpen(false)}>×</button></div>
+                <p className="mb-5 text-sm">{t.text}</p>
+                <div className="grid grid-cols-2 gap-3"><button type="button" className="rounded-lg border border-brand py-3 text-sm font-bold" onClick={() => save({ analytics: false, marketing: false, functional: false })}>{t.reject}</button><button type="button" className="rounded-lg border border-brand py-3 text-sm font-bold" onClick={() => save({ analytics: true, marketing: true, functional: true })}>{t.accept}</button></div>
             </div>
         </div>}
     </>;
