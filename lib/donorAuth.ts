@@ -3,7 +3,7 @@ import crypto from "crypto";
 import { SignJWT,jwtVerify } from "jose";
 import { cookies } from "next/headers";
 import { loadDonorEmailTemplate,sendEmailVerification,sendMail,escapeEmailHtml } from "./mailer";
-import { DONOR_EMAIL_COPY, donorPageUrl } from './donor-email-copy';
+import { DONOR_EMAIL_COPY, donorPageUrl, donorResetText } from './donor-email-copy';
 import type { Locale } from './locales';
 import { getRequestSite } from "./request-site";
 import { getSessionSecret } from "./session-secret";
@@ -172,14 +172,15 @@ export async function requestPasswordReset(email: string, locale: Locale) {
         throw new Error("RESET_TOKEN_SAVE_FAILED");
     const siteUrl = getRequestSite().url;
     const resetUrl = donorPageUrl(siteUrl, locale, 'reset-password', token);
+    const copy = DONOR_EMAIL_COPY[locale];
+    const resetText = donorResetText(locale, user.name || user.email, resetUrl, siteUrl);
     const resetVars = { donorName: user.name || user.email, email: user.email, resetUrl, expiryHours: "1", siteUrl };
     const resetTpl = await loadDonorEmailTemplate("password_reset", resetVars, locale);
     if (resetTpl) {
-        if (!await sendMail({ to: user.email, subject: resetTpl.subject, html: resetTpl.html }))
+        if (!await sendMail({ to: user.email, subject: resetTpl.subject, html: resetTpl.html, text: resetText }))
             throw new Error("RESET_EMAIL_FAILED");
         return;
     }
-    const copy = DONOR_EMAIL_COPY[locale];
     const direction = locale === 'ar' ? 'rtl' : 'ltr';
     const sent = await sendMail({
         to: user.email,
@@ -189,7 +190,10 @@ export async function requestPasswordReset(email: string, locale: Locale) {
       <p>${copy.resetGreeting} ${escapeEmailHtml(user.name || user.email)}! ${copy.resetBody}</p>
       <a href="${escapeEmailHtml(resetUrl)}" style="display:inline-block;background:linear-gradient(135deg,#003C87,#0069D2);color:#fff;font-weight:700;padding:14px 32px;border-radius:12px;text-decoration:none;margin:16px 0;">${copy.resetButton}</a>
       <p style="color:#999;font-size:12px;">${copy.resetExpiry}</p>
+      <p style="color:#999;font-size:12px;">${copy.resetIgnore}</p>
+      <p style="color:#999;font-size:12px;">Destekol — ${escapeEmailHtml(siteUrl)}</p>
     </div>`,
+        text: resetText,
     });
     if (!sent)
         throw new Error("RESET_EMAIL_FAILED");

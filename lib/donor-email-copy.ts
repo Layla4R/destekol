@@ -9,9 +9,14 @@ export function donorPageUrl(siteUrl: string, locale: Locale, page: string, toke
     return `${siteUrl}${path}/${page}?token=${encodeURIComponent(token)}`;
 }
 
+export function donorResetText(locale: Locale, donorName: string, resetUrl: string, siteUrl: string): string {
+    const copy = DONOR_EMAIL_COPY[locale];
+    return `${copy.resetGreeting} ${donorName},\n\n${copy.resetBody}\n${resetUrl}\n\n${copy.resetExpiry}\n${copy.resetIgnore}\n\nDestekol — ${siteUrl}`;
+}
+
 export const DONOR_EMAIL_COPY: Record<Locale, {
     verifySubject: string; verifyTitle: string; verifyGreeting: string; verifyBody: string; verifyButton: string; verifyExpiry: string; verifyIgnore: string;
-    resetSubject: string; resetTitle: string; resetGreeting: string; resetBody: string; resetButton: string; resetExpiry: string;
+    resetSubject: string; resetTitle: string; resetGreeting: string; resetBody: string; resetButton: string; resetExpiry: string; resetIgnore: string;
 }> = {
     ar: {
         verifySubject: 'تأكيد بريدك الإلكتروني — Destekol', verifyTitle: 'تأكيد بريدك الإلكتروني', verifyGreeting: 'مرحباً',
@@ -19,6 +24,7 @@ export const DONOR_EMAIL_COPY: Record<Locale, {
         verifyExpiry: 'ينتهي الرابط خلال 24 ساعة.', verifyIgnore: 'إذا لم تطلب إنشاء هذا الحساب، يمكنك تجاهل هذه الرسالة.',
         resetSubject: 'إعادة تعيين كلمة المرور — Destekol', resetTitle: 'إعادة تعيين كلمة المرور', resetGreeting: 'مرحباً',
         resetBody: 'اضغط الزر أدناه لإعادة تعيين كلمة مرورك.', resetButton: 'إعادة تعيين كلمة المرور', resetExpiry: 'ينتهي الرابط خلال ساعة واحدة.',
+        resetIgnore: 'إذا لم تطلب إعادة تعيين كلمة المرور، فتجاهل هذه الرسالة.',
     },
     en: {
         verifySubject: 'Verify your email — Destekol', verifyTitle: 'Verify your email address', verifyGreeting: 'Hello',
@@ -26,6 +32,7 @@ export const DONOR_EMAIL_COPY: Record<Locale, {
         verifyExpiry: 'This link expires in 24 hours.', verifyIgnore: 'If you did not create this account, you can ignore this email.',
         resetSubject: 'Reset your password — Destekol', resetTitle: 'Reset your password', resetGreeting: 'Hello',
         resetBody: 'Click the button below to reset your password.', resetButton: 'Reset password', resetExpiry: 'This link expires in one hour.',
+        resetIgnore: 'If you did not request a password reset, you can ignore this email.',
     },
     fr: {
         verifySubject: 'Confirmez votre adresse e-mail — Destekol', verifyTitle: 'Confirmez votre adresse e-mail', verifyGreeting: 'Bonjour',
@@ -33,6 +40,7 @@ export const DONOR_EMAIL_COPY: Record<Locale, {
         verifyExpiry: 'Ce lien expire dans 24 heures.', verifyIgnore: 'Si vous n’avez pas créé ce compte, vous pouvez ignorer cet e-mail.',
         resetSubject: 'Réinitialisez votre mot de passe — Destekol', resetTitle: 'Réinitialisez votre mot de passe', resetGreeting: 'Bonjour',
         resetBody: 'Cliquez sur le bouton ci-dessous pour réinitialiser votre mot de passe.', resetButton: 'Réinitialiser le mot de passe', resetExpiry: 'Ce lien expire dans une heure.',
+        resetIgnore: 'Si vous n’avez pas demandé cette réinitialisation, ignorez ce message.',
     },
     tr: {
         verifySubject: 'E-posta adresinizi doğrulayın — Destekol', verifyTitle: 'E-posta adresinizi doğrulayın', verifyGreeting: 'Merhaba',
@@ -40,6 +48,7 @@ export const DONOR_EMAIL_COPY: Record<Locale, {
         verifyExpiry: 'Bu bağlantı 24 saat içinde geçerliliğini yitirir.', verifyIgnore: 'Bu hesabı siz oluşturmadıysanız bu e-postayı yok sayabilirsiniz.',
         resetSubject: 'Şifrenizi sıfırlayın — Destekol', resetTitle: 'Şifrenizi sıfırlayın', resetGreeting: 'Merhaba',
         resetBody: 'Şifrenizi sıfırlamak için aşağıdaki düğmeye tıklayın.', resetButton: 'Şifremi sıfırla', resetExpiry: 'Bu bağlantı bir saat içinde geçerliliğini yitirir.',
+        resetIgnore: 'Şifre sıfırlama isteğinde bulunmadıysanız bu e-postayı yok sayabilirsiniz.',
     },
 };
 
