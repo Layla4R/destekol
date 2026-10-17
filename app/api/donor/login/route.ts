@@ -1,15 +1,18 @@
 import { loginDonor } from "@/lib/donorAuth";
+import { DONOR_AUTH_ERROR_COPY, donorLocale } from '@/lib/donor-email-copy';
 import { enforceRequestLimit } from "@/lib/request-limit";
 import { getSessionSecret } from "@/lib/session-secret";
 import { NextRequest,NextResponse } from "next/server";
 export async function POST(req: NextRequest) {
     const limited = await enforceRequestLimit(req, "donor-login");
     if (limited) return limited;
+    let locale = donorLocale(null);
     try {
         getSessionSecret();
-        const { email, password } = await req.json();
+        const { email, password, locale: requestedLocale } = await req.json();
+        locale = donorLocale(requestedLocale);
         if (!email || !password)
-            return NextResponse.json({ error: "البريد وكلمة المرور مطلوبان" }, { status: 400 });
+            return NextResponse.json({ error: DONOR_AUTH_ERROR_COPY[locale].required }, { status: 400 });
         const { user, token } = await loginDonor(email, password);
         const res = NextResponse.json({ ok: true, user });
         res.cookies.set("destekol_donor_session", token, {
@@ -30,13 +33,14 @@ export async function POST(req: NextRequest) {
     }
     catch (e: any) {
         if (e.message === "AUTH_CONFIGURATION_ERROR") {
-            return NextResponse.json({ error: "Authentication is temporarily unavailable." }, { status: 503 });
+            return NextResponse.json({ error: DONOR_AUTH_ERROR_COPY[locale].serverError }, { status: 503 });
         }
+        const copy = DONOR_AUTH_ERROR_COPY[locale];
         const msgs: Record<string, string> = {
-            INVALID_CREDENTIALS: "البريد الإلكتروني أو كلمة المرور غير صحيحة",
-            USE_ADMIN_LOGIN: "استخدم صفحة تسجيل دخول الأدمن",
-            EMAIL_NOT_VERIFIED: "يرجى تفعيل حسابك من خلال الرابط المرسل إلى بريدك الإلكتروني أولاً",
+            INVALID_CREDENTIALS: copy.invalidCredentials,
+            USE_ADMIN_LOGIN: copy.adminLogin,
+            EMAIL_NOT_VERIFIED: copy.unverified,
         };
-        return NextResponse.json({ error: msgs[e.message] || e.message }, { status: 401 });
+        return NextResponse.json({ error: msgs[e.message] || copy.invalidCredentials }, { status: 401 });
     }
 }

@@ -9,7 +9,7 @@ function ResetClientContent({ locale, dict: D }: {
 }) {
     const params = useSearchParams();
     const token = params.get("token") || "";
-    const p = locale === "ar" ? "" : `/${locale}`;
+    const p = locale === "tr" ? "" : `/${locale}`;
     const [pw, setPw] = useState("");
     const [confirm, setConfirm] = useState("");
     const [loading, setLoading] = useState(false);

@@ -1,4 +1,5 @@
 import { requestPasswordReset } from "@/lib/donorAuth";
+import { donorLocale } from '@/lib/donor-email-copy';
 import { NextRequest,NextResponse } from "next/server";
 const resetAttempts = new Map<string, {
     count: number;
@@ -20,8 +21,8 @@ export async function POST(req: NextRequest) {
     const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
     if (!checkResetLimit(ip))
         return NextResponse.json({ ok: true }); // Silently rate-limit
-    const { email } = await req.json();
+    const { email, locale: requestedLocale } = await req.json();
     if (email)
-        await requestPasswordReset(email).catch(() => { });
+        await requestPasswordReset(email, donorLocale(requestedLocale)).catch(() => { });
     return NextResponse.json({ ok: true }); // Always ok — don't reveal existence
 }

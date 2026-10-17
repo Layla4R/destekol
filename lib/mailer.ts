@@ -6,6 +6,8 @@ import { getRequestSite,siteEnv } from "./request-site";
  */
 import nodemailer from "nodemailer";
 import { getSupabaseOrNull } from "./supabase";
+import { DONOR_EMAIL_COPY, donorLocale } from './donor-email-copy';
+import type { Locale } from './locales';
 export interface MailOptions {
     to: string | string[];
     subject: string;
@@ -82,11 +84,11 @@ export async function sendMail(opts: MailOptions): Promise<boolean> {
     }
 }
 /** Load email template and apply vars (exported for donorAuth) */
-export async function loadDonorEmailTemplate(id: string, vars: Record<string, string>): Promise<{
+export async function loadDonorEmailTemplate(id: string, vars: Record<string, string>, locale: Locale = 'en'): Promise<{
     subject: string;
     html: string;
 } | null> {
-    const tpl = await loadEmailTemplate(id);
+    const tpl = await loadEmailTemplate(`${id}_${locale}`) || (locale === 'en' ? await loadEmailTemplate(id) : null);
     if (!tpl)
         return null;
     return { subject: applyVars(tpl.subject, vars), html: applyVars(tpl.html, vars) };
@@ -124,11 +126,13 @@ export async function sendEmailVerification(opts: {
     to: string;
     donorName: string;
     verifyUrl: string;
+    locale: Locale;
 }): Promise<boolean> {
     const siteUrl = getRequestSite().url;
     const uniqueTag = `<!-- unique_time:${Date.now()} -->`; // 🌟 بصمة زمنية تمنع دمج Gmail للرسائل وإخفاء الزر
     const vars = { donorName: opts.donorName, verifyUrl: opts.verifyUrl, siteUrl };
-    const tpl = await loadEmailTemplate("email_verification");
+    const locale = donorLocale(opts.locale);
+    const tpl = await loadEmailTemplate(`email_verification_${locale}`) || (locale === 'en' ? await loadEmailTemplate('email_verification') : null);
     if (tpl) {
         return sendMail({
             to: opts.to,
@@ -136,24 +140,31 @@ export async function sendEmailVerification(opts: {
             html: applyVars(tpl.html, vars) + uniqueTag,
         });
     }
+    const copy = DONOR_EMAIL_COPY[locale];
+    const direction = locale === 'ar' ? 'rtl' : 'ltr';
+    const donorName = escapeEmailHtml(opts.donorName);
+    const verifyUrl = escapeEmailHtml(opts.verifyUrl);
     return sendMail({
         to: opts.to,
-        subject: "Verify Your Email — Destekol",
-        html: `<div style="font-family:Cairo,Arial,sans-serif;padding:32px;background:#F8FAFF;max-width:600px;margin:0 auto;">
+        subject: copy.verifySubject,
+        html: `<div lang="${locale}" dir="${direction}" style="font-family:Cairo,Arial,sans-serif;padding:32px;background:#F8FAFF;max-width:600px;margin:0 auto;">
       <div style="background:linear-gradient(135deg,#003C87,#0069D2);padding:28px;border-radius:12px;text-align:center;margin-bottom:24px;">
         <h1 style="color:#ffffff;margin:0;font-size:20px;">Destekol</h1>
       </div>
-      <h2 style="color:#0069D2;margin-bottom:16px;">Verify Your Email Address</h2>
+      <h2 style="color:#0069D2;margin-bottom:16px;">${copy.verifyTitle}</h2>
       <p style="color:#5C6880;line-height:1.6;margin-bottom:24px;">
-        Hello <strong>${opts.donorName}</strong>,<br/>
-        Click below to verify your email address. This link expires in 24 hours.
+        ${copy.verifyGreeting} <strong>${donorName}</strong>,<br/>
+        ${copy.verifyBody} ${copy.verifyExpiry}
       </p>
       <div style="text-align:center;margin:32px 0;">
-        <a href="${opts.verifyUrl}" style="display:inline-block;background:linear-gradient(135deg,#F00F5A,#FF4D88);color:#ffffff !important;font-weight:700;padding:14px 32px;border-radius:12px;text-decoration:none;font-size:16px;">Verify Email Address</a>
+        <a href="${verifyUrl}" style="display:inline-block;background:linear-gradient(135deg,#F00F5A,#FF4D88);color:#ffffff !important;font-weight:700;padding:14px 32px;border-radius:12px;text-decoration:none;font-size:16px;">${copy.verifyButton}</a>
       </div>
-      <p style="color:#aaa;font-size:12px;text-align:center;margin-top:24px;">If you didn't request this, ignore this email.</p>
+      <p style="color:#aaa;font-size:12px;text-align:center;margin-top:24px;">${copy.verifyIgnore}</p>
     </div>${uniqueTag}`,
     });
+}
+export function escapeEmailHtml(value: string): string {
+    return value.replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char] || char);
 }
 /** Test SMTP connection (used by the admin settings panel). */
 export async function testSmtpConnection(cfg: SmtpConfig): Promise<{

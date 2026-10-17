@@ -6,14 +6,14 @@ export default function ForgotClient({ locale, dict: D }: {
     locale: string;
     dict: Record<string, string>;
 }) {
-    const p = locale === "ar" ? "" : `/${locale}`;
+    const p = locale === "tr" ? "" : `/${locale}`;
     const [email, setEmail] = useState("");
     const [sent, setSent] = useState(false);
     const [loading, setLoading] = useState(false);
     async function submit(e: React.FormEvent) {
         e.preventDefault();
         setLoading(true);
-        await fetch("/api/donor/forgot-password", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email }) });
+        await fetch("/api/donor/forgot-password", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, locale }) });
         setSent(true);
         setLoading(false);
     }

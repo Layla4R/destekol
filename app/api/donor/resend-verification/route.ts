@@ -1,4 +1,5 @@
 import { sendEmailVerification } from "@/lib/mailer";
+import { donorLocale, donorPageUrl } from '@/lib/donor-email-copy';
 import { getRequestSite } from "@/lib/request-site";
 import { getSupabase } from "@/lib/supabase";
 import crypto from "crypto";
@@ -23,7 +24,8 @@ export async function POST(req: NextRequest) {
     const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
     if (!checkResendLimit(ip))
         return NextResponse.json({ ok: true }); // Silently rate-limit
-    const { email } = await req.json();
+    const { email, locale: requestedLocale } = await req.json();
+    const locale = donorLocale(requestedLocale);
     if (!email)
         return NextResponse.json({ ok: true }); // Silent
     const supabase = getSupabase();
@@ -38,7 +40,7 @@ export async function POST(req: NextRequest) {
     const expiry = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
     await supabase.from("User").update({ verifyToken: token, verifyExpiry: expiry }).eq("id", user.id);
     const siteUrl = getRequestSite().url;
-    const verifyUrl = `${siteUrl}/verify-email?token=${token}`;
-    await sendEmailVerification({ to: email, donorName: user.name || email, verifyUrl });
+    const verifyUrl = donorPageUrl(siteUrl, locale, 'verify-email', token);
+    await sendEmailVerification({ to: email, donorName: user.name || email, verifyUrl, locale });
     return NextResponse.json({ ok: true });
 }

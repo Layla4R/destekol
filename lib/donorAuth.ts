@@ -2,7 +2,9 @@ import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import { SignJWT,jwtVerify } from "jose";
 import { cookies } from "next/headers";
-import { loadDonorEmailTemplate,sendEmailVerification,sendMail } from "./mailer";
+import { loadDonorEmailTemplate,sendEmailVerification,sendMail,escapeEmailHtml } from "./mailer";
+import { DONOR_EMAIL_COPY, donorPageUrl } from './donor-email-copy';
+import type { Locale } from './locales';
 import { getRequestSite } from "./request-site";
 import { getSessionSecret } from "./session-secret";
 import { getSupabase } from "./supabase";
@@ -18,6 +20,7 @@ export async function registerDonor(opts: {
     email: string;
     password: string;
     country?: string;
+    locale: Locale;
 }) {
     const supabase = getSupabase();
     const { data: existing } = await supabase
@@ -49,12 +52,13 @@ export async function registerDonor(opts: {
         throw new Error(error.message);
     }
     const siteUrl = getRequestSite().url;
-    const verifyUrl = `${siteUrl}/verify-email?token=${verifyToken}`;
+    const verifyUrl = donorPageUrl(siteUrl, opts.locale, 'verify-email', verifyToken);
     // 🌟 إرسال بريد التفعيل وانتظار النتيجة
     const sent = await sendEmailVerification({
         to: user.email,
         donorName: user.name,
         verifyUrl,
+        locale: opts.locale,
     });
     return { id: user.id, name: user.name, email: user.email };
 }
@@ -146,7 +150,7 @@ export async function logoutDonor() {
     cookies().delete(SESSION_COOKIE);
 }
 // ── Password Reset ────────────────────────────────────────────
-export async function requestPasswordReset(email: string) {
+export async function requestPasswordReset(email: string, locale: Locale) {
     const supabase = getSupabase();
     const { data: user, error: userError } = await supabase
         .from("User")
@@ -162,21 +166,23 @@ export async function requestPasswordReset(email: string) {
         resetExpiry: expiry.toISOString(),
     }).eq("id", user.id);
     const siteUrl = getRequestSite().url;
-    const resetUrl = `${siteUrl}/reset-password?token=${token}`;
+    const resetUrl = donorPageUrl(siteUrl, locale, 'reset-password', token);
     const resetVars = { donorName: user.name || email, email, resetUrl, expiryHours: "1", siteUrl };
-    const resetTpl = await loadDonorEmailTemplate("password_reset", resetVars);
+    const resetTpl = await loadDonorEmailTemplate("password_reset", resetVars, locale);
     if (resetTpl) {
         await sendMail({ to: email, subject: resetTpl.subject, html: resetTpl.html }).catch(() => { });
         return;
     }
+    const copy = DONOR_EMAIL_COPY[locale];
+    const direction = locale === 'ar' ? 'rtl' : 'ltr';
     await sendMail({
         to: email,
-        subject: "إعادة تعيين كلمة المرور — Destekol",
-        html: `<div dir="rtl" style="font-family:Cairo,Tahoma,sans-serif;padding:32px;background:#F8FAFF;">
-      <h2 style="color:#0069D2;">إعادة تعيين كلمة المرور</h2>
-      <p>مرحباً ${user.name}! اضغط الرابط أدناه لإعادة تعيين كلمة مرورك:</p>
-      <a href="${resetUrl}" style="display:inline-block;background:linear-gradient(135deg,#003C87,#0069D2);color:#fff;font-weight:700;padding:14px 32px;border-radius:12px;text-decoration:none;margin:16px 0;">إعادة تعيين كلمة المرور</a>
-      <p style="color:#999;font-size:12px;">الرابط صالح لمدة ساعة واحدة فقط.</p>
+        subject: copy.resetSubject,
+        html: `<div lang="${locale}" dir="${direction}" style="font-family:Cairo,Tahoma,sans-serif;padding:32px;background:#F8FAFF;">
+      <h2 style="color:#0069D2;">${copy.resetTitle}</h2>
+      <p>${copy.resetGreeting} ${escapeEmailHtml(user.name || email)}! ${copy.resetBody}</p>
+      <a href="${escapeEmailHtml(resetUrl)}" style="display:inline-block;background:linear-gradient(135deg,#003C87,#0069D2);color:#fff;font-weight:700;padding:14px 32px;border-radius:12px;text-decoration:none;margin:16px 0;">${copy.resetButton}</a>
+      <p style="color:#999;font-size:12px;">${copy.resetExpiry}</p>
     </div>`,
     }).catch(() => { });
 }

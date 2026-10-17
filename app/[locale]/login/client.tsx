@@ -1,6 +1,7 @@
 "use client";
 import PrivacyNotice from '@/components/site/PrivacyNotice';
 import { interfaceCopy } from "@/lib/interface-copy";
+import { DONOR_AUTH_ERROR_COPY, donorLocale } from '@/lib/donor-email-copy';
 
 import Icon from "@/components/icons";
 import { countries } from "countries-list";
@@ -17,14 +18,15 @@ const getFlagEmoji = (code: string) => {
         .replace(/./g, (char) => String.fromCodePoint(127397 + char.charCodeAt(0)));
 };
 // دالة معالجة الاستجابات بأمان لمنع خطأ Unexpected token <
-async function parseJsonResponse(res: Response) {
+async function parseJsonResponse(res: Response, locale: string) {
+    const copy = DONOR_AUTH_ERROR_COPY[donorLocale(locale)];
     const contentType = res.headers.get("content-type");
     if (!contentType || !contentType.includes("application/json")) {
-        throw new Error("حدث خطأ في السيرفر، يرجى المحاولة لاحقاً");
+        throw new Error(copy.serverError);
     }
     const data = await res.json();
     if (!res.ok) {
-        throw new Error(data.error || "حدث خطأ غير متوقع");
+        throw new Error(data.error || copy.serverError);
     }
     return data;
 }
@@ -33,7 +35,7 @@ export default function LoginClient({ locale, dict: D, }: {
     dict: Record<string, string>;
 }) {
     const router = useRouter();
-    const p = locale === "ar" ? "" : `/${locale}`;
+    const p = locale === "tr" ? "" : `/${locale}`;
     const [mounted, setMounted] = useState(false);
     useEffect(() => {
         setMounted(true);
@@ -114,9 +116,9 @@ export default function LoginClient({ locale, dict: D, }: {
             const res = await fetch("/api/donor/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email: form.email, password: form.password }),
+                body: JSON.stringify({ email: form.email, password: form.password, locale }),
             });
-            await parseJsonResponse(res);
+            await parseJsonResponse(res, locale);
             router.push(`${p}/account`);
             router.refresh();
         }
@@ -149,10 +151,11 @@ export default function LoginClient({ locale, dict: D, }: {
                     email: form.email,
                     password: form.password,
                     country: form.country,
+                    locale,
                 }),
             });
-            await parseJsonResponse(regRes);
-            setSuccessMsg("تم إنشاء حسابك بنجاح! أرسلنا رابط التفعيل إلى بريدك الإلكتروني، يرجى مراجعة صندوق الوارد (أو الرسائل غير المرغوبة) لتأكيد حسابك.");
+            await parseJsonResponse(regRes, locale);
+            setSuccessMsg(D["auth.register_success"]);
             setForm({ name: "", email: "", password: "", confirm: "", country: "" });
         }
         catch (e: any) {
