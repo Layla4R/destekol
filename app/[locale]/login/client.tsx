@@ -41,6 +41,10 @@ export default function LoginClient({ locale, dict: D, }: {
         setMounted(true);
     }, []);
     const [tab, setTab] = useState<"login" | "register">("login");
+    useEffect(() => {
+        if (new URLSearchParams(window.location.search).get("tab") === "register")
+            setTab("register");
+    }, []);
     const [form, setForm] = useState({
         name: "",
         email: "",

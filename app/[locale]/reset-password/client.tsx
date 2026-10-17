@@ -17,6 +17,10 @@ function ResetClientContent({ locale, dict: D }: {
     const [done, setDone] = useState(false);
     async function submit(e: React.FormEvent) {
         e.preventDefault();
+        if (!token) {
+            setError(D["auth.reset_invalid_link"]);
+            return;
+        }
         if (pw !== confirm) {
             setError(D["auth.password_mismatch"]);
             return;
@@ -27,15 +31,27 @@ function ResetClientContent({ locale, dict: D }: {
         }
         setError("");
         setLoading(true);
-        const res = await fetch("/api/donor/reset-password", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ token, password: pw }) });
-        const d = await res.json();
-        if (!res.ok) {
-            setError(d.error || "Error");
-            setLoading(false);
-            return;
+        try {
+            const res = await fetch("/api/donor/reset-password", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ token, password: pw }) });
+            const data = await res.json();
+            if (!res.ok) {
+                const errors: Record<string, string> = {
+                    INVALID_TOKEN: D["auth.reset_invalid_link"],
+                    TOKEN_EXPIRED: D["auth.reset_expired_link"],
+                    PASSWORD_SHORT: D["auth.password_short"],
+                    PASSWORD_WEAK: D["auth.reset_weak_password"],
+                };
+                setError(errors[data.error] || D["auth.reset_unavailable"]);
+                return;
+            }
+            setDone(true);
         }
-        setDone(true);
-        setLoading(false);
+        catch {
+            setError(D["auth.reset_unavailable"]);
+        }
+        finally {
+            setLoading(false);
+        }
     }
     const inp = "w-full rounded-xl border border-line bg-cream py-3 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-brand/30";
     return (<div className="min-h-[60vh] flex items-center justify-center bg-section-gradient px-6 py-16">
@@ -58,10 +74,11 @@ function ResetClientContent({ locale, dict: D }: {
               <label className="block text-sm text-muted mb-1.5">{D["auth.confirm_password"]}</label>
               <input type="password" required value={confirm} onChange={e => setConfirm(e.target.value)} className={inp}/>
             </div>
-            {error && <p className="text-danger text-sm">{error}</p>}
-            <button type="submit" disabled={loading} className="w-full bg-brand hover:bg-brand-dark text-white font-bold rounded-xl py-3 transition disabled:opacity-60">
+            {(error || !token) && <p role="alert" className="text-danger text-sm">{error || D["auth.reset_invalid_link"]}</p>}
+            <button type="submit" disabled={loading || !token} className="w-full bg-brand hover:bg-brand-dark text-white font-bold rounded-xl py-3 transition disabled:opacity-60">
               {loading ? "..." : D["auth.set_password"]}
             </button>
+            <Link href={`${p}/forgot-password`} className="block text-center text-sm text-brand hover:underline">{D["auth.forgot_password"]}</Link>
           </form>)}
       </div>
     </div>);

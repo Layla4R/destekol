@@ -154,53 +154,65 @@ export async function requestPasswordReset(email: string, locale: Locale) {
     const supabase = getSupabase();
     const { data: user, error: userError } = await supabase
         .from("User")
-        .select("id, name")
-        .eq("email", email.toLowerCase())
+        .select("id, name, email")
+        .eq("email", email.trim().toLowerCase())
+        .eq("role", "DONOR")
         .maybeSingle();
-    if (userError || !user)
-        return; // Silent for security
+    if (userError)
+        throw new Error("RESET_LOOKUP_FAILED");
+    if (!user)
+        return; // Keep unknown addresses indistinguishable from successful requests.
     const token = generateToken();
     const expiry = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
-    await supabase.from("User").update({
+    const { data: savedToken, error: updateError } = await supabase.from("User").update({
         resetToken: token,
         resetExpiry: expiry.toISOString(),
-    }).eq("id", user.id);
+    }).eq("id", user.id).select("id").maybeSingle();
+    if (updateError || !savedToken)
+        throw new Error("RESET_TOKEN_SAVE_FAILED");
     const siteUrl = getRequestSite().url;
     const resetUrl = donorPageUrl(siteUrl, locale, 'reset-password', token);
-    const resetVars = { donorName: user.name || email, email, resetUrl, expiryHours: "1", siteUrl };
+    const resetVars = { donorName: user.name || user.email, email: user.email, resetUrl, expiryHours: "1", siteUrl };
     const resetTpl = await loadDonorEmailTemplate("password_reset", resetVars, locale);
     if (resetTpl) {
-        await sendMail({ to: email, subject: resetTpl.subject, html: resetTpl.html }).catch(() => { });
+        if (!await sendMail({ to: user.email, subject: resetTpl.subject, html: resetTpl.html }))
+            throw new Error("RESET_EMAIL_FAILED");
         return;
     }
     const copy = DONOR_EMAIL_COPY[locale];
     const direction = locale === 'ar' ? 'rtl' : 'ltr';
-    await sendMail({
-        to: email,
+    const sent = await sendMail({
+        to: user.email,
         subject: copy.resetSubject,
         html: `<div lang="${locale}" dir="${direction}" style="font-family:Cairo,Tahoma,sans-serif;padding:32px;background:#F8FAFF;">
       <h2 style="color:#0069D2;">${copy.resetTitle}</h2>
-      <p>${copy.resetGreeting} ${escapeEmailHtml(user.name || email)}! ${copy.resetBody}</p>
+      <p>${copy.resetGreeting} ${escapeEmailHtml(user.name || user.email)}! ${copy.resetBody}</p>
       <a href="${escapeEmailHtml(resetUrl)}" style="display:inline-block;background:linear-gradient(135deg,#003C87,#0069D2);color:#fff;font-weight:700;padding:14px 32px;border-radius:12px;text-decoration:none;margin:16px 0;">${copy.resetButton}</a>
       <p style="color:#999;font-size:12px;">${copy.resetExpiry}</p>
     </div>`,
-    }).catch(() => { });
+    });
+    if (!sent)
+        throw new Error("RESET_EMAIL_FAILED");
 }
 export async function resetPassword(token: string, newPassword: string) {
     const supabase = getSupabase();
-    const { data: user } = await supabase
+    const { data: user, error: lookupError } = await supabase
         .from("User")
         .select("id, resetExpiry")
         .eq("resetToken", token)
         .maybeSingle();
+    if (lookupError)
+        throw new Error("RESET_LOOKUP_FAILED");
     if (!user)
         throw new Error("INVALID_TOKEN");
-    if (user.resetExpiry && new Date(user.resetExpiry) < new Date())
+    if (!user.resetExpiry || new Date(user.resetExpiry) < new Date())
         throw new Error("TOKEN_EXPIRED");
     const passwordHash = await bcrypt.hash(newPassword, SALT_ROUNDS);
-    await supabase.from("User").update({
+    const { data: updatedUser, error: updateError } = await supabase.from("User").update({
         passwordHash,
         resetToken: null,
         resetExpiry: null,
-    }).eq("id", user.id);
+    }).eq("id", user.id).eq("resetToken", token).select("id").maybeSingle();
+    if (updateError || !updatedUser)
+        throw new Error("RESET_PASSWORD_SAVE_FAILED");
 }

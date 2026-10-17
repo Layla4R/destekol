@@ -18,11 +18,25 @@ function checkResetLimit(ip: string): boolean {
     return true;
 }
 export async function POST(req: NextRequest) {
+    let email: unknown;
+    let requestedLocale: unknown;
+    try {
+        ({ email, locale: requestedLocale } = await req.json());
+    }
+    catch {
+        return NextResponse.json({ error: "INVALID_REQUEST" }, { status: 400 });
+    }
+    if (typeof email !== "string" || !email.trim())
+        return NextResponse.json({ error: "INVALID_REQUEST" }, { status: 400 });
     const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
     if (!checkResetLimit(ip))
-        return NextResponse.json({ ok: true }); // Silently rate-limit
-    const { email, locale: requestedLocale } = await req.json();
-    if (email)
-        await requestPasswordReset(email, donorLocale(requestedLocale)).catch(() => { });
-    return NextResponse.json({ ok: true }); // Always ok — don't reveal existence
+        return NextResponse.json({ error: "RATE_LIMITED" }, { status: 429 });
+    try {
+        await requestPasswordReset(email, donorLocale(requestedLocale));
+        return NextResponse.json({ ok: true }); // Do not reveal whether the account exists.
+    }
+    catch (error) {
+        console.error("[donor-reset] Request failed:", error instanceof Error ? error.message : "UNKNOWN");
+        return NextResponse.json({ error: "RESET_UNAVAILABLE" }, { status: 503 });
+    }
 }
