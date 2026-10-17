@@ -26,7 +26,7 @@ export default function DonationsClient({ locale, dict: D }: {
     dict: Record<string, string>;
 }) {
     const router = useRouter();
-    const p = locale === "ar" ? "" : `/${locale}`;
+    const p = locale === "tr" ? "" : `/${locale}`;
     const [donations, setDonations] = useState<Donation[]>([]);
     const [loading, setLoading] = useState(true);
     const [cancelling, setCancelling] = useState<string | null>(null);

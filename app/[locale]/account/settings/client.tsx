@@ -18,7 +18,7 @@ export default function SettingsClient({ locale, dict: D, }: {
     dict: Record<string, string>;
 }) {
     const router = useRouter();
-    const p = locale === "ar" ? "" : `/${locale}`;
+    const p = locale === "tr" ? "" : `/${locale}`;
     const [mounted, setMounted] = useState(false);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);

@@ -20,7 +20,7 @@ export default function AccountClient({ locale, dict: D, }: {
     dict: Record<string, string>;
 }) {
     const router = useRouter();
-    const p = locale === "ar" ? "" : `/${locale}`;
+    const p = locale === "tr" ? "" : `/${locale}`;
     const [donor, setDonor] = useState<Donor | null>(null);
     const [loading, setLoading] = useState(true);
     const dateLocale = locale === "ar"
