@@ -14,6 +14,7 @@ import DonationWidget from "@/components/site/DonateWidget";
 import HeroSection from "@/components/site/HeroSection";
 import KindnessBox from "@/components/site/KindnessBox";
 import NewsSection from "@/components/site/NewsSection"; // 🌟 تم استيراد مكون الأخبار/القصص
+import OfficialIdentitySection from "@/components/site/OfficialIdentitySection";
 import { PageSection } from "@/lib/blocks";
 import { normalizeDestekolBrandCopy } from "@/lib/destekol-brand-copy";
 import { formatCurrency } from "@/lib/format";
@@ -70,6 +71,8 @@ export default function BlockRenderer({ section, context = {}, }: {
     const locale = context?.locale || "ar";
     const getLocalizedLink = (url?: string, defaultFallback = "/") => storyLink(url || defaultFallback, locale) || `/${locale}`;
     switch (section.type) {
+        case "official_identity":
+            return <OfficialIdentitySection data={p} locale={locale}/>;
         case "kindness_box": {
             ;
             const available = new Map((context.kindnessCampaigns || context.campaigns || []).map(c => [c.id, c]));

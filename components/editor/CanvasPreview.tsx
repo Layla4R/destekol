@@ -5,6 +5,15 @@ export default function CanvasPreview({ section }: {
 }) {
     const p = section.props || {};
     switch (section.type) {
+        case "official_identity": return <div className="grid grid-cols-[minmax(0,1fr)_35%] gap-6 items-center p-8 bg-[#f7fcfd] text-[#063962]">
+          <div><h2 className="text-2xl font-bold mb-4">{p.heading}</h2><dl className="space-y-2 text-xs">{[
+            [p.officialNameLabel, p.officialName], [p.publicNameLabel, p.publicName],
+            [p.registrationLabel, p.registrationNumber], [p.statusLabel, p.status],
+            [p.websiteLabel, p.websiteUrl], [p.emailLabel, p.email],
+          ].filter(([label, value]) => label && value).map(([label, value], i) => <div key={i} className="grid grid-cols-2 gap-2 border-b pb-2"><dt className="font-semibold">{label}</dt><dd>{value}</dd></div>)}</dl>
+          <p className="text-xs mt-4">{p.description}</p><p className="text-xs font-bold mt-3">{p.verificationLabel}</p></div>
+          {p.logo && <img src={p.logo} alt={p.logoAlt || ""} className="w-full rounded-xl"/>}
+        </div>;
         case "kindness_box": return <div className="p-8 grid grid-cols-3 gap-4 items-center" style={{ background: "#edf8fb", color: "#063962" }}><img src={p.image} alt="" className="w-full"/><div><h2 className="font-bold text-2xl">{p.title}</h2><p className="text-sm">{p.subtitle}</p></div><div className="bg-white rounded-xl p-4">{(p.items || []).map((item: any, i: number) => <div key={i} className="text-xs py-2">{item.title} <span className="float-right">− 0 +</span></div>)}<div className="text-white p-2 rounded text-center text-xs" style={{ background: "#0a5171" }}>{p.cartButtonText}</div></div></div>;
         case "hero": {
             const slide = p.items?.[0] || p.slides?.[0] || p;

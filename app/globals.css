@@ -138,6 +138,37 @@ body[data-site="destekol"] .destekol-inner-page-banner-wave { position: absolute
 body[data-site="destekol"] .destekol-inner-page-banner + .destekol-achievements { width: min(100%, 1440px); margin: 0 auto; }
 
 /* About page rows follow the reference while every heading, paragraph and image remains in page blocks. */
+body[data-site="destekol"] .destekol-identity-section {
+  padding: 8px clamp(16px, 3.5vw, 52px) 14px;
+  background: #fff;
+}
+body[data-site="destekol"] .destekol-identity-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(24px, 4vw, 58px);
+  width: min(100%, 1260px);
+  margin-inline: auto;
+  padding: clamp(22px, 3vw, 40px);
+  border: 1px solid #e5f1f5;
+  border-radius: 20px;
+  background: linear-gradient(115deg, #f7fcfd, #fff 58%, #f4fbfc);
+  box-shadow: 0 10px 28px rgb(10 81 113 / 5%);
+}
+body[data-site="destekol"] .destekol-identity-card.has-logo { grid-template-columns: minmax(0, 1.5fr) minmax(260px, .9fr); }
+body[data-site="destekol"] .destekol-identity-content { min-width: 0; }
+body[data-site="destekol"] .destekol-identity-accent { display: block; width: 44px; height: 5px; margin-bottom: 14px; border-radius: 8px; background: #d9a750; }
+body[data-site="destekol"] .destekol-identity-content h2 { margin: 0 0 22px; color: #063962; font-size: clamp(25px, 2.5vw, 34px); line-height: 1.3; font-weight: 850; }
+body[data-site="destekol"] .destekol-identity-details { display: grid; gap: 11px; margin: 0 0 22px; }
+body[data-site="destekol"] .destekol-identity-details > div { display: grid; grid-template-columns: minmax(170px, .65fr) minmax(0, 1fr); gap: 8px 20px; padding-bottom: 10px; border-bottom: 1px solid #e2edf0; }
+body[data-site="destekol"] .destekol-identity-details dt { color: #49677f; font-size: 14px; font-weight: 700; }
+body[data-site="destekol"] .destekol-identity-details dd { margin: 0; color: #063962; font-size: 14px; font-weight: 700; overflow-wrap: anywhere; }
+body[data-site="destekol"] .destekol-identity-content p { margin: 0 0 18px; color: #49677f; font-size: 14px; line-height: 1.85; }
+body[data-site="destekol"] .destekol-identity-content a { color: #075d89; text-decoration: underline; text-underline-offset: 3px; }
+body[data-site="destekol"] .destekol-identity-content a:hover { color: #063962; }
+body[data-site="destekol"] .destekol-identity-verify { display: inline-flex; align-items: center; gap: 3px; font-size: 14px; font-weight: 800; }
+body[data-site="destekol"] .destekol-identity-logo { display: grid; place-items: center; margin: 0; padding: 20px; border: 1px solid #e5f1f5; border-radius: 16px; background: #f7f7f7; }
+body[data-site="destekol"] .destekol-identity-logo img { display: block; width: 100%; height: auto; }
 body[data-site="destekol"] .destekol-about-row {
   border: 0;
   background: #fff;
@@ -267,6 +298,11 @@ body[data-site="destekol"] .destekol-about-cta-copy p { margin: 0 auto 17px; col
 body[data-site="destekol"] .destekol-about-cta-copy a { min-height: 42px; border-radius: 9px; padding: 10px 22px; background: #d9a750 !important; box-shadow: none; }
 
 @media (max-width: 767px) {
+  body[data-site="destekol"] .destekol-identity-section { padding-inline: 14px; }
+  body[data-site="destekol"] .destekol-identity-card,
+  body[data-site="destekol"] .destekol-identity-card.has-logo { grid-template-columns: 1fr; gap: 18px; padding: 18px; border-radius: 16px; }
+  body[data-site="destekol"] .destekol-identity-details > div { grid-template-columns: 1fr; gap: 2px; }
+  body[data-site="destekol"] .destekol-identity-logo { padding: 12px; }
   body[data-site="destekol"] .destekol-inner-page-banner { min-height: 440px; align-items: flex-start; padding: 26px 22px 110px; }
   body[data-site="destekol"] .destekol-inner-page-banner-image { object-position: 67% bottom; }
   body[data-site="destekol"] .destekol-inner-page-banner-overlay { background: linear-gradient(180deg, #f2fbff 0%, #f2fbfff7 38%, #f2fbffb8 54%, #f2fbff0a 82%); }

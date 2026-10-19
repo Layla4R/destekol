@@ -6,6 +6,8 @@ const TEXT_FIELDS = new Set([
     "storyEyebrow", "readButtonText", "successText", "errorText", "notice",
     "category", "location", "status", "authorName", "authorRole", "contactHeading", "contactSummary",
     "sourceName", "methodology",
+    "officialNameLabel", "publicNameLabel", "registrationLabel", "statusLabel",
+    "websiteLabel", "emailLabel", "verificationLabel", "logoAlt",
 ]);
 // Seed only metadata keys so translated editors can update shared facts on legacy blocks.
 function metricDefaults<T>(value: T): T {

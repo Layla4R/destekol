@@ -317,6 +317,9 @@ export default async function DynamicPage({ params, }: {
         ...sec,
         id: sec.id || `section-${idx}`,
     }));
+    const officialIdentity = isDestekolAboutPage
+        ? sections.find((section) => section.type === "official_identity")?.props
+        : null;
     const isTrustPage = !isLegalPage && (slug === "about" ||
         slug === "about-us" ||
         slug === "our-work" ||
@@ -366,10 +369,13 @@ export default async function DynamicPage({ params, }: {
                     {
                         "@type": ["NGO", "Organization"],
                         "@id": `${siteUrl}/#organization`,
-                        name: fullName,
+                        name: officialIdentity?.officialName || fullName,
+                        ...(officialIdentity?.officialName ? { legalName: officialIdentity.officialName } : {}),
+                        ...(officialIdentity?.registrationNumber ? { identifier: { "@type": "PropertyValue", propertyID: "Dernek Kayıt Numarası", value: officialIdentity.registrationNumber } } : {}),
+                        ...(officialIdentity?.email ? { email: officialIdentity.email } : {}),
                         alternateName: ["Destekol", fullName],
                         url: siteUrl,
-                        logo: appearance?.logoImage ? new URL(appearance.logoImage, siteUrl).toString() : undefined,
+                        logo: officialIdentity?.logo ? new URL(officialIdentity.logo, siteUrl).toString() : appearance?.logoImage ? new URL(appearance.logoImage, siteUrl).toString() : undefined,
                         knowsAbout: [
                             "Humanitarian Aid",
                             "Emergency Relief",

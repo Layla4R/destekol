@@ -38,6 +38,30 @@ const METRIC_FIELDS: FieldDef[] = [
 ];
 export const BLOCK_DEFINITIONS: BlockDefinition[] = [
     {
+        type: "official_identity", label: "Destekol — الهوية الرسمية", description: "بيانات الجمعية القانونية وشعارها ورابط التحقق الرسمي", icon: "shield", category: "content",
+        defaultProps: { heading: "", officialNameLabel: "", officialName: "", publicNameLabel: "", publicName: "", registrationLabel: "", registrationNumber: "", statusLabel: "", status: "", websiteLabel: "", websiteUrl: "", emailLabel: "", email: "", description: "", verificationLabel: "", verificationUrl: "", logo: "", logoAlt: "" },
+        fields: [
+            { key: "heading", label: "عنوان القسم", type: "text" },
+            { key: "officialNameLabel", label: "تسمية الاسم الرسمي", type: "text" },
+            { key: "officialName", label: "الاسم الرسمي للجمعية — مشترك بين اللغات", type: "text" },
+            { key: "publicNameLabel", label: "تسمية الاسم المتداول", type: "text" },
+            { key: "publicName", label: "الاسم المتداول — مشترك بين اللغات", type: "text" },
+            { key: "registrationLabel", label: "تسمية رقم التسجيل", type: "text" },
+            { key: "registrationNumber", label: "رقم التسجيل — مشترك بين اللغات", type: "text" },
+            { key: "statusLabel", label: "تسمية الوضع القانوني", type: "text" },
+            { key: "status", label: "الوضع القانوني", type: "textarea" },
+            { key: "websiteLabel", label: "تسمية الموقع الرسمي", type: "text" },
+            { key: "websiteUrl", label: "رابط الموقع الرسمي — مشترك بين اللغات", type: "text" },
+            { key: "emailLabel", label: "تسمية البريد الرسمي", type: "text" },
+            { key: "email", label: "البريد الرسمي — مشترك بين اللغات", type: "text" },
+            { key: "description", label: "شرح العلاقة بين Destekol والجمعية والنطاق", type: "textarea" },
+            { key: "verificationLabel", label: "نص رابط التحقق", type: "text" },
+            { key: "verificationUrl", label: "رابط DERBİS — مشترك بين اللغات", type: "text" },
+            { key: "logo", label: "الشعار الرسمي — مشترك بين اللغات", type: "image" },
+            { key: "logoAlt", label: "النص البديل للشعار", type: "text" },
+        ],
+    },
+    {
         type: "kindness_box", label: "Destekol — صندوق الخير", description: "اختيار حملات حقيقية وإضافتها إلى السلة", icon: "heart", category: "fundraising",
         defaultProps: { title: "İyilik kutunuzu oluşturun.", subtitle: "Dilediğiniz alanlarda bağış yaparak kendi iyilik kutunuzu oluşturun.", buttonText: "Hemen Başla", buttonLink: "", cartButtonText: "Sepete Ekle", image: "", items: [] },
         fields: [{ key: "title", label: "العنوان", type: "text" }, { key: "subtitle", label: "الوصف", type: "textarea" }, { key: "image", label: "صورة صندوق الخير", type: "image" }, { key: "imageAlt", label: "وصف الصورة", type: "text" }, { key: "buttonText", label: "نص زر البدء", type: "text" }, { key: "buttonLink", label: "رابط زر البدء", type: "text", hint: "مثال: /campaigns أو رابط كامل" }, { key: "cartButtonText", label: "نص زر الإضافة للسلة", type: "text" }, { key: "items", label: "خيارات التبرع (حملة مختلفة لكل خيار)", type: "list", itemFields: [{ key: "title", label: "اسم الخيار", type: "text" }, { key: "campaignId", label: "الحملة المرتبطة", type: "campaign" }, { key: "unitAmount", label: "قيمة كل مساهمة بعملة الموقع", type: "number" }, { key: "icon", label: "الأيقونة", type: "select", options: [{ label: "الغذاء", value: "food" }, { label: "التعليم", value: "education" }, { label: "الماء", value: "water" }, { label: "الصحة", value: "medical" }] }] }]
