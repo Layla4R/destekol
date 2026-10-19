@@ -79,7 +79,9 @@ export default function FaqSection({ email = "", locale, dict, data, }: {
                     {/* الإجابة موجودة دائمًا في DOM لزواحف البحث وتخفى بصريًا فقط */}
                     <dd id={faqId} className={`pt-2 pb-3 text-slate-600 text-sm sm:text-base leading-relaxed m-0 ${isOpen ? "block" : "hidden"}`}>
                       <p className="text-slate-500 leading-loose whitespace-pre-wrap">
-                        {answerText}
+                        {typeof answerText === "string" ? answerText.split(/(https?:\/\/[^\s]+)/g).map((part: string, index: number) =>
+                          /^https?:\/\//.test(part) ? <a key={index} href={part} className="text-brand underline underline-offset-2 hover:opacity-80">{part}</a> : part
+                        ) : answerText}
                       </p>
                     </dd>
                   </div>);
