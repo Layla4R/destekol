@@ -21,9 +21,9 @@ export function normalizeDestekolBrandText(value: string, locale = "en"): string
     if (/^(?:https?:\/\/|\/|mailto:|tel:)/i.test(value.trim()))
         return value;
     const protectedValues: string[] = [];
-    const text = value.replace(/https?:\/\/[^\s"'<>]+|(?:href|src)=["'][^"']*["']/gi, (match) => {
+    const text = value.replace(/https?:\/\/[^\s"'<>]+|(?:www\.)?destekol\.org|(?:href|src)=["'][^"']*["']/gi, (match) => {
         const index = protectedValues.push(match) - 1;
-        return `__DESTEKOL_PROTECTED_${index}__`;
+        return `__URL_PROTECTED_${index}__`;
     });
     const organizationName = getDestekolOrganizationName(locale);
     return text
@@ -63,7 +63,7 @@ export function normalizeDestekolBrandText(value: string, locale = "en"): string
         .replace(/Destekol\s+(?:International\s+)?Humanitarian\s+Foundation/gi, organizationName)
         .replace(/(?:مؤسسة|منظمة)\s+Destekol(?:\s+الإنسانية)?/gi, organizationName)
         .replace(/(?:مؤسسة|منظمة)\s+غير\s+ربحية(?:\s*\(NGO\))?/gi, organizationName)
-        .replace(/__DESTEKOL_PROTECTED_(\d+)__/g, (_, index: string) => protectedValues[Number(index)] || "");
+        .replace(/__URL_PROTECTED_(\d+)__/g, (_, index: string) => protectedValues[Number(index)] || "");
 }
 // These values are identifiers used by renderers, routes and integrations, not copy.
 const CONTENT_IDENTIFIERS = new Set([
