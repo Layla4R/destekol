@@ -9,7 +9,7 @@ import { getDestekolAnswers } from "@/lib/destekol-answers";
 import { normalizeDestekolBrandText } from "@/lib/destekol-brand-copy";
 import { LOCALES,loadTranslations,type Locale,} from "@/lib/i18n";
 import { PUBLIC_SITE_SETTINGS_SELECT,pickPublicSiteSettings,type PublicSiteSettings } from "@/lib/public-site-settings";
-import { DESTEKOL_ADDRESS, DESTEKOL_REGISTRATION_NUMBER, DESTEKOL_VERIFICATION_URL } from '@/lib/public-contact';
+import { DESTEKOL_ADDRESS, DESTEKOL_REGISTRATION_NUMBER } from '@/lib/public-contact';
 import { getSupabaseOrNull } from "@/lib/supabase";
 import type { Metadata } from "next";
 import { headers } from "next/headers";
@@ -168,7 +168,7 @@ async function getSiteData(locale: string) {
         ...settings,
         contactAddress: stringValue(contactProps.address) || DESTEKOL_ADDRESS,
         registrationNumber: stringValue(contactProps.registrationNumber) || DESTEKOL_REGISTRATION_NUMBER,
-        verificationUrl: stringValue(contactProps.verificationUrl) || DESTEKOL_VERIFICATION_URL,
+        verificationUrl: stringValue(contactProps.verificationUrl),
     }, dict };
 }
 function safeJsonLd(data: unknown) {
