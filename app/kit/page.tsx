@@ -27,13 +27,13 @@ export function generateMetadata(): Metadata {
             siteName: "Destekol",
             locale: { en: "en_US", tr: "tr_TR", ar: "ar_AR" }[locale],
             alternateLocale: ["en_US", "tr_TR", "ar_AR"].filter(value => value !== { en: "en_US", tr: "tr_TR", ar: "ar_AR" }[locale]),
-            images: [{ url: "/kit/destekol-logo.png", width: 1774, height: 887, alt: "Destekol" }],
+            images: [{ url: "/brand/destekol-legal-logo-v5.png", width: 1774, height: 887, alt: "Destekol" }],
         },
         twitter: {
             card: "summary_large_image",
             title: copy.title,
             description: copy.description,
-            images: ["/kit/destekol-logo.png"],
+            images: ["/brand/destekol-legal-logo-v5.png"],
         },
     };
 }

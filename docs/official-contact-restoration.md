@@ -1,6 +1,6 @@
 # Official contact information restored — 8 October 2026
 
-The association’s supplied Faaliyet Belgesi confirms the legal name DESTEK OL İNSANİ YARDIM VE KALKINDIRMA DERNEĞİ, registration number 34-283-182, registered address in Taşdelen / Çekmeköy / İstanbul, and official DERBİS certificate-verification portal:
+The public legal name was corrected on 21 October 2026 at the site owner’s request to DESTEK OL İNSANİ YARDIM VE KALKINMA DERNEĞİ. The earlier restoration recorded registration number 34-283-182, registered address in Taşdelen / Çekmeköy / İstanbul, and official DERBİS certificate-verification portal:
 
 https://derbis.dernekler.gov.tr/default/anonymous/faaliyet-belgesi-dogrulama-anonim
 

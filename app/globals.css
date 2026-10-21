@@ -166,7 +166,9 @@ body[data-site="destekol"] .destekol-identity-details dd { margin: 0; color: #06
 body[data-site="destekol"] .destekol-identity-content p { margin: 0 0 18px; color: #49677f; font-size: 14px; line-height: 1.85; }
 body[data-site="destekol"] .destekol-identity-content a { color: #075d89; text-decoration: underline; text-underline-offset: 3px; }
 body[data-site="destekol"] .destekol-identity-content a:hover { color: #063962; }
-body[data-site="destekol"] .destekol-identity-verify { display: inline-flex; align-items: center; gap: 3px; font-size: 14px; font-weight: 800; }
+body[data-site="destekol"] .destekol-identity-verify { display: inline-flex; align-items: center; gap: 10px; max-width: 100%; min-height: 46px; padding: 12px 16px; border: 1px solid #82b9ca; border-radius: 10px; background: #e8f5fa; color: #063962; font-size: 15px; line-height: 1.65; font-weight: 800; text-decoration-thickness: 1.5px; text-underline-offset: 4px; }
+body[data-site="destekol"] .destekol-identity-verify:hover { background: #d8edf5; border-color: #066090; }
+body[data-site="destekol"] .destekol-identity-verify:focus-visible { outline: 3px solid #066090; outline-offset: 3px; }
 body[data-site="destekol"] .destekol-identity-logo { display: grid; place-items: center; margin: 0; padding: 20px; border: 1px solid #e5f1f5; border-radius: 16px; background: #f7f7f7; }
 body[data-site="destekol"] .destekol-identity-logo img { display: block; width: 100%; height: auto; }
 body[data-site="destekol"] .destekol-about-row {
@@ -813,20 +815,25 @@ body[data-site="destekol"] .home-layout .home-section--stories { margin-top: 14p
 .destekol-footer > div:first-child { height: 3px !important; background: linear-gradient(90deg, #d9a750, #098494, #066090) !important; }
 .destekol-footer .destekol-footer-main { grid-template-columns: 1.3fr 1fr .95fr 1fr; gap: 32px; padding: 30px 36px 24px; }
 .destekol-footer :is(h2, p, a, span, li) { color: #31556d; }
-.destekol-footer h2 { margin-bottom: 12px; color: #063962 !important; font-size: 12px; letter-spacing: .01em; }
+.destekol-footer h2 { margin-bottom: 14px; color: #063962 !important; font-size: 14px; letter-spacing: .01em; }
 .destekol-footer p { margin-bottom: 14px; color: #5a7486 !important; font-size: 12px; line-height: 1.75; }
 .destekol-footer a:hover { color: #0a83bc !important; }
-.destekol-footer nav ul { gap: 7px; font-size: 12px; }
-.destekol-footer nav ul a { gap: 7px; }
-.destekol-footer nav ul a > span { width: 4px; height: 4px; background: #d9a750; }
+.destekol-footer nav ul { gap: 9px; font-size: 14px; line-height: 1.75; }
+.destekol-footer nav ul a { gap: 8px; font-weight: 700; }
+.destekol-footer nav ul a > span { width: 4px; height: 4px; flex-shrink: 0; background: #d9a750; }
+.destekol-footer .destekol-footer-contact a { font-size: 14px; font-weight: 700; }
+.destekol-footer a:focus-visible { outline: 3px solid #066090; outline-offset: 4px; border-radius: 4px; }
 .destekol-footer nav[aria-label="Social media channels"] { gap: 7px; margin-bottom: 14px; }
 .destekol-footer nav[aria-label="Social media channels"] a { width: 30px; height: 30px; background: #f0f7fa; border: 1px solid #e3edf1; }
 .destekol-footer nav[aria-label="Social media channels"] a svg { color: #0a5171 !important; }
 .destekol-footer .destekol-footer-main > div:first-child > a[aria-label$="Home"] img { width: 190px; height: auto; max-height: 100px; margin-bottom: 14px; object-fit: contain; }
 .destekol-footer .destekol-footer-main > div:first-child > a[style] { color: white !important; background: linear-gradient(135deg, #d9a750, #c79239) !important; border-radius: 8px; padding: 8px 13px; font-size: 12px; }
-.destekol-footer .destekol-footer-bottom { padding: 12px 36px; gap: 14px; color: #597487; background: #f7fafb; border-top: 1px solid #eaf1f4; font-size: 10px; }
+.destekol-footer .destekol-footer-bottom { padding: 18px 36px; gap: 14px; color: #597487; background: #f7fafb; border-top: 1px solid #eaf1f4; font-size: 12px; }
 .destekol-footer .destekol-footer-bottom :is(span, a) { color: #597487 !important; }
-.destekol-footer .destekol-footer-bottom a { background: #fff !important; border-color: #dbe7ed !important; border-radius: 8px; padding: 6px 9px; color: #0a5171 !important; font-size: 10px !important; }
+.destekol-footer .destekol-footer-bottom a { display: inline-flex; align-items: center; gap: 10px; max-width: 100%; min-height: 46px; background: #e8f5fa; border: 1px solid #82b9ca; border-radius: 10px; padding: 12px 16px; color: #063962 !important; font-size: 14px; font-weight: 800; line-height: 1.65; text-decoration-thickness: 1.5px; text-underline-offset: 4px; }
+.destekol-footer .destekol-footer-bottom a:hover { background: #d8edf5; border-color: #066090; }
+.destekol-footer .destekol-footer-bottom a span { color: inherit !important; }
+.destekol-footer-verification > svg { flex-shrink: 0; }
 .destekol-footer--ar .destekol-footer-brand { min-width: 0; text-align: right; }
 .destekol-footer--ar .destekol-footer-brand p { text-align: right; overflow-wrap: anywhere; margin-bottom: 24px; }
 .destekol-footer--ar .destekol-footer-brand > a[aria-label$="Home"] { display: block; }
@@ -863,7 +870,7 @@ body[data-site="destekol"] .home-layout .home-section--stories { margin-top: 14p
   .destekol-footer { width: calc(100% - 24px); margin: 8px auto 14px; border-radius: 14px; }
   .destekol-footer .destekol-footer-main { grid-template-columns: 1fr 1fr; gap: 20px 14px; padding: 22px 18px 18px; }
   .destekol-footer .destekol-footer-main > div:first-child { grid-column: 1 / -1; }
-  .destekol-footer .destekol-footer-bottom { padding: 12px 16px; align-items: flex-start; font-size: 9px; }
+  .destekol-footer .destekol-footer-bottom { padding: 16px; align-items: flex-start; font-size: 12px; }
 }
 /* Contact content only: the shared Destekol header, page intro and statistics keep their existing styles. */
 .destekol-contact-page { background: linear-gradient(180deg, #fff 25%, #f3fafc 65%, #fff); }

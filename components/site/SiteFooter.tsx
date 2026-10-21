@@ -1,5 +1,6 @@
 "use client";
 import Icon from "@/components/icons";
+import { ExternalLink } from 'lucide-react';
 import { normalizeDestekolBrandText } from "@/lib/destekol-brand-copy";
 import type { PublicSiteSettings } from "@/lib/public-site-settings";
 import Image from "next/image";
@@ -216,7 +217,7 @@ export default function SiteFooter({ isDestekol = false, navItems = [], settings
           <p className="text-white/80 text-sm leading-relaxed mb-6">
             {settings?.footerDescription || ""}
           </p>
-          {isDestekol && <p className="mb-5 text-xs leading-relaxed" dir="ltr">{DESTEKOL_LEGAL_NAME}</p>}
+          {isDestekol && <p className="mb-5 text-sm font-semibold leading-relaxed" dir="ltr" lang="tr">{DESTEKOL_LEGAL_NAME}</p>}
 
           {/* =================================================
           Social Media
@@ -456,7 +457,7 @@ export default function SiteFooter({ isDestekol = false, navItems = [], settings
       {(settings?.registrationNumber || settings?.footerTagline || settings?.copyrightText) && <div className="destekol-footer-bottom border-t border-white/10 py-5 px-6 flex flex-wrap items-center justify-between gap-6 text-sm text-white/70">
         {settings?.footerTagline && <span>{settings.footerTagline}</span>}
         {settings?.registrationNumber && (settings.verificationUrl
-          ? <a href={settings.verificationUrl} target="_blank" rel="noopener noreferrer" className="underline underline-offset-4">{({ ar: 'رقم التسجيل والتحقق', en: 'Registration and verification', fr: 'Enregistrement et vérification', tr: 'Kayıt ve doğrulama' }[loc])}: <bdi>{settings.registrationNumber}</bdi></a>
+          ? <a href={settings.verificationUrl} target="_blank" rel="noopener noreferrer" className="destekol-footer-verification underline underline-offset-4"><ExternalLink size={20} aria-hidden="true"/><span>{({ ar: 'تحقّق من تسجيل الجمعية رسميًا عبر DERBİS', en: 'Verify official association registration — DERBİS', fr: 'Vérifier l’enregistrement officiel — DERBİS', tr: 'Resmî dernek kaydını DERBİS üzerinden doğrulayın' }[loc])}: <bdi dir="ltr">{settings.registrationNumber}</bdi></span></a>
           : <span>{({ ar: 'رقم التسجيل', en: 'Registration number', fr: 'Numéro d’enregistrement', tr: 'Kayıt numarası' }[loc])}: <bdi>{settings.registrationNumber}</bdi></span>)}
         {settings?.copyrightText && <span>{settings.copyrightText}</span>}
       </div>}

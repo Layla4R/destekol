@@ -72,7 +72,7 @@ interface Settings {
     accentColor: string;
 }
 const DEFAULTS: Settings = {
-    siteName: "Destekol Charitable Non-Profit Association", logoText: "Destekol",
+    siteName: "DESTEK OL İNSANİ YARDIM VE KALKINMA DERNEĞİ", logoText: "Destekol",
     logoImage: "", heroImage: "",
     contactEmail: "", contactPhone: "", whatsappNumber: "",
     facebookUrl: "", twitterUrl: "", instagramUrl: "",
@@ -496,7 +496,7 @@ export default function AppearancePage() {
     if (!settings)
         return null;
     const menuPages = navPages.filter(p => p.showInMenu);
-    const logoImage = settings.logoImage || "/brand/logo-horizontal-transparent.png";
+    const logoImage = settings.logoImage || "/brand/destekol-legal-logo-v5.png";
     const socials = [
         { url: settings.facebookUrl, icon: "facebook", label: "Facebook" },
         { url: settings.twitterUrl, icon: "twitter", label: "Twitter" },
@@ -635,7 +635,7 @@ export default function AppearancePage() {
                     {/* Brand */}
                     <Section id="footer-brand" active={activeSection} onActivate={setActiveSection} primaryColor={settings?.primaryColor} label="Brand">
                       <div>
-                        <img src={logoImage} alt="" className="h-10 w-auto object-contain mb-3 opacity-90" onError={e => { (e.target as any).src = "/brand/logo-horizontal-transparent.png"; }}/>
+                        <img src={logoImage} alt="" className="h-10 w-auto object-contain mb-3 opacity-90" onError={e => { (e.target as any).src = "/brand/destekol-legal-logo-v5.png"; }}/>
                         {settings.footerTagline ? (<Editable value={settings.footerTagline} onChange={v => upd("footerTagline", v)} className="block text-white/80 text-sm font-bold mb-2" tag="p" placeholder="Tagline…"/>) : (<span onClick={e => { e.stopPropagation(); setActiveSection("footer-brand"); }} className="block text-white/25 text-xs italic mb-2 cursor-pointer hover:text-white/80 transition">+ Add tagline</span>)}
                         <Editable value={settings.footerDescription} onChange={v => upd("footerDescription", v)} className="block text-white/80 text-xs leading-relaxed mb-1" tag="p" placeholder="Click to add organization description…" multiline/>
                         {!settings.footerDescription && activeSection !== "footer-brand" && (<p className="text-[9px] text-white/20 italic mb-3">↑ Click text to edit inline</p>)}

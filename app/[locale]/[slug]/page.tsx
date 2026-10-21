@@ -375,7 +375,7 @@ export default async function DynamicPage({ params, }: {
                         ...(officialIdentity?.email ? { email: officialIdentity.email } : {}),
                         alternateName: ["Destekol", fullName],
                         url: siteUrl,
-                        logo: officialIdentity?.logo ? new URL(officialIdentity.logo, siteUrl).toString() : appearance?.logoImage ? new URL(appearance.logoImage, siteUrl).toString() : undefined,
+                        logo: new URL('/brand/destekol-legal-logo-v5.png', siteUrl).toString(),
                         knowsAbout: [
                             "Humanitarian Aid",
                             "Emergency Relief",

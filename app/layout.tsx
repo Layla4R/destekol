@@ -1,4 +1,6 @@
 import { getCmsBranding } from "@/lib/cms-branding";
+import { withDestekolIdentity } from '@/lib/destekol-brand-copy';
+import { DESTEKOL_LEGAL_NAME } from '@/lib/public-contact';
 import { headers } from "next/headers";
 // HTML and settings depend on the request domain.
 export const dynamic = "force-dynamic";
@@ -84,7 +86,7 @@ export default async function RootLayout({ children, }: {
 
 
     const supabase = getSupabaseOrNull();
-    const settings = supabase
+    const rawSettings = supabase
         ? (await supabase
             .from("SiteSettings")
             .select(`
@@ -100,6 +102,7 @@ export default async function RootLayout({ children, }: {
             .eq("id", "default")
             .maybeSingle()).data
         : null;
+    const settings = withDestekolIdentity<Record<string, string | null>>(rawSettings || {});
     const isDestekol = true;
     const siteUrl = "https://destekol.org";
     const primaryColor = settings?.primaryColor || ("#066090");
@@ -122,6 +125,7 @@ export default async function RootLayout({ children, }: {
     const structuredData = {
         "@context": "https://schema.org",
         "@graph": [{ "@type": "Organization", "@id": organizationId, url: siteUrl,
+            legalName: DESTEKOL_LEGAL_NAME,
             name: settings?.siteName || settings?.logoText || "", description: settings?.footerDescription || "",
             ...(settings?.logoImage ? { logo: new URL(settings.logoImage, siteUrl).toString() } : {}),
             ...(settings?.contactEmail ? { email: settings.contactEmail } : {}), sameAs: sameAsLinks,

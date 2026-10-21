@@ -155,10 +155,11 @@ export default async function ContactPage({ params: { locale }, }: {
             {
                 "@type": ["Organization", "NGO"],
                 "@id": `${SITE_URL}/#organization`,
-                name: (settings?.siteName || ""),
+                name: getDestekolOrganizationName(locale),
+                legalName: getDestekolOrganizationName(locale),
                 alternateName: site.name,
                 url: SITE_URL,
-                logo: `${SITE_URL}/brand/${"destekol-logo.png"}`,
+                logo: `${SITE_URL}/brand/${"destekol-legal-logo-v5.png"}`,
                 email: contactEmail,
                 telephone: contactPhone,
                 address: {

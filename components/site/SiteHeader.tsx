@@ -52,7 +52,7 @@ export default function SiteHeader({ navItems, settings, locale, dict, transpare
       <div className={`${isHomePage ? "home-header-container" : "max-w-screen-xl mx-auto px-4 sm:px-6"} h-16 sm:h-20 flex items-center justify-between gap-3 sm:gap-4`}>
         {/* Logo */}
         <Link href={`${p}/`} className="flex items-center gap-2 shrink-0" aria-label={`${logoText} Home`}>
-          {logoImage ? <Image src={logoImage} alt={logoText} width={175} height={70} className="h-[2.5rem] md:h-[6.5rem] w-auto object-contain" priority/> : <span>{logoText}</span>}
+          {logoImage ? <Image src={logoImage} alt={logoText} width={200} height={80} className="h-12 w-[150px] md:h-16 md:w-[200px] object-contain" priority/> : <span>{logoText}</span>}
         </Link>
 
         {/* Desktop Nav */}

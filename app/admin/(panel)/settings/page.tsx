@@ -37,7 +37,7 @@ interface Settings {
 }
 const DEFAULTS: Settings = {
     defaultCurrency: "usd",
-    siteName: "Destekol Charitable Non-Profit Association", logoText: "Destekol",
+    siteName: "DESTEK OL İNSANİ YARDIM VE KALKINMA DERNEĞİ", logoText: "Destekol",
     logoImage: "", heroImage: "",
     contactEmail: "", contactPhone: "",
     whatsappNumber: "", facebookUrl: "", twitterUrl: "",
@@ -48,7 +48,7 @@ const DEFAULTS: Settings = {
     heroSlides: "", socialPosition: "right",
 
     smtpHost: "my.mailbux.com", smtpPort: 587, smtpUser: "", smtpPassword: "",
-    smtpFrom: "", smtpFromName: "Destekol Charitable Non-Profit Association", smtpSecure: false,
+    smtpFrom: "", smtpFromName: "DESTEK OL İNSANİ YARDIM VE KALKINMA DERNEĞİ", smtpSecure: false,
 };
 // Sanitize DB values — null → ""
 function sanitize(raw: any): Settings {

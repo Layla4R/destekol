@@ -124,7 +124,7 @@ export async function generateMetadata({ params, }: {
     const isDestekol = true;
     const siteUrl = getRequestSite().url;
     const url = `${siteUrl}/${params.locale}/news/${post.slug}`;
-    const image = post.coverImage || `${siteUrl}/brand/${"destekol-logo.png"}`;
+    const image = post.coverImage || `${siteUrl}/brand/${"destekol-legal-logo-v5.png"}`;
     const title = cleanText(post.displayTitle);
     const description = cleanText(post.displayExcerpt) || cleanText(post.displayBody).slice(0, 160);
     const rawPublishedDate = post.publishedAt || post.published_at || post.createdAt || post.created_at;
@@ -228,7 +228,7 @@ export default async function NewsPostPage({ params, }: {
         "@id": `${pageUrl}/#article`,
         headline: displayTitle,
         description: displayExcerpt || cleanText(displayBody).slice(0, 160),
-        image: imagesArray.length > 0 ? imagesArray : [`${siteUrl}/brand/${"destekol-logo.png"}`],
+        image: imagesArray.length > 0 ? imagesArray : [`${siteUrl}/brand/${"destekol-legal-logo-v5.png"}`],
         datePublished: publishedDateISO,
         dateModified: updatedDateISO,
         inLanguage: locale,
@@ -250,7 +250,7 @@ export default async function NewsPostPage({ params, }: {
             url: siteUrl,
             logo: {
                 "@type": "ImageObject",
-                url: `${siteUrl}/brand/${"destekol-logo.png"}`,
+                url: `${siteUrl}/brand/${"destekol-legal-logo-v5.png"}`,
             },
             contactPoint: {
                 "@type": "ContactPoint",

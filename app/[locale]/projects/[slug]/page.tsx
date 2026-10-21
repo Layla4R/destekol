@@ -147,7 +147,7 @@ export async function generateMetadata({ params, }: {
     const description = cleanText(project.excerpt) || cleanText(project.body).slice(0, 160);
     const cleanSlug = project.slug.replace(/^projects\//, "");
     const url = `${siteUrl}/${params.locale}/projects/${cleanSlug}`;
-    const image = project.coverImage || `${siteUrl}/brand/${"destekol-logo.png"}`;
+    const image = project.coverImage || `${siteUrl}/brand/${"destekol-legal-logo-v5.png"}`;
     return {
         title,
         description,

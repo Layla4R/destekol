@@ -174,7 +174,7 @@ export default function LoginClient({ locale, dict: D, }: {
       <div className="relative bg-white rounded-2xl shadow-2xl border border-line p-8 w-full max-w-md">
         <div className="text-center mb-6">
           <Link href={`${p}/`}>
-            <Image src="/brand/logo-horizontal-transparent.png" alt="Destekol" width={180} height={72} className="h-11 w-auto object-contain mx-auto mb-5"/>
+            <Image src="/brand/destekol-legal-logo-v5.png" alt="Destekol" width={180} height={72} className="h-11 w-auto object-contain mx-auto mb-5"/>
           </Link>
           <h1 className="font-display text-2xl font-extrabold text-ink">
             {tab === "login" ? D["auth.login"] : D["auth.register"]}

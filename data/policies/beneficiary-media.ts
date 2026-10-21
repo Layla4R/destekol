@@ -2,7 +2,7 @@
 export const beneficiaryMediaPolicies = {
     tr: {
         title: 'Yararlanıcı Görselleri, Video Kayıtları ve Açık Rıza',
-        text: `DESTEK OL İNSANİ YARDIM VE KALKINDIRMA DERNEĞİ tarafından yürütülen insani yardım faaliyetleri ve bağış kampanyaları kapsamında, bazı yararlanıcıların fotoğraf, video ve gerektiğinde ses kayıtları alınabilmektedir.
+        text: `DESTEK OL İNSANİ YARDIM VE KALKINMA DERNEĞİ tarafından yürütülen insani yardım faaliyetleri ve bağış kampanyaları kapsamında, bazı yararlanıcıların fotoğraf, video ve gerektiğinde ses kayıtları alınabilmektedir.
 Çekim öncesinde ilgili kişiler bilgilendirilmekte ve görüntülerinin, video kayıtlarının ve beyanlarının yayımlanması ve kampanya içeriklerinde kullanılması konusunda açık rızaları alınmaktadır.
 İlgili kişilere, bu içeriklerin; insani durumun kamuoyuna aktarılması, farkındalık oluşturulması, bağış kampanyalarının tanıtılması ve ilgili kişi veya proje için destek ve bağış sağlanması amacıyla kullanılabileceği açıkça bildirilmektedir.
 Açık rıza kapsamında elde edilen fotoğraf, video ve diğer görsel-işitsel içerikler;
@@ -22,7 +22,7 @@ Destekol, insani yardım ve bağış kampanyalarında kullanılan yararlanıcı 
     },
     ar: {
         title: 'صور المستفيدين وتسجيلات الفيديو والموافقة الصريحة',
-        text: `قد تُلتقط صور وتُسجَّل مقاطع فيديو، وعند الحاجة تسجيلات صوتية، لبعض المستفيدين ضمن أنشطة المساعدات الإنسانية وحملات التبرع التي تنفذها جمعية DESTEK OL İNSANİ YARDIM VE KALKINDIRMA DERNEĞİ (دستك أول للمساعدات الإنسانية والتنمية).
+        text: `قد تُلتقط صور وتُسجَّل مقاطع فيديو، وعند الحاجة تسجيلات صوتية، لبعض المستفيدين ضمن أنشطة المساعدات الإنسانية وحملات التبرع التي تنفذها جمعية DESTEK OL İNSANİ YARDIM VE KALKINMA DERNEĞİ (دستك أول للمساعدات الإنسانية والتنمية).
 يُبلَّغ الأشخاص المعنيون قبل التصوير، وتُؤخذ موافقتهم الصريحة على نشر صورهم وتسجيلات الفيديو الخاصة بهم وإفاداتهم، واستخدامها في محتوى الحملات.
 يُوضَّح للأشخاص المعنيين صراحةً أن هذه المواد قد تُستخدم لعرض الوضع الإنساني على الجمهور، وتعزيز الوعي، والتعريف بحملات التبرع، وجمع الدعم والتبرعات للشخص المعني أو للمشروع.
 يجوز نشر الصور ومقاطع الفيديو وغيرها من المواد السمعية والبصرية التي جُمعت بناءً على الموافقة الصريحة واستخدامها في:
@@ -42,7 +42,7 @@ Destekol, insani yardım ve bağış kampanyalarında kullanılan yararlanıcı 
     },
     en: {
         title: 'Beneficiary Images, Video Recordings and Explicit Consent',
-        text: `As part of the humanitarian aid activities and donation campaigns carried out by DESTEK OL İNSANİ YARDIM VE KALKINDIRMA DERNEĞİ (Destek Ol Humanitarian Aid and Development Association), photographs, videos and, where necessary, audio recordings of some beneficiaries may be taken.
+        text: `As part of the humanitarian aid activities and donation campaigns carried out by DESTEK OL İNSANİ YARDIM VE KALKINMA DERNEĞİ (Destek Ol Humanitarian Aid and Development Association), photographs, videos and, where necessary, audio recordings of some beneficiaries may be taken.
 Before any recording takes place, the individuals concerned are informed and their explicit consent is obtained for the publication of their images, video recordings and statements, and their use in campaign content.
 The individuals concerned are clearly informed that this material may be used to communicate the humanitarian situation to the public, raise awareness, promote donation campaigns, and secure support and donations for the individual or project concerned.
 Photographs, videos and other audiovisual material obtained with explicit consent may be published and used through:
@@ -62,7 +62,7 @@ Destekol uses beneficiary photographs and videos in humanitarian aid and donatio
     },
     fr: {
         title: 'Images des bénéficiaires, enregistrements vidéo et consentement explicite',
-        text: `Dans le cadre des activités d’aide humanitaire et des campagnes de dons menées par DESTEK OL İNSANİ YARDIM VE KALKINDIRMA DERNEĞİ (Association Destek Ol pour l’aide humanitaire et le développement), des photographies, des vidéos et, si nécessaire, des enregistrements audio de certains bénéficiaires peuvent être réalisés.
+        text: `Dans le cadre des activités d’aide humanitaire et des campagnes de dons menées par DESTEK OL İNSANİ YARDIM VE KALKINMA DERNEĞİ (Association Destek Ol pour l’aide humanitaire et le développement), des photographies, des vidéos et, si nécessaire, des enregistrements audio de certains bénéficiaires peuvent être réalisés.
 Avant toute prise de vue ou tout enregistrement, les personnes concernées sont informées et leur consentement explicite est recueilli pour la publication de leurs images, de leurs enregistrements vidéo et de leurs témoignages, ainsi que pour leur utilisation dans les contenus des campagnes.
 Les personnes concernées sont clairement informées que ces contenus peuvent servir à présenter la situation humanitaire au public, à sensibiliser celui-ci, à promouvoir les campagnes de dons et à mobiliser des soutiens et des dons en faveur de la personne ou du projet concerné.
 Les photographies, vidéos et autres contenus audiovisuels obtenus avec un consentement explicite peuvent être publiés et utilisés sur les supports suivants :

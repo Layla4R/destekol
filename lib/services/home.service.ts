@@ -1,12 +1,12 @@
 import { getPageBySlug } from "@/lib/pageData";
-import { normalizeDestekolBrandCopy } from "@/lib/destekol-brand-copy";
+import { normalizeDestekolBrandCopy, withDestekolIdentity } from "@/lib/destekol-brand-copy";
 import { getSupabaseOrNull } from "@/lib/supabase";
 export async function getHomeData(locale: string) {
     const supabase = getSupabaseOrNull();
     if (!supabase) {
         return {
             page: null,
-            settings: null,
+            settings: withDestekolIdentity({}),
             campaigns: [],
             posts: [],
             stats: { total: 0, families: 0 },
@@ -68,7 +68,7 @@ export async function getHomeData(locale: string) {
         kindnessCampaigns,
         page,
         pageSections: page?.sections || [],
-        settings: settingsRes.data,
+        settings: withDestekolIdentity(settingsRes.data || {}, locale),
         campaigns,
         posts,
         stats: statsRes.data || { total: 0, families: 0 },

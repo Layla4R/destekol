@@ -7,7 +7,31 @@ const code = ts.transpileModule(fs.readFileSync(path.join(__dirname, '../lib/des
     compilerOptions: { module: ts.ModuleKind.CommonJS },
 }).outputText;
 const exportsObject = {};
-new Function('exports', code)(exportsObject);
+const contact = {};
+new Function('exports', ts.transpileModule(fs.readFileSync(path.join(__dirname, '../lib/public-contact.ts'), 'utf8'), {
+    compilerOptions: { module: ts.ModuleKind.CommonJS },
+}).outputText)(contact);
+new Function('exports', 'require', code)(exportsObject, () => contact);
+
+test('stored legacy names use the exact legal identity in every language without changing links', () => {
+    for (const locale of ['tr', 'ar', 'en', 'fr']) {
+        for (const name of [
+            'DESTEK OL İNSANİ YARDIM VE KALKINDIRMA DERNEĞİ',
+            'Destek Ol İnsani Yardım ve Kalkındırma Derneği',
+            'Destekol Charitable Non-Profit Association',
+            contact.DESTEKOL_LEGAL_NAME,
+        ]) {
+            const source = { siteName: name, footerDescription: `${name} — info@destekol.org`, logoImage: '/old-logo.png', facebookUrl: 'https://example.org/Destekol' };
+            const result = exportsObject.withDestekolIdentity(source, locale);
+            assert.equal(result.siteName, contact.DESTEKOL_LEGAL_NAME);
+            assert.equal(result.footerDescription, `${contact.DESTEKOL_LEGAL_NAME} — info@destekol.org`);
+            assert.equal(result.logoImage, contact.DESTEKOL_LOGO);
+            assert.equal(result.facebookUrl, source.facebookUrl);
+            assert.equal(source.siteName, name);
+            assert.deepEqual(exportsObject.withDestekolIdentity(result, locale), result);
+        }
+    }
+});
 test('CMS branding changes editorial text without changing renderer or route identifiers', () => {
     const legacyName = ['4', 'Relief'].join('');
     const page = {

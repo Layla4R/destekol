@@ -38,7 +38,7 @@ const BLOCK_META: {
     { type: "footer", label: "Footer", icon: "help-circle", group: "Structure" },
 ];
 const DEFAULTS: Record<BType, Record<string, string>> = {
-    logo: { logoUrl: "", logoText: "Destekol Charitable Non-Profit Association", logoWidth: "180", align: "center", bgColor: "#003C87", padding: "28" },
+    logo: { logoUrl: "", logoText: "DESTEK OL İNSANİ YARDIM VE KALKINMA DERNEĞİ", logoWidth: "180", align: "center", bgColor: "#003C87", padding: "28" },
     header: { text: "Your heading here", fontSize: "22", color: "#1A1A2E", align: "center", bgColor: "#ffffff", padding: "16" },
     text: { content: "Write your message here...", fontSize: "15", color: "#5C6880", align: "left", bgColor: "#ffffff", padding: "16", lineHeight: "1.8" },
     button: { label: "Click Here", url: "#", bgColor: "#F00F5A", textColor: "#ffffff", borderRadius: "10", fontSize: "15", align: "center", padding: "16" },
@@ -47,7 +47,7 @@ const DEFAULTS: Record<BType, Record<string, string>> = {
     divider: { color: "#DDE4F0", thickness: "1", margin: "16" },
     spacer: { height: "24" },
     table: { title: "Details", bgColor: "#F4F7FD", titleColor: "#003C87", rows: '[["Field","Value"],["Receipt","{{receiptNumber}}"],["Amount","{{amount}}"],["Date","{{date}}"]]' },
-    footer: { text: "© 2026 Destekol Charitable Non-Profit Association. All rights reserved.", color: "#5C6880", bgColor: "#F4F7FD", fontSize: "12", align: "center", padding: "20", links: "Privacy Policy|/privacy,Contact Us|/contact" },
+    footer: { text: "© 2026 DESTEK OL İNSANİ YARDIM VE KALKINMA DERNEĞİ. All rights reserved.", color: "#5C6880", bgColor: "#F4F7FD", fontSize: "12", align: "center", padding: "20", links: "Privacy Policy|/privacy,Contact Us|/contact" },
 };
 // ── Global email settings ─────────────────────────────────────
 interface EmailSettings {
@@ -65,8 +65,8 @@ interface EmailSettings {
 const DEFAULT_SETTINGS: EmailSettings = {
     primaryColor: "#003C87", accentColor: "#F00F5A", bgColor: "#F8FAFF", cardBg: "#ffffff",
     fontFamily: "Cairo, Tahoma, Arial, sans-serif",
-    logoUrl: "", logoText: "Destekol Charitable Non-Profit Association",
-    footerText: "© 2026 Destekol Charitable Non-Profit Association. All rights reserved.",
+    logoUrl: "", logoText: "DESTEK OL İNSANİ YARDIM VE KALKINMA DERNEĞİ",
+    footerText: "© 2026 DESTEK OL İNSANİ YARDIM VE KALKINMA DERNEĞİ. All rights reserved.",
     footerLinks: "Privacy Policy|/privacy,Contact Us|/contact",
     siteUrl: "https://destekol.org",
 };

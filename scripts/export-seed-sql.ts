@@ -32,7 +32,7 @@ function sqlNumber(value: number | string): string {
 async function main() {
     const lines: string[] = [];
     lines.push("-- ============================================================");
-    lines.push("-- Destekol Charitable Non-Profit Association — Seed Data");
+    lines.push("-- DESTEK OL İNSANİ YARDIM VE KALKINMA DERNEĞİ — Seed Data");
     lines.push("-- Run this AFTER supabase/schema.sql in Supabase SQL Editor.");
     lines.push("-- ============================================================");
     lines.push("");
@@ -41,7 +41,7 @@ async function main() {
     // --------------------------------------------------------
     lines.push("-- Site settings");
     lines.push(`INSERT INTO "SiteSettings" ("id", "siteName", "logoText", "logoImage", "primaryColor", "accentColor", "contactEmail", "updatedAt")
-VALUES ('default', ${sqlString("Destekol Charitable Non-Profit Association")}, ${sqlString("Destekol")}, ${sqlString("/brand/logo-horizontal-transparent.png")}, ${sqlString("#0069D2")}, ${sqlString("#F00F5A")}, ${sqlString("info@destekol.org")}, now())
+VALUES ('default', ${sqlString("DESTEK OL İNSANİ YARDIM VE KALKINMA DERNEĞİ")}, ${sqlString("Destekol")}, ${sqlString("/brand/logo-horizontal-transparent.png")}, ${sqlString("#0069D2")}, ${sqlString("#F00F5A")}, ${sqlString("info@destekol.org")}, now())
 ON CONFLICT ("id") DO NOTHING;`);
     lines.push("");
     // --------------------------------------------------------
@@ -186,7 +186,7 @@ ON CONFLICT ("slug") DO NOTHING;`);
     const aboutSections: PageSection[] = [
         section("text", {
             title: "من نحن",
-            body: "Destekol Charitable Non-Profit Association هي منصة تبرعات مستقلة تأسست بهدف توفير قناة آمنة وشفافة لدعم العائلات المحتاجة حول العالم. نعمل مع شبكة من الشركاء المحليين الموثوقين لضمان وصول المساعدات إلى من يحتاجها بأسرع وقت وبأقل التكاليف الإدارية.\n\nرؤيتنا هي بناء جسر من التضامن الإنساني يربط المتبرعين حول العالم بالأسر المحتاجة، من خلال تقارير شفافية دورية ومتابعة دقيقة لكل مشروع.",
+            body: "DESTEK OL İNSANİ YARDIM VE KALKINMA DERNEĞİ هي منصة تبرعات مستقلة تأسست بهدف توفير قناة آمنة وشفافة لدعم العائلات المحتاجة حول العالم. نعمل مع شبكة من الشركاء المحليين الموثوقين لضمان وصول المساعدات إلى من يحتاجها بأسرع وقت وبأقل التكاليف الإدارية.\n\nرؤيتنا هي بناء جسر من التضامن الإنساني يربط المتبرعين حول العالم بالأسر المحتاجة، من خلال تقارير شفافية دورية ومتابعة دقيقة لكل مشروع.",
             align: "right",
         }),
         section("stats", {
@@ -250,7 +250,7 @@ ON CONFLICT ("slug") DO NOTHING;`);
         {
             slug: "about",
             title: "من نحن",
-            description: "تعرف على منصة Destekol Charitable Non-Profit Association ورؤيتنا الإنسانية",
+            description: "تعرف على منصة DESTEK OL İNSANİ YARDIM VE KALKINMA DERNEĞİ ورؤيتنا الإنسانية",
             sections: aboutSections,
             isPublished: true,
             isSystem: false,
@@ -260,7 +260,7 @@ ON CONFLICT ("slug") DO NOTHING;`);
         {
             slug: "transparency",
             title: "الشفافية",
-            description: "تقارير الشفافية المالية لمنصة Destekol Charitable Non-Profit Association",
+            description: "تقارير الشفافية المالية لمنصة DESTEK OL İNSANİ YARDIM VE KALKINMA DERNEĞİ",
             sections: transparencySections,
             isPublished: true,
             isSystem: false,
@@ -270,7 +270,7 @@ ON CONFLICT ("slug") DO NOTHING;`);
         {
             slug: "contact",
             title: "اتصل بنا",
-            description: "تواصل مع فريق Destekol Charitable Non-Profit Association",
+            description: "تواصل مع فريق DESTEK OL İNSANİ YARDIM VE KALKINMA DERNEĞİ",
             sections: contactSections,
             isPublished: true,
             isSystem: false,
@@ -280,7 +280,7 @@ ON CONFLICT ("slug") DO NOTHING;`);
         {
             slug: "privacy",
             title: "سياسة الخصوصية",
-            description: "سياسة الخصوصية لمنصة Destekol Charitable Non-Profit Association",
+            description: "سياسة الخصوصية لمنصة DESTEK OL İNSANİ YARDIM VE KALKINMA DERNEĞİ",
             sections: privacySections,
             isPublished: true,
             isSystem: false,

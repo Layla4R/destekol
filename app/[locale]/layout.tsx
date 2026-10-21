@@ -6,10 +6,10 @@ import SiteHeader from "@/components/site/SiteHeader";
 import SocialSidebar from "@/components/site/SocialSidebar";
 import WhatsAppButton from "@/components/site/WhatsAppButton";
 import { getDestekolAnswers } from "@/lib/destekol-answers";
-import { normalizeDestekolBrandText } from "@/lib/destekol-brand-copy";
+import { normalizeDestekolBrandText, withDestekolIdentity } from "@/lib/destekol-brand-copy";
 import { LOCALES,loadTranslations,type Locale,} from "@/lib/i18n";
 import { PUBLIC_SITE_SETTINGS_SELECT,pickPublicSiteSettings,type PublicSiteSettings } from "@/lib/public-site-settings";
-import { DESTEKOL_ADDRESS, DESTEKOL_REGISTRATION_NUMBER } from '@/lib/public-contact';
+import { DESTEKOL_ADDRESS, DESTEKOL_REGISTRATION_NUMBER, DESTEKOL_LEGAL_NAME, DESTEKOL_LOGO } from '@/lib/public-contact';
 import { getSupabaseOrNull } from "@/lib/supabase";
 import type { Metadata } from "next";
 import { headers } from "next/headers";
@@ -110,7 +110,7 @@ async function getSiteData(locale: string) {
     if (!supabase) {
         return {
             pages: [],
-            settings: null,
+            settings: withDestekolIdentity<PublicSiteSettings>({}),
             dict: {},
         };
     }
@@ -165,7 +165,7 @@ async function getSiteData(locale: string) {
     const contactProps = contactPage?.sections?.find((section: any) => section.type === "contact_form")?.props || {};
     const stringValue = (value: unknown) => typeof value === "string" ? value : "";
     return { pages, settings: {
-        ...settings,
+        ...withDestekolIdentity(settings || {}, locale),
         contactAddress: stringValue(contactProps.address) || DESTEKOL_ADDRESS,
         registrationNumber: stringValue(contactProps.registrationNumber) || DESTEKOL_REGISTRATION_NUMBER,
         verificationUrl: stringValue(contactProps.verificationUrl),
@@ -182,11 +182,12 @@ function buildSiteSchemas(locale: string, settings: PublicSiteSettings | null, l
         "@type": ["NGO", "Organization"],
         "@id": `${siteUrl}/#organization`,
         name: fullName,
+        legalName: DESTEKOL_LEGAL_NAME,
         alternateName: ["Destekol", fullName],
         url: siteUrl,
         logo: {
             "@type": "ImageObject",
-            url: `${siteUrl}${"/brand/destekol-logo.png"}`,
+            url: `${siteUrl}${DESTEKOL_LOGO}`,
         },
         description: settings?.footerDescription || "",
         ...({}),

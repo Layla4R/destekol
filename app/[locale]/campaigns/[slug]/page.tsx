@@ -23,7 +23,7 @@ export async function generateMetadata({params}:{params:Params}):Promise<Metadat
   if(!raw)return {};
   const campaign=normalizeDestekolBrandCopy(raw,params.locale),siteUrl=getRequestSite().url;
   const title=campaign.displayTitle||campaign.title,description=cleanText(campaign.displaySummary||campaign.summary),url=`${siteUrl}/${params.locale}/campaigns/${campaign.slug}`;
-  const image=campaign.coverImage||`${siteUrl}/brand/destekol-logo.png`;
+  const image=campaign.coverImage||`${siteUrl}/brand/destekol-legal-logo-v5.png`;
   return {title,description,alternates:{canonical:url,languages:Object.fromEntries(LOCALES.map(locale=>[locale,`${siteUrl}/${locale}/campaigns/${campaign.slug}`]))},openGraph:{type:'article',url,siteName:'Destekol',title,description,images:[{url:image,alt:title}]},twitter:{card:'summary_large_image',title,description,images:[image]}};
 }
 export default async function CampaignDetailPage({params}:{params:Params}) {
