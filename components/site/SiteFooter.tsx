@@ -223,7 +223,7 @@ export default function SiteFooter({ isDestekol = false, navItems = [], settings
               ar: "موقع destekol.org هو الموقع الإلكتروني الرسمي لـ",
               fr: "destekol.org est le site officiel de l’association ",
             }[loc])}
-            <strong dir="ltr">DESTEK OL İNSANİ YARDIM VE KALKINDIRMA DERNEĞİ</strong>
+            <strong dir="ltr">DESTEK OL İNSANİ YARDIM VE KALKINMA DERNEĞİ</strong>
             {loc === "tr" ? "'nin resmi İnternet sitesidir." : "."}
           </p>}
 
