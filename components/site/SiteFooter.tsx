@@ -6,7 +6,6 @@ import type { PublicSiteSettings } from "@/lib/public-site-settings";
 import Image from "next/image";
 import Link from "next/link";
 import { getPolicyMetadata } from "@/lib/policy-metadata";
-import { DESTEKOL_LEGAL_NAME } from '@/lib/public-contact';
 interface NavItem {
     slug: string;
     title: string;
@@ -217,7 +216,16 @@ export default function SiteFooter({ isDestekol = false, navItems = [], settings
           <p className="text-white/80 text-sm leading-relaxed mb-6">
             {settings?.footerDescription || ""}
           </p>
-          {isDestekol && <p className="mb-5 text-sm font-semibold leading-relaxed" dir="ltr" lang="tr">{DESTEKOL_LEGAL_NAME}</p>}
+          {isDestekol && <p className="mb-5 text-sm leading-relaxed" lang={loc}>
+            {({
+              tr: "destekol.org web sitesi, ",
+              en: "destekol.org is the official website of ",
+              ar: "موقع destekol.org هو الموقع الإلكتروني الرسمي لـ",
+              fr: "destekol.org est le site officiel de l’association ",
+            }[loc])}
+            <strong dir="ltr">DESTEK OL İNSANİ YARDIM VE KALKINDIRMA DERNEĞİ</strong>
+            {loc === "tr" ? "'nin resmi İnternet sitesidir." : "."}
+          </p>}
 
           {/* =================================================
           Social Media
