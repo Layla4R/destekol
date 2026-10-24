@@ -4,6 +4,7 @@ import Icon from "@/components/icons";
 import { adminFetch } from "@/lib/admin-fetch";
 import { autoTranslateContent } from "@/lib/auto-translate";
 import { BLOCK_CATEGORIES,BLOCK_DEFINITIONS,PageSection,createSection,getBlockDefinition,} from "@/lib/blocks";
+import { attachProjectPageItems } from "@/lib/destekol-homepage";
 import { useCallback,useEffect,useRef,useState } from "react";
 import CanvasPreview from "./CanvasPreview";
 import Inspector from "./Inspector";
@@ -25,13 +26,14 @@ interface PageData {
     isSystem: boolean;
     sections: PageSection[];
 }
-export default function PageEditor({ page, locale = "ar", isTranslation = false, hasExistingTranslation = false, isDestekol = false, initialChangesPending = false, }: {
+export default function PageEditor({ page, locale = "ar", isTranslation = false, hasExistingTranslation = false, isDestekol = false, initialChangesPending = false, linkedProjectsSection = null, }: {
     page: PageData;
     locale?: string;
     isTranslation?: boolean;
     hasExistingTranslation?: boolean;
     isDestekol?: boolean;
     initialChangesPending?: boolean;
+    linkedProjectsSection?: PageSection | null;
 }) {
     const [sections, setSections] = useState<PageSection[]>(page.sections);
     const [selectedId, setSelectedId] = useState<string | null>(page.sections.length > 0 ? page.sections[0].id : null);
@@ -651,7 +653,7 @@ export default function PageEditor({ page, locale = "ar", isTranslation = false,
                 + Add Block
               </button>
             </div>) : (<div className="bg-white rounded-2xl overflow-hidden shadow-lg border border-[#E2E5ED] transition-all duration-300 w-full" style={{ maxWidth: canvasMaxWidth }}>
-              {sections.map((section, idx) => (<SectionWrapper key={section.id} section={section} idx={idx} total={sections.length} isSelected={section.id === selectedId} onSelect={() => setSelectedId(section.id)} onDelete={() => deleteSection(section.id)} onMoveUp={() => moveSection(section.id, "up")} onMoveDown={() => moveSection(section.id, "down")} onDuplicate={() => duplicateSection(section.id)}/>))}
+              {sections.map((section, idx) => (<SectionWrapper key={section.id} section={section} linkedProjectsSection={linkedProjectsSection} idx={idx} total={sections.length} isSelected={section.id === selectedId} onSelect={() => setSelectedId(section.id)} onDelete={() => deleteSection(section.id)} onMoveUp={() => moveSection(section.id, "up")} onMoveDown={() => moveSection(section.id, "down")} onDuplicate={() => duplicateSection(section.id)}/>))}
               <div onClick={() => setLeftTab("blocks")} className="border-2 border-dashed border-[#E5E7EB] hover:border-[#C4B5FD] m-4 mt-0 rounded-xl py-5 flex items-center justify-center gap-2 text-[#9CA3AF] hover:text-[#6366F1] cursor-pointer transition group">
                 <Icon name="plus" size={16}/>
                 <span className="text-xs font-semibold">Add Block</span>
@@ -696,7 +698,7 @@ export default function PageEditor({ page, locale = "ar", isTranslation = false,
                     Del
                   </button>
                 </div>
-                <Inspector section={selected} onChange={(props) => updateSectionProps(selected.id, props)}/>
+                <Inspector section={selected} linkedProjectsSection={linkedProjectsSection} onChange={(props) => updateSectionProps(selected.id, props)}/>
               </div>) : (<div className="flex-1 flex flex-col items-center justify-center text-center px-6 min-h-0"> {/* تمت الإضافة هنا (min-h-0) */}
                 <div className="w-14 h-14 rounded-2xl bg-[#F5F3FF] flex items-center justify-center mb-3">
                   <Icon name="settings" size={24} className="text-[#A5B4FC]"/>
@@ -716,8 +718,9 @@ export default function PageEditor({ page, locale = "ar", isTranslation = false,
       </div>
     </div>);
 }
-function SectionWrapper({ section, idx, total, isSelected, onSelect, onDelete, onMoveUp, onMoveDown, onDuplicate, }: {
+function SectionWrapper({ section, linkedProjectsSection, idx, total, isSelected, onSelect, onDelete, onMoveUp, onMoveDown, onDuplicate, }: {
     section: PageSection;
+    linkedProjectsSection: PageSection | null;
     idx: number;
     total: number;
     isSelected: boolean;
@@ -728,6 +731,7 @@ function SectionWrapper({ section, idx, total, isSelected, onSelect, onDelete, o
     onDuplicate: () => void;
 }) {
     const def = getBlockDefinition(section.type);
+    const previewSection = linkedProjectsSection ? attachProjectPageItems([section], [linkedProjectsSection])[0] : section;
     return (<div onClick={onSelect} className={`relative group cursor-pointer transition-all ${isSelected
             ? "outline outline-2 outline-[#6366F1] outline-offset-0"
             : "hover:outline hover:outline-1 hover:outline-[#C4B5FD] hover:outline-offset-0"}`}>
@@ -779,6 +783,6 @@ function SectionWrapper({ section, idx, total, isSelected, onSelect, onDelete, o
         {idx + 1}
       </div>
 
-      <CanvasPreview section={section}/>
+      <CanvasPreview section={previewSection}/>
     </div>);
 }

@@ -3,15 +3,28 @@ import Icon from "@/components/icons";
 import { adminFetch } from "@/lib/admin-fetch";
 import { FieldDef,PageSection,getBlockDefinition } from "@/lib/blocks";
 import { useEffect,useRef,useState } from "react";
-export default function Inspector({ section, onChange }: {
+export default function Inspector({ section, linkedProjectsSection = null, onChange }: {
     section: PageSection;
+    linkedProjectsSection?: PageSection | null;
     onChange: (props: Record<string, any>) => void;
 }) {
     const def = getBlockDefinition(section.type);
     if (!def)
         return <div className="p-4 text-xs text-[#9CA3AF]">Unknown block: {section.type}</div>;
+    const usesProjectsPage = section.type === "projects" && section.props.source !== "manual";
+    const linkedItems = Array.isArray(linkedProjectsSection?.props?.items) ? linkedProjectsSection.props.items : [];
     return (<div className="p-4 space-y-5">
-      {def.fields.map(field => (<FieldEditor key={field.key} field={field} value={section.props[field.key]} onChange={val => onChange({ [field.key]: val })}/>))}
+      {def.fields.filter(field => !usesProjectsPage || field.key !== "items").map(field => (<FieldEditor key={field.key} field={field} value={field.key === "source" ? section.props[field.key] || "projects-page" : usesProjectsPage && ["eyebrow", "title", "subtitle"].includes(field.key) ? section.props[field.key] || linkedProjectsSection?.props?.[field.key] : section.props[field.key]} onChange={val => onChange({ [field.key]: val })}/>))}
+      {usesProjectsPage && <div className="space-y-3" dir="auto">
+        <p className="text-xs font-semibold text-[#374151]">المشاريع المنشورة ({linkedItems.length})</p>
+        {linkedItems.map((item: any, index: number) => <div key={`${index}-${item.title || "project"}`} className="rounded-xl border border-[#E5E7EB] p-3 text-xs text-[#374151]">
+          {item.image && <img src={item.image} alt={item.title || ""} className="mb-2 h-24 w-full rounded-lg object-cover"/>}
+          <p className="font-bold">{item.title}</p>
+          {[item.category, item.location, item.status].filter(Boolean).join(" · ") && <p className="mt-1 text-[#6B7280]">{[item.category, item.location, item.status].filter(Boolean).join(" · ")}</p>}
+          {item.description && <p className="mt-2 leading-relaxed">{item.description}</p>}
+          {item.buttonLink && <p className="mt-2 break-all text-[#6366F1]">{item.buttonLink}</p>}
+        </div>)}
+      </div>}
       {def.fields.length === 0 && (<p className="text-[#9CA3AF] text-xs text-center py-4">No editable properties for this block.</p>)}
     </div>);
 }

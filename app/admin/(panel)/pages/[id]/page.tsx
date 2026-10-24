@@ -3,6 +3,7 @@ import PageEditor from "@/components/editor/PageEditor";
 import { requireAdmin } from "@/lib/auth";
 import { PageSection } from "@/lib/blocks";
 import { prepareDestekolHomeSections } from "@/lib/destekol-homepage";
+import { getPageBySlug } from "@/lib/pageData";
 import { getSupabase } from "@/lib/supabase";
 import { KIT_SETTINGS_ID } from "@/lib/kit-config";
 import { notFound,redirect } from "next/navigation";
@@ -62,6 +63,8 @@ export default async function EditPagePage({ params, searchParams, }: {
     const initialChangesPending = page.slug === "home"
         && JSON.stringify(originalSections) !== JSON.stringify(editSections)
         && (locale === "ar" || hasTranslation);
+    const linkedProjectsPage = page.slug === "home" ? await getPageBySlug("projects", locale) : null;
+    const linkedProjectsSection = (linkedProjectsPage?.sections || []).find((section: PageSection) => section.type === "projects") || null;
     return (<PageEditor isDestekol={isDestekol} page={{
             id: page.id,
             title: editTitle,
@@ -78,5 +81,5 @@ export default async function EditPagePage({ params, searchParams, }: {
             showInMenu: page.showInMenu,
             isSystem: page.isSystem,
             sections: editSections,
-        }} locale={locale} isTranslation={locale !== "ar"} hasExistingTranslation={hasTranslation} initialChangesPending={initialChangesPending}/>);
+        }} locale={locale} isTranslation={locale !== "ar"} hasExistingTranslation={hasTranslation} initialChangesPending={initialChangesPending} linkedProjectsSection={linkedProjectsSection}/>);
 }

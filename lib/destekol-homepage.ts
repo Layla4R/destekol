@@ -2,9 +2,10 @@ import type { PageSection } from "@/lib/blocks";
 /** Home projects use the published projects Page as the single CMS source unless an editor selects manual items. */
 export function attachProjectPageItems(homeSections: PageSection[], projectSections: PageSection[]): PageSection[] {
     const projectBlock = projectSections.find((section) => section.type === "projects");
-    const items = Array.isArray(projectBlock?.props?.items) ? projectBlock.props.items : [];
+    const projectProps = projectBlock?.props || {};
+    const items = Array.isArray(projectProps.items) ? projectProps.items : [];
     return homeSections.map((section) => section.type === "projects" && section.props?.source !== "manual"
-        ? { ...section, props: { ...section.props, items } }
+        ? { ...section, props: { ...section.props, eyebrow: section.props?.eyebrow || projectProps.eyebrow || "", title: section.props?.title || projectProps.title || "", subtitle: section.props?.subtitle || projectProps.subtitle || "", items } }
         : section);
 }
 function storyKey(item: Record<string, any>, index: number) {
