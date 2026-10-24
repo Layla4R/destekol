@@ -1,0 +1,38 @@
+[
+  {
+    "url": "https://derbis.dernekler.gov.tr/default/anonymous/faaliyet-belgesi-dogrulama-anonim?kutukno=34-283-182&dogrulamakodu=6ce72ed2-6c92-48af-86b9-2821a4bfae76",
+    "status": 200,
+    "final_url": "https://derbis.dernekler.gov.tr/default/anonymous/faaliyet-belgesi-dogrulama-anonim?kutukno=34-283-182&dogrulamakodu=6ce72ed2-6c92-48af-86b9-2821a4bfae76",
+    "error": ""
+  },
+  {
+    "url": "https://drive.google.com/drive/folders/1REBi-2mj-aLsseccVTZmBpqwc5SjLnA2?usp=sharing",
+    "status": 200,
+    "final_url": "https://drive.google.com/drive/folders/1REBi-2mj-aLsseccVTZmBpqwc5SjLnA2?usp=sharing",
+    "error": ""
+  },
+  {
+    "url": "https://drive.google.com/file/d/103LLYAwgQLiH_mO9VLKQnOFJDH0JSAO_/view?usp=sharing",
+    "status": 200,
+    "final_url": "https://drive.google.com/file/d/103LLYAwgQLiH_mO9VLKQnOFJDH0JSAO_/view?usp=sharing",
+    "error": ""
+  },
+  {
+    "url": "https://drive.google.com/file/d/1_hgn2nSGwy9GzANs7TmxY96MSIdY85Gd/view?usp=sharing",
+    "status": 200,
+    "final_url": "https://drive.google.com/file/d/1_hgn2nSGwy9GzANs7TmxY96MSIdY85Gd/view?usp=sharing",
+    "error": ""
+  },
+  {
+    "url": "https://drive.google.com/file/d/1iLDuidmZJDOQ_MSM8OE6HKXLZIpy1ryc/view?usp=sharing",
+    "status": 200,
+    "final_url": "https://drive.google.com/file/d/1iLDuidmZJDOQ_MSM8OE6HKXLZIpy1ryc/view?usp=sharing",
+    "error": ""
+  },
+  {
+    "url": "https://wa.me/905521271062",
+    "status": 200,
+    "final_url": "https://api.whatsapp.com/send/?phone=905521271062&text&type=phone_number&app_absent=0",
+    "error": ""
+  }
+]

@@ -34,9 +34,9 @@ export default function LegalPageContent({ slug, locale }: { slug: string; local
                     </table>
                 </div> : <div className="space-y-3 text-slate-600 leading-loose">{section.text.split('\n').filter(Boolean).map((paragraph, paragraphIndex) => <p key={paragraphIndex} className="whitespace-pre-wrap break-words">{paragraph}</p>)}</div>}
             </section>)}
-            <nav className="mt-8 flex flex-wrap gap-4" aria-label={copy.related}>
+            {/* <nav className="mt-8 flex flex-wrap gap-4" aria-label={copy.related}>
                 {Object.keys(policies[language]).filter(key => key !== slug && key !== 'how-we-use-donations').map(key => <Link key={key} href={`/${language}/${key}`} className="text-brand underline underline-offset-4">{getPolicyMetadata(key, language).title}</Link>)}
-            </nav>
+            </nav> */}
             <section className="mt-8 rounded-3xl bg-slate-900 p-8 text-center">
                 <h2 className="text-xl font-bold mb-4 text-white">{copy.contact}</h2>
                 <a href={`mailto:info@destekol.org?subject=${encodeURIComponent(sections[0].title)}`} className="inline-block rounded-xl bg-brand px-6 py-3 font-bold text-white" dir="ltr">info@destekol.org</a>

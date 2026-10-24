@@ -1,17 +1,12 @@
-import { DESTEKOL_LEGAL_NAME, DESTEKOL_LOGO } from './public-contact';
+import { DESTEKOL_LEGAL_NAME } from './public-contact';
 
 export function getDestekolOrganizationName(locale = "en"): string {
     return DESTEKOL_LEGAL_NAME;
 }
 
-// The registered identity is the same in every locale, including older CMS rows.
+// Normalize legacy editorial copy without overriding settings chosen in the admin.
 export function withDestekolIdentity<T extends object>(settings: T, locale = "en") {
-    return {
-        ...normalizeDestekolBrandCopy(settings, locale),
-        siteName: DESTEKOL_LEGAL_NAME,
-        logoText: DESTEKOL_LEGAL_NAME,
-        logoImage: DESTEKOL_LOGO,
-    };
+    return normalizeDestekolBrandCopy(settings, locale);
 }
 /**
  * Render imported editorial content with this association's localized identity.

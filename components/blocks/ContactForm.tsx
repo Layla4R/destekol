@@ -61,34 +61,34 @@ export default function ContactForm({ email, locale = "ar", dict = {} }: {
         </button>
       </div>);
     }
-    return (<form onSubmit={submit} className="max-w-lg mx-auto space-y-4 bg-white rounded-2xl shadow-xl p-6 sm:p-8 border border-line">
+    return (<form method="post" onSubmit={submit} className="max-w-lg mx-auto space-y-4 bg-white rounded-2xl shadow-xl p-6 sm:p-8 border border-line">
       <div className="grid sm:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-semibold text-ink mb-1.5">
+          <label htmlFor="contact-name" className="block text-sm font-semibold text-ink mb-1.5">
             {t("الاسم الكامل", "Full Name", "Nom Complet", "Ad Soyad")} *
           </label>
-          <input required value={form.name} onChange={e => upd("name", e.target.value)} placeholder={t("الاسم الكامل", "Your name", "Votre nom", "Adınız")} className={inp}/>
+          <input id="contact-name" required value={form.name} onChange={e => upd("name", e.target.value)} placeholder={t("الاسم الكامل", "Your name", "Votre nom", "Adınız")} className={inp}/>
         </div>
         <div>
-          <label className="block text-sm font-semibold text-ink mb-1.5">
+          <label htmlFor="contact-email" className="block text-sm font-semibold text-ink mb-1.5">
             {t("البريد الإلكتروني", "Email", "Email", "E-posta")} *
           </label>
-          <input required type="email" value={form.email} onChange={e => upd("email", e.target.value)} placeholder={t("example@email.com", "example@email.com", "exemple@email.com", "ornek@email.com")} className={inp}/>
+          <input id="contact-email" required type="email" value={form.email} onChange={e => upd("email", e.target.value)} placeholder={t("example@email.com", "example@email.com", "exemple@email.com", "ornek@email.com")} className={inp}/>
         </div>
       </div>
 
       <div>
-        <label className="block text-sm font-semibold text-ink mb-1.5">
+        <label htmlFor="contact-subject" className="block text-sm font-semibold text-ink mb-1.5">
           {t("الموضوع", "Subject", "Sujet", "Konu")}
         </label>
-        <input value={form.subject} onChange={e => upd("subject", e.target.value)} placeholder={t("موضوع رسالتك", "Message subject", "Sujet du message", "Mesajınızın konusu")} className={inp}/>
+        <input id="contact-subject" value={form.subject} onChange={e => upd("subject", e.target.value)} placeholder={t("موضوع رسالتك", "Message subject", "Sujet du message", "Mesajınızın konusu")} className={inp}/>
       </div>
 
       <div>
-        <label className="block text-sm font-semibold text-ink mb-1.5">
+        <label htmlFor="contact-message" className="block text-sm font-semibold text-ink mb-1.5">
           {t("الرسالة", "Message", "Message", "Mesaj")} *
         </label>
-        <textarea required rows={5} value={form.message} onChange={e => upd("message", e.target.value)} placeholder={t("اكتب رسالتك هنا...", "Write your message here...", "Écrivez votre message ici...", "Mesajınızı buraya yazın...")} className={`${inp} resize-none`}/>
+        <textarea id="contact-message" required rows={5} value={form.message} onChange={e => upd("message", e.target.value)} placeholder={t("اكتب رسالتك هنا...", "Write your message here...", "Écrivez votre message ici...", "Mesajınızı buraya yazın...")} className={`${inp} resize-none`}/>
       </div>
 
       {(status === "error" && error) && (<div className="flex items-center gap-2 bg-danger/8 border border-danger/20 rounded-xl p-3 text-danger text-sm">

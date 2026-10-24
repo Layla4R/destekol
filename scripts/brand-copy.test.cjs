@@ -25,12 +25,16 @@ test('stored legacy names use the exact legal identity in every language without
             const result = exportsObject.withDestekolIdentity(source, locale);
             assert.equal(result.siteName, contact.DESTEKOL_LEGAL_NAME);
             assert.equal(result.footerDescription, `${contact.DESTEKOL_LEGAL_NAME} — info@destekol.org`);
-            assert.equal(result.logoImage, contact.DESTEKOL_LOGO);
+            assert.equal(result.logoImage, source.logoImage);
             assert.equal(result.facebookUrl, source.facebookUrl);
             assert.equal(source.siteName, name);
             assert.deepEqual(exportsObject.withDestekolIdentity(result, locale), result);
         }
     }
+});
+test('admin branding remains editable', () => {
+    const source = { siteName: 'Destekol community', logoText: 'Destekol', logoImage: '/custom-logo.png' };
+    assert.deepEqual(exportsObject.withDestekolIdentity(source, 'en'), source);
 });
 test('CMS branding changes editorial text without changing renderer or route identifiers', () => {
     const legacyName = ['4', 'Relief'].join('');

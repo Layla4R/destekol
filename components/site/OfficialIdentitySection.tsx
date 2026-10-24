@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { DESTEKOL_LEGAL_NAME, DESTEKOL_LOGO } from '@/lib/public-contact';
 
 type IdentityProps = Record<string, unknown>;
 function httpUrl(value: string) {
@@ -14,9 +13,9 @@ export default function OfficialIdentitySection({ data, locale }: { data: Identi
     const websiteUrl = httpUrl(value("websiteUrl"));
     const email = value("email");
     const verificationUrl = httpUrl(value("verificationUrl"));
-    const logo = DESTEKOL_LOGO;
+    const logo = value("logo");
     const details = [
-        [value("officialNameLabel"), DESTEKOL_LEGAL_NAME],
+        [value("officialNameLabel"), value("officialName")],
         [value("publicNameLabel"), value("publicName")],
         [value("registrationLabel"), value("registrationNumber")],
         [value("statusLabel"), value("status")],
@@ -38,7 +37,7 @@ export default function OfficialIdentitySection({ data, locale }: { data: Identi
                     {value("description") && <p>{value("description")}</p>}
                     {verificationUrl && value("verificationLabel") && <a className="destekol-identity-verify" href={verificationUrl} target="_blank" rel="noopener noreferrer">{value("verificationLabel")}<span aria-hidden="true"> ↗</span></a>}
                 </div>
-                {logo && <figure className="destekol-identity-logo"><Image src={logo} alt={DESTEKOL_LEGAL_NAME} width={1600} height={800} priority sizes="(max-width: 767px) 100vw, 36vw" /></figure>}
+                {logo && <figure className="destekol-identity-logo"><Image src={logo} alt={value("logoAlt") || value("officialName")} width={1600} height={800} priority sizes="(max-width: 767px) 100vw, 36vw" /></figure>}
             </div>
         </section>
     );

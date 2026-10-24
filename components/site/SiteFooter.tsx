@@ -216,14 +216,14 @@ export default function SiteFooter({ isDestekol = false, navItems = [], settings
           <p className="text-white/80 text-sm leading-relaxed mb-6">
             {settings?.footerDescription || ""}
           </p>
-          {isDestekol && <p className="mb-5 text-sm leading-relaxed" lang={loc}>
+          {isDestekol && settings?.siteName && <p className="mb-5 text-sm leading-relaxed" lang={loc}>
             {({
               tr: "destekol.org web sitesi, ",
               en: "destekol.org is the official website of ",
               ar: "موقع destekol.org هو الموقع الإلكتروني الرسمي لـ",
               fr: "destekol.org est le site officiel de l’association ",
             }[loc])}
-            <strong dir="ltr">DESTEK OL İNSANİ YARDIM VE KALKINMA DERNEĞİ</strong>
+            <strong dir="ltr">{settings.siteName}</strong>
             {loc === "tr" ? "'nin resmi İnternet sitesidir." : "."}
           </p>}
 
