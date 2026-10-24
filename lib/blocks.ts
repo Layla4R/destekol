@@ -294,51 +294,17 @@ export const BLOCK_DEFINITIONS: BlockDefinition[] = [
         icon: "layers",
         category: "fundraising",
         defaultProps: {
-            eyebrow: "مشاريعنا الميدانية",
-            title: "نُحوّل العطاء إلى أثرٍ تنموي ملموس",
-            subtitle: "أعدّت محفظة مشاريعنا الاستراتيجية لتلبية الاحتياجات الأساسية وإعادة بناء المجتمعات المتأثرة بالأزمات بكرامة وشفافية.",
-            pageSize: 8,
-            items: [
-                {
-                    title: "مشروع صهاريج مياه الشرب المعقمة",
-                    category: "الإصحاح المائي (WASH)",
-                    icon: "droplet",
-                    location: "المناطق الحرجة والبؤر الأشد احتياجاً",
-                    status: "قيد التنفيذ المستمر",
-                    image: "https://images.unsplash.com/photo-1542810634-71277d95dcbb?w=800&q=80",
-                    description: "نقل وتوزيع آلاف اللترات من مياه الشرب المعقمة يومياً على الأسر النازحة للوقاية من تلوث المياه والأمراض.",
-                    buttonText: "استعرض تفاصيل المشروع",
-                    buttonLink: "/campaigns"
-                },
-                {
-                    title: "المخبز الآلي المجتمعي للوجبات اليومية",
-                    category: "الأمن الغذائي",
-                    icon: "utensils",
-                    location: "المناطق الحرجة والبؤر الأشد احتياجاً",
-                    status: "استجابة عاجلة",
-                    image: "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=800&q=80",
-                    description: "تشغيل مخبز مجتمعي لإنتاج وتوزيع ربطات الخبز الطازج مجاناً للأسر التي تعاني من المجاعة والجوع الحاد.",
-                    buttonText: "استعرض تفاصيل المشروع",
-                    buttonLink: "/campaigns"
-                },
-                {
-                    title: "النقاط الطبية والمستشفيات الميدانية",
-                    category: "الرعاية الصحية",
-                    icon: "heart-pulse",
-                    location: "المناطق الحرجة والبؤر الأشد احتياجاً",
-                    status: "دعم مباشر",
-                    image: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=800&q=80",
-                    description: "تزويد المراكز الصحية والأطباء بالمستلزمات والأدوية الطبية العاجلة لإسعاف الجرحى وتأمين الرعاية.",
-                    buttonText: "استعرض تفاصيل المشروع",
-                    buttonLink: "/campaigns"
-                }
-            ]
+            eyebrow: "",
+            title: "",
+            subtitle: "",
+            source: "projects-page",
+            items: []
         },
         fields: [
             { key: "eyebrow", label: "Eyebrow Text / Tag", type: "text" },
             { key: "title", label: "Section Title", type: "text" },
             { key: "subtitle", label: "Section Subtitle", type: "textarea" },
-            { key: "pageSize", label: "Projects per Page", type: "number" },
+            { key: "source", label: "مصدر بطاقات المشاريع", type: "select", options: [{ label: "من صفحة المشاريع", value: "projects-page" }, { label: "إدخال مستقل لهذه الصفحة", value: "manual" }], hint: "الصفحة الرئيسية تعرض مشاريع صفحة المشاريع المنشورة في اللغة الحالية عند اختيار المصدر المشترك." },
             {
                 key: "items",
                 label: "Projects List",

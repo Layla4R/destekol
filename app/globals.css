@@ -665,6 +665,10 @@ body[data-site="destekol"] .home-layout .destekol-campaigns h2 { font-size: clam
 .home-carousel-dots button { width:9px; height:9px; border-radius:20px; background:#dce8ef; transition:width .2s,background .2s; }
 .home-carousel-dots button[aria-current="true"] { width:28px; background:#0a5171; }
 .home-carousel-dots button:focus-visible { outline:2px solid #0a5171; outline-offset:4px; }
+.destekol-projects .campaign-carousel-four-up > .home-carousel-slide { flex-basis:calc((100% - 60px)/4); }
+.destekol-projects .home-carousel-slide > article { height:100%; }
+@media(max-width:1199px) and (min-width:640px) { .destekol-projects .campaign-carousel-four-up > .home-carousel-slide { flex-basis:calc((100% - 20px)/2); } }
+@media(max-width:639px) { .destekol-projects .campaign-carousel-four-up > .home-carousel-slide { flex-basis:100%; } }
 @media(min-width:1200px) { body[data-site="destekol"] .campaigns-page-grid { grid-template-columns:repeat(4,minmax(0,1fr)); } }
 @media(max-width:1199px) and (min-width:768px) { .destekol-campaigns .campaign-carousel-four-up > .home-carousel-slide { flex-basis:calc((100% - 20px)/2); } }
 @media(max-width:767px) { .destekol-campaigns .campaign-carousel-four-up > .home-carousel-slide { flex-basis:100%; } }

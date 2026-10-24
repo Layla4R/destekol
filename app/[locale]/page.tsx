@@ -87,7 +87,7 @@ export default async function HomePage({ params }: PageProps) {
     const stats = data.stats || { total: 0, families: 0 };
     const pageSections = data.pageSections || [];
     const rawSections = Array.isArray(pageSections) ? pageSections : [];
-    const sections = rawSections.filter((section: any) => section.type !== "projects");
+    const sections = rawSections;
     const primaryColor = settings?.primaryColor || "#0069D2";
     const accentColor = settings?.accentColor || "#F00F5A";
     const pageUrl = `${siteUrl}/${locale}`;

@@ -1,8 +1,9 @@
 "use client";
 import Icon from "@/components/icons";
+import CardCarousel from "@/components/site/CardCarousel";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect,useMemo,useState } from "react";
+import { useMemo } from "react";
 type ProjectItem = {
     title?: string;
     category?: string;
@@ -14,16 +15,6 @@ type ProjectItem = {
     icon?: string;
     buttonText?: string;
     buttonLink?: string;
-};
-const paginationCopy: Record<string, {
-    previous: string;
-    next: string;
-    page: string;
-}> = {
-    ar: { previous: "السابق", next: "التالي", page: "صفحة" },
-    en: { previous: "Previous", next: "Next", page: "Page" },
-    fr: { previous: "Précédent", next: "Suivant", page: "Page" },
-    tr: { previous: "Önceki", next: "Sonraki", page: "Sayfa" },
 };
 function getProjectIcon(item: ProjectItem): string {
     if (item.icon)
@@ -72,20 +63,10 @@ export default function DestekolProjectsSection({ data, locale }: {
     locale: string;
 }) {
     const items = useMemo(() => (Array.isArray(data.items) ? data.items.filter((item: ProjectItem) => item && (item.title || item.image)) : []) as ProjectItem[], [data.items]);
-    const pageSize = Math.max(1, Math.floor(Number(data.pageSize) || 8));
-    const pageCount = Math.ceil(items.length / pageSize);
-    const [currentPage, setCurrentPage] = useState(1);
     const isRtl = locale === "ar";
-    const copy = paginationCopy[locale] || paginationCopy.en;
-    useEffect(() => {
-        if (currentPage > pageCount)
-            setCurrentPage(Math.max(1, pageCount));
-    }, [currentPage, pageCount]);
     if (items.length === 0)
         return null;
-    const startIndex = (currentPage - 1) * pageSize;
-    const visibleItems = items.slice(startIndex, startIndex + pageSize);
-    return (<section className="relative overflow-hidden bg-white px-4 py-12 sm:px-6 sm:py-16 lg:py-20" dir={isRtl ? "rtl" : "ltr"}>
+    return (<section className="destekol-projects relative overflow-hidden bg-white px-4 py-12 sm:px-6 sm:py-16 lg:py-20" dir={isRtl ? "rtl" : "ltr"}>
       <div className="pointer-events-none absolute -left-20 top-24 h-52 w-52 rounded-full bg-teal-50/80 blur-3xl" aria-hidden="true"/>
       <div className="pointer-events-none absolute -right-20 bottom-24 h-52 w-52 rounded-full bg-sky-50/80 blur-3xl" aria-hidden="true"/>
 
@@ -96,12 +77,12 @@ export default function DestekolProjectsSection({ data, locale }: {
             {data.subtitle && <p className="mx-auto mt-3 max-w-2xl text-sm leading-7 text-slate-600 sm:text-base">{data.subtitle}</p>}
           </header>)}
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-5">
-          {visibleItems.map((item, index) => {
+        <CardCarousel grouped locale={locale} href={`/${locale}/projects`} groupLabel={isRtl ? "مجموعة المشاريع" : locale === "tr" ? "Proje grubu" : locale === "fr" ? "Groupe de projets" : "Project group"}>
+          {items.map((item, index) => {
             const icon = getProjectIcon(item);
             const href = item.buttonLink?.trim() ? localizeHref(item.buttonLink.trim(), locale) : null;
             const isExternal = href ? /^(?:https?:|mailto:|tel:)/i.test(href) : false;
-            const cardKey = `${startIndex + index}-${item.title || "project"}`;
+            const cardKey = `${index}-${item.title || "project"}`;
             return (<article key={cardKey} className="group flex min-w-0 flex-col overflow-hidden rounded-2xl border border-[#e3eef2] bg-white shadow-[0_6px_22px_rgba(10,81,113,0.055)] transition duration-300 hover:-translate-y-1 hover:border-[#b9dce3] hover:shadow-[0_14px_32px_rgba(10,81,113,0.12)]">
                 <div className="relative aspect-[16/9] overflow-hidden bg-gradient-to-br from-[#e5f3f5] to-[#f5fafb]">
                   {item.image && (<Image src={item.image} alt={item.title || ""} fill sizes="(max-width: 639px) 100vw, (max-width: 1023px) 50vw, 25vw" className="object-cover transition-transform duration-500 group-hover:scale-105"/>)}
@@ -133,21 +114,7 @@ export default function DestekolProjectsSection({ data, locale }: {
                 </div>
               </article>);
         })}
-        </div>
-
-        {pageCount > 1 && (<nav className="mt-9 flex flex-wrap items-center justify-center gap-2" aria-label={isRtl ? "ترقيم صفحات المشاريع" : locale === "tr" ? "Proje sayfaları" : locale === "fr" ? "Pages des projets" : "Project pages"}>
-            <button type="button" onClick={() => setCurrentPage((page) => Math.max(1, page - 1))} disabled={currentPage === 1} className="inline-flex h-10 items-center gap-2 rounded-xl border border-[#d9e7ed] bg-white px-3 text-xs font-bold text-[#0a5171] transition hover:bg-[#eff8fa] disabled:cursor-not-allowed disabled:opacity-40">
-              <Icon name={isRtl ? "arrow-right" : "arrow-left"} size={15}/>{copy.previous}
-            </button>
-            <div className="flex items-center gap-1.5" aria-live="polite">
-              {Array.from({ length: pageCount }, (_, index) => index + 1).map((page) => (<button key={page} type="button" onClick={() => setCurrentPage(page)} aria-current={currentPage === page ? "page" : undefined} aria-label={`${copy.page} ${page}`} className={`h-10 min-w-10 rounded-xl px-3 text-xs font-extrabold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#098494] focus-visible:ring-offset-2 ${currentPage === page ? "bg-[#0a5171] text-white shadow-sm" : "border border-[#d9e7ed] bg-white text-[#31556d] hover:bg-[#eff8fa]"}`}>
-                  {page}
-                </button>))}
-            </div>
-            <button type="button" onClick={() => setCurrentPage((page) => Math.min(pageCount, page + 1))} disabled={currentPage === pageCount} className="inline-flex h-10 items-center gap-2 rounded-xl border border-[#d9e7ed] bg-white px-3 text-xs font-bold text-[#0a5171] transition hover:bg-[#eff8fa] disabled:cursor-not-allowed disabled:opacity-40">
-              {copy.next}<Icon name={isRtl ? "arrow-left" : "arrow-right"} size={15}/>
-            </button>
-          </nav>)}
+        </CardCarousel>
       </div>
     </section>);
 }

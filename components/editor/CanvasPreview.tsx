@@ -76,16 +76,17 @@ export default function CanvasPreview({ section }: {
         case "projects": return (<div className="bg-white px-10 py-10 border-t border-slate-100">
         <div className="text-center max-w-xl mx-auto mb-8">
           <span className="inline-block text-xs font-semibold uppercase text-[#0069D2] tracking-widest bg-blue-50 px-3 py-1 rounded-full mb-2">
-            {p.eyebrow || "مشاريعنا الميدانية"}
+            {p.eyebrow}
           </span>
           <h2 className="font-bold text-2xl text-slate-900 mb-2">
-            {p.title || "نُحوّل العطاء إلى أثرٍ تنموي ملموس"}
+            {p.title}
           </h2>
           <p className="text-xs text-slate-600 leading-relaxed">
-            {p.subtitle || "أعدّت محفظة مشاريعنا الاستراتيجية لتلبية الاحتياجات الأساسية وإعادة بناء المجتمعات."}
+            {p.subtitle}
           </p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-start">
+        {p.source !== "manual" && <p className="mb-4 text-center text-xs text-slate-500">بطاقات المشاريع تُقرأ من صفحة المشاريع المنشورة عند عرض الموقع.</p>}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-start">
           {(p.items || []).map((item: any, i: number) => (<div key={i} className="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm flex flex-col justify-between">
               <div>
                 {item.image ? (<img src={item.image} alt="" className="w-full h-32 object-cover"/>) : (<div className="w-full h-32 bg-slate-100 flex items-center justify-center text-xs text-slate-400">لا توجد صورة</div>)}

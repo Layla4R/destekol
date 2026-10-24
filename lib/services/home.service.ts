@@ -1,4 +1,5 @@
 import { getPageBySlug } from "@/lib/pageData";
+import { attachProjectPageItems } from "@/lib/destekol-homepage";
 import { normalizeDestekolBrandCopy, withDestekolIdentity } from "@/lib/destekol-brand-copy";
 import { getSupabaseOrNull } from "@/lib/supabase";
 export async function getHomeData(locale: string) {
@@ -64,10 +65,16 @@ export async function getHomeData(locale: string) {
             kindnessCampaigns = kindnessCampaigns.map(c => ({ ...c, title: names.get(c.id) || c.title }));
         }
     }
+    const sections = page?.sections || [];
+    let pageSections = sections;
+    if (sections.some((section: any) => section.type === "projects" && section.props?.source !== "manual")) {
+        const projectsPage = await getPageBySlug("projects", locale);
+        pageSections = attachProjectPageItems(sections, projectsPage?.sections || []);
+    }
     return normalizeDestekolBrandCopy({
         kindnessCampaigns,
         page,
-        pageSections: page?.sections || [],
+        pageSections,
         settings: withDestekolIdentity(settingsRes.data || {}, locale),
         campaigns,
         posts,

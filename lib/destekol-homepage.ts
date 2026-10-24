@@ -1,4 +1,12 @@
 import type { PageSection } from "@/lib/blocks";
+/** Home projects use the published projects Page as the single CMS source unless an editor selects manual items. */
+export function attachProjectPageItems(homeSections: PageSection[], projectSections: PageSection[]): PageSection[] {
+    const projectBlock = projectSections.find((section) => section.type === "projects");
+    const items = Array.isArray(projectBlock?.props?.items) ? projectBlock.props.items : [];
+    return homeSections.map((section) => section.type === "projects" && section.props?.source !== "manual"
+        ? { ...section, props: { ...section.props, items } }
+        : section);
+}
 function storyKey(item: Record<string, any>, index: number) {
     const explicit = String(item.id || item.slug || "").trim();
     if (explicit)
@@ -10,7 +18,7 @@ function storyKey(item: Record<string, any>, index: number) {
 /** Ensures the homepage blocks and per-story donation links are present in the CMS model. */
 export function prepareDestekolHomeSections(sections: PageSection[] | null | undefined): PageSection[] {
     const next = Array.isArray(sections)
-        ? sections.filter((section) => section.type !== "projects").map((section) => ({
+        ? sections.map((section) => ({
             ...section,
             props: { ...(section.props || {}) },
         }))

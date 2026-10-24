@@ -7,7 +7,7 @@ const labels: Record<string, string[]> = {
     tr: ["Tümünü gör", "Önceki", "Sonraki"],
     fr: ["Tout voir", "Précédent", "Suivant"],
 };
-export default function CardCarousel({ children, locale, href, enabled = true, className = "", fallbackRef, grouped = false }: {
+export default function CardCarousel({ children, locale, href, enabled = true, className = "", fallbackRef, grouped = false, groupLabel }: {
     children: ReactNode;
     locale: string;
     href: string;
@@ -15,6 +15,7 @@ export default function CardCarousel({ children, locale, href, enabled = true, c
     className?: string;
     fallbackRef?: Ref<HTMLDivElement>;
     grouped?: boolean;
+    groupLabel?: string;
 }) {
     const track = useRef<HTMLDivElement>(null);
     const [edges, setEdges] = useState({ start: true, end: true });
@@ -33,7 +34,8 @@ export default function CardCarousel({ children, locale, href, enabled = true, c
                 const gap = parseFloat(getComputedStyle(el).columnGap) || 20;
                 const perPage = Math.max(1, Math.round((el.clientWidth + gap) / ((card?.offsetWidth || el.clientWidth) + gap)));
                 const pages = Math.max(1, Math.ceil(el.children.length / perPage));
-                setPagination({ page: Math.min(pages - 1, Math.round(offset / (el.clientWidth + gap))), pages });
+                const maxOffset = Math.max(0, el.scrollWidth - el.clientWidth);
+                setPagination({ page: maxOffset ? Math.min(pages - 1, Math.round(offset / maxOffset * (pages - 1))) : 0, pages });
             }
         };
         update();
@@ -65,6 +67,6 @@ export default function CardCarousel({ children, locale, href, enabled = true, c
     <div ref={track} className={`home-carousel-track ${grouped ? 'campaign-carousel-four-up' : ''}`} tabIndex={0}>
       {Children.toArray(children).map((child, index) => <div className="home-carousel-slide" key={(child as any)?.key ?? index}>{child}</div>)}
     </div>
-    {grouped && <div className="home-carousel-dots">{Array.from({ length: pagination.pages }, (_, page) => <button key={page} type="button" aria-label={`${locale === 'ar' ? 'مجموعة الحملات' : locale === 'tr' ? 'Kampanya grubu' : locale === 'fr' ? 'Groupe de campagnes' : 'Campaign group'} ${page + 1}`} aria-current={pagination.page === page ? 'true' : undefined} onClick={() => { const el = track.current; if (!el) return; const gap = parseFloat(getComputedStyle(el).columnGap) || 20; el.scrollTo({ left: page * (el.clientWidth + gap) * (rtl ? -1 : 1), behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); }}/>)}</div>}
+    {grouped && <div className="home-carousel-dots">{Array.from({ length: pagination.pages }, (_, page) => <button key={page} type="button" aria-label={`${groupLabel || (locale === 'ar' ? 'مجموعة الحملات' : locale === 'tr' ? 'Kampanya grubu' : locale === 'fr' ? 'Groupe de campagnes' : 'Campaign group')} ${page + 1}`} aria-current={pagination.page === page ? 'true' : undefined} onClick={() => { const el = track.current; if (!el) return; const gap = parseFloat(getComputedStyle(el).columnGap) || 20; el.scrollTo({ left: page * (el.clientWidth + gap) * (rtl ? -1 : 1), behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); }}/>)}</div>}
   </div>;
 }
