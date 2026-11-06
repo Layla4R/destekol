@@ -287,6 +287,12 @@ export default function HeroSection({ locale, dict, heroImage, heroSlides, accen
       {<button type="button" aria-label={interfaceCopy(locale).nextSlide} onClick={next} className="destekol-slide-arrow">→</button>}
     </div>)}
 
+  {mode === "hero" && isDestekolProp && <svg className="destekol-inner-page-banner-wave" viewBox="0 0 1440 110" preserveAspectRatio="none" aria-hidden="true">
+    <path fill="#80d0d3" opacity=".72" d="M0 35C160 94 290 5 480 36s296 70 470 16 330-14 490 12v46H0Z"/>
+    <path fill="#d8f1f2" d="M0 76C190 18 300 107 493 65s277 25 451 5 320-67 496-24v64H0Z"/>
+    <path fill="white" d="M0 89C176 38 326 95 490 79s302-27 466 3 321-41 484-18v46H0Z"/>
+  </svg>}
+
         </div>}
       {/* Quick Donation */}
 
