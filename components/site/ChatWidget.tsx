@@ -148,7 +148,7 @@ export default function ChatWidget({ locale = "ar" }: {
         voiceActive.current = tab === "voice";
         setActiveTab(tab);
     }
-    return <div dir={locale === "ar" ? "rtl" : "ltr"} className="fixed bottom-6 start-6 z-50 font-sans" style={{ color: "#1e293b" }}>
+    return <div dir={locale === "ar" ? "rtl" : "ltr"} className="fixed bottom-6 right-6 z-50 font-sans" style={{ color: "#1e293b" }}>
     {!isOpen ? <button type="button" aria-label={t.open} onClick={() => { setIsOpen(true); voiceActive.current = activeTab === "voice"; }} className="w-14 h-14 rounded-full shadow-2xl" style={{ backgroundColor: blue, color: "white" }}>💬</button> :
             <section aria-label={t.title} className="w-80 sm:w-96 rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col" style={{ height: 580, maxWidth: "calc(100vw - 3rem)", maxHeight: "calc(100dvh - 3rem)", backgroundColor: "white" }}>
         <header className="p-3 flex shrink-0 items-center justify-between gap-2" style={{ backgroundColor: blue, color: "white" }}>
