@@ -125,6 +125,11 @@ const SOCIAL_ICONS: Record<string, {
         label: "TikTok",
     },
 };
+const FOOTER_SOCIAL_LINKS = [
+    { label: "Facebook", path: "M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z", url: "https://www.facebook.com/profile.php?id=61595406984608", color: "#1877F2" },
+    { label: "X", path: "M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.848L1.258 2.25H8.08l4.259 5.63 5.905-5.63zm-1.161 17.52h1.833L7.084 4.126H5.117z", url: "https://x.com/destekolorg", color: "#111111" },
+    { label: "YouTube", path: "M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z", url: "https://www.youtube.com/@DESTEKOL_%C4%B0NSAN%C4%B0_YARDIM", color: "#FF0033" },
+];
 /* =========================================================
    DESTEKOL OFFICIAL INFORMATION
 ========================================================= */
@@ -156,7 +161,7 @@ export default function SiteFooter({ isDestekol = false, navItems = [], settings
        Social Links
     ========================================================= */
     const socialLinks = Object.entries(SOCIAL_ICONS)
-        .filter(([key]) => settings?.[key as keyof PublicSiteSettings])
+        .filter(([key]) => !["facebookUrl", "twitterUrl", "youtubeUrl"].includes(key) && settings?.[key as keyof PublicSiteSettings])
         .map(([key, meta]) => ({
         url: settings?.[key as keyof PublicSiteSettings] as string,
         ...meta,
@@ -253,6 +258,11 @@ export default function SiteFooter({ isDestekol = false, navItems = [], settings
             tr: "Bağış Yap",
         })}
           </Link>
+          <nav aria-label="Facebook, X and YouTube" className="destekol-footer-featured-social" dir="ltr">
+            {FOOTER_SOCIAL_LINKS.map((social) => <a key={social.label} href={social.url} target="_blank" rel="noopener noreferrer" aria-label={social.label} title={social.label} style={{ backgroundColor: social.color }}>
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d={social.path}/></svg>
+            </a>)}
+          </nav>
         </div>
 
         {/* ===================================================

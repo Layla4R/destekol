@@ -832,6 +832,11 @@ body[data-site="destekol"] .home-layout .home-section--stories { margin-top: 14p
 .destekol-footer nav[aria-label="Social media channels"] { gap: 7px; margin-bottom: 14px; }
 .destekol-footer nav[aria-label="Social media channels"] a { width: 30px; height: 30px; background: #f0f7fa; border: 1px solid #e3edf1; }
 .destekol-footer nav[aria-label="Social media channels"] a svg { color: #0a5171 !important; }
+.destekol-footer .destekol-footer-featured-social { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.destekol-footer .destekol-footer-featured-social a { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 10px; color: white !important; box-shadow: 0 5px 12px #06396224; transition: transform .2s ease, box-shadow .2s ease; }
+.destekol-footer .destekol-footer-featured-social a:hover { transform: translateY(-3px); box-shadow: 0 8px 18px #06396233; }
+.destekol-footer .destekol-footer-featured-social a svg { width: 20px; height: 20px; color: white; }
+.destekol-footer--ar .destekol-footer-featured-social { justify-content: flex-end; }
 .destekol-footer .destekol-footer-main > div:first-child > a[aria-label$="Home"] img { width: 190px; height: auto; max-height: 100px; margin-bottom: 14px; object-fit: contain; }
 .destekol-footer .destekol-footer-main > div:first-child > a[style] { color: white !important; background: linear-gradient(135deg, #d9a750, #c79239) !important; border-radius: 8px; padding: 8px 13px; font-size: 12px; }
 .destekol-footer .destekol-footer-bottom { padding: 18px 36px; gap: 14px; color: #597487; background: #f7fafb; border-top: 1px solid #eaf1f4; font-size: 12px; }
