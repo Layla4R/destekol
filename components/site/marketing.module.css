@@ -22,3 +22,6 @@
 @media(max-width:500px){.hero h1{font-size:58px}.heroMedia{min-height:260px!important}.programGrid{gap:8px}.programCard{min-height:127px}.programCard strong{font-size:16px}.programIcon{width:55px;height:55px}.allPrograms{min-width:0;width:100%}.programPreview{padding:24px 16px}.heroActions{width:100%}.heroActions>a{flex:1;min-width:130px;padding-inline:10px;font-size:15px}.brochureRow h2{font-size:16px}.brochureRow p{font-size:13px}}
 .cta h2,.cta p{color:#fff}
 .hero h1,.aboutCopy>h2,.programPreview h2{color:#063962}
+.value h2,.allPrograms{color:#063962}
+.programPreview>p{color:#315a76}
+.hero{margin-bottom:24px}
