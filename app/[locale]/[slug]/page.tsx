@@ -15,6 +15,8 @@ import { normalizePublicContact,officialEmail } from "@/lib/public-contact";
 import { getSupabaseOrNull } from "@/lib/supabase";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { getLandingAlias } from "@/lib/marketing-pages";
+import MarketingLanding from "@/components/site/MarketingLanding";
 export const revalidate = 0;
 interface PageProps {
     params: {
@@ -202,6 +204,12 @@ export async function generateMetadata({ params, }: {
     };
 }): Promise<Metadata> {
     const { slug, locale } = params;
+    const landingAlias = await getLandingAlias(slug, locale);
+    if (landingAlias) return {
+        title: landingAlias.title,
+        description: landingAlias.description,
+        alternates: { canonical: `https://destekol.org/${locale}/${encodeURIComponent(slug)}` },
+    };
     const { siteUrl, brandName, fullName } = await getDomainContext(locale);
     const page = await getFullPageData(slug, locale);
     if (!page)
@@ -245,6 +253,8 @@ export default async function DynamicPage({ params, }: {
     };
 }) {
     const { slug, locale } = params;
+    const landingAlias = await getLandingAlias(slug, locale);
+    if (landingAlias) return <MarketingLanding locale={locale} content={landingAlias.content}/>;
     const { isDestekol, siteUrl, brandName, fullName } = await getDomainContext(locale);
     if (LEGAL_SLUGS.includes(slug)) {
         const { title, description } = getPolicyMetadata(slug, locale);

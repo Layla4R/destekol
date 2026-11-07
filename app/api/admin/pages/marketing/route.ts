@@ -30,6 +30,17 @@ export async function PUT(req: NextRequest) {
     return NextResponse.json({ error: "Invalid page data" }, { status: 400 });
   }
   const db = getSupabase();
+  if (slug === "landing") {
+    if (content.publicSlug != null && typeof content.publicSlug !== "string")
+      return NextResponse.json({ error: "Invalid URL name" }, { status: 400 });
+    const publicSlug = (content.publicSlug || "landing").trim().replace(/\s+/g, " ").normalize("NFC");
+    if (publicSlug.length > 100 || !publicSlug || /[\/?#%\\.:<>\x00-\x1f]/.test(publicSlug))
+      return NextResponse.json({ error: "URL name must be under 100 characters and contain no URL punctuation" }, { status: 400 });
+    const { data: existing } = await db.from("Page").select("id").eq("slug", publicSlug).neq("slug", "landing").maybeSingle();
+    if (existing || ["admin", "api", "kit", "programs", "contact", "donate", "news", "projects", "campaigns", "account", "login", "cart", "unsubscribe", "reset-password", "forgot-password", "verify-email", "google-verification", "why-destekol"].includes(publicSlug.toLowerCase()))
+      return NextResponse.json({ error: "This URL name is already in use" }, { status: 400 });
+    content.publicSlug = publicSlug;
+  }
   const { data: page, error: readError } = await db.from("Page").select("id").eq("slug", slug).maybeSingle();
   if (readError || !page) return NextResponse.json({ error: "Page not found" }, { status: 404 });
   const sections = [{ id: `${slug}-content`, type: "marketing", props: content }];
@@ -39,5 +50,6 @@ export async function PUT(req: NextRequest) {
   const { error } = await update;
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   revalidatePath(`/${locale}/${slug}`);
+  if (slug === "landing") revalidatePath(`/${locale}/${encodeURIComponent(content.publicSlug)}`);
   return NextResponse.json({ ok: true });
 }

@@ -14,6 +14,7 @@ import { getSupabaseOrNull } from "@/lib/supabase";
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
+import { getLandingAlias } from "@/lib/marketing-pages";
 
 // Each domain has independent CMS data; do not reuse generated HTML between sites.
 export const dynamic = "force-dynamic";
@@ -227,7 +228,10 @@ export default async function LocaleLayout({ children, params: { locale }, }: {
     const pixelId = settings?.facebookPixelId;
     // تحديد الاتجاه تلقائياً بناءً على اللغة
     const dir = locale === "ar" ? "rtl" : "ltr";
-    const isMarketingLanding = /^\/(ar|en)\/landing\/?$/.test(headers().get("x-admin-path") || "");
+    const currentPath = headers().get("x-admin-path") || "";
+    const possibleAlias = currentPath.match(/^\/(ar|en)\/([^/]+)\/?$/);
+    const isMarketingLanding = /^\/(ar|en)\/landing\/?$/.test(currentPath) ||
+        Boolean(possibleAlias && await getLandingAlias(possibleAlias[2], locale));
     return (<div className="flex min-h-screen flex-col" dir={dir} lang={locale}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(organizationSchema) }}/>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(websiteSchema) }}/>

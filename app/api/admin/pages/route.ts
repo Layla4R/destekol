@@ -11,12 +11,18 @@ export async function GET(req: Request) {
     // Get pages + their translation status in parallel (not N×3 requests)
     const [pagesRes, transRes] = await Promise.all([
         supabase.from("Page").select("id,slug,title,description,isPublished,showInMenu,isSystem,order,updatedAt,sections").neq("id", KIT_SETTINGS_ID).order("order", { ascending: true }).order("createdAt", { ascending: true }),
-        supabase.from("PageTranslation").select("pageId, locale").in("locale", ["en", "fr", "tr"]),
+        supabase.from("PageTranslation").select("pageId, locale, sections").in("locale", ["en", "fr", "tr"]),
     ]);
     if (pagesRes.error) {
         if (process.env.NODE_ENV !== "production")
             console.error("Pages fetch error:", pagesRes.error);
         return NextResponse.json({ error: "Failed to fetch pages: " + pagesRes.error.message }, { status: 500 });
+    }
+    const landingPage = (pagesRes.data || []).find(p => p.slug === "landing");
+    const landingSlugs: Record<string, string> = { ar: landingPage?.sections?.[0]?.props?.publicSlug || "landing" };
+    for (const t of transRes.data || []) {
+        if (t.pageId === landingPage?.id && t.locale === "en")
+            landingSlugs.en = t.sections?.[0]?.props?.publicSlug || "landing";
     }
     const pages = (pagesRes.data || []).map(p => ({
         ...p,
@@ -31,7 +37,7 @@ export async function GET(req: Request) {
             transMap[t.pageId] = {};
         transMap[t.pageId][t.locale] = true;
     }
-    return NextResponse.json({ pages, transMap });
+    return NextResponse.json({ pages, transMap, landingSlugs });
 }
 export async function POST(req: NextRequest) {
     try {

@@ -1,4 +1,5 @@
 import { getSupabaseOrNull } from "@/lib/supabase";
+import { cache } from "react";
 
 export const BROCHURE_URL = "https://drive.google.com/file/d/1RuGI5Xv0cBTckfHmc-0t96GZH4eV4Tr7/view";
 export const MARKETING_SLUGS = ["landing", "programs"] as const;
@@ -12,6 +13,7 @@ export type MarketingContent = {
   contactLabel?: string; brochureLabel?: string; ctaHeading?: string; ctaText?: string;
   heroImage?: string; aboutImage?: string; logoImage?: string;
   programImageOne?: string; programImageTwo?: string;
+  publicSlug?: string;
   values?: { id: string; title: string; description: string; icon: string }[];
   programs?: MarketingProgram[];
 };
@@ -33,7 +35,22 @@ export async function getMarketingPage(slug: MarketingSlug, locale: string) {
       title = translated.title || title;
       description = translated.description || description;
       content = { ...content, ...(translated.sections?.[0]?.props || {}) };
+      if (slug === "landing" && !translated.sections?.[0]?.props?.publicSlug) content.publicSlug = "landing";
     }
+    if (!translated && slug === "landing") content.publicSlug = "landing";
   }
   return { title, description, content };
 }
+
+export function landingPublicSlug(content: MarketingContent): string {
+  return content.publicSlug?.trim().replace(/\s+/g, " ").normalize("NFC") || "landing";
+}
+
+export const getLandingAlias = cache(async (slug: string, locale: string) => {
+  if (!["ar", "en"].includes(locale) || slug === "landing") return null;
+  const page = await getMarketingPage("landing", locale);
+  if (!page) return null;
+  let requested = slug;
+  try { requested = decodeURIComponent(slug); } catch { return null; }
+  return requested.normalize("NFC") === landingPublicSlug(page.content) ? page : null;
+});

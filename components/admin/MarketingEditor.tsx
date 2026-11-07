@@ -1,7 +1,8 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
 import { adminFetch } from "@/lib/admin-fetch";
-import type { MarketingContent, MarketingProgram } from "@/lib/marketing-pages";
+import { landingPublicSlug, type MarketingContent, type MarketingProgram } from "@/lib/marketing-pages";
+import { useSearchParams } from "next/navigation";
 
 type Slug = "landing" | "programs";
 const languageNames = { ar: "العربية", en: "English", fr: "Français", tr: "Türkçe" };
@@ -20,8 +21,9 @@ const programsFields = ["heading","description","brochureLabel","contactLabel","
 const iconOptions = ["food","home","heart","water","sprout","women","wheat","people","book","care","access","child","recycle","growth","shield"];
 
 export default function MarketingEditor() {
+  const searchParams = useSearchParams();
   const [slug, setSlug] = useState<Slug>("landing");
-  const [locale, setLocale] = useState<keyof typeof languageNames>("ar");
+  const [locale, setLocale] = useState<keyof typeof languageNames>(searchParams.get("locale") === "en" ? "en" : "ar");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [content, setContent] = useState<MarketingContent>({});
@@ -63,7 +65,7 @@ export default function MarketingEditor() {
   return <div className="p-6 sm:p-8 max-w-5xl w-full mx-auto text-slate-900">
     <div className="flex flex-wrap justify-between items-center gap-4 mb-5">
       <div><h1 className="text-2xl font-bold">Landing page & Programs</h1><p className="text-sm text-slate-500">Edit the two campaign pages and their translations.</p></div>
-      <a className="text-sm underline text-teal-700" href={`/${locale}/${slug}`} target="_blank" rel="noopener noreferrer">Preview page ↗</a>
+      <a className="text-sm underline text-teal-700" href={`/${locale}/${encodeURIComponent(slug === "landing" ? landingPublicSlug(content) : slug)}`} target="_blank" rel="noopener noreferrer">Preview page ↗</a>
     </div>
     <div className="flex flex-wrap gap-2 mb-4">{(["landing","programs"] as Slug[]).map(item => <button key={item} type="button" onClick={() => { setSlug(item); if (item === "landing" && !["ar","en"].includes(locale)) setLocale("ar"); }} className={`px-4 py-2 rounded-lg font-semibold ${slug === item ? "bg-teal-700 text-white" : "bg-white border"}`}>{item === "landing" ? "Google Ads landing" : "Our Programs"}</button>)}</div>
     <div className="flex flex-wrap gap-2 mb-6">{Object.entries(languageNames).filter(([code]) => slug === "programs" || ["ar","en"].includes(code)).map(([code,name]) => <button key={code} type="button" onClick={() => setLocale(code as keyof typeof languageNames)} className={`px-3 py-1.5 rounded-lg text-sm ${locale === code ? "bg-sky-100 border border-sky-500 font-bold" : "bg-white border"}`}>{name}</button>)}</div>
@@ -73,6 +75,10 @@ export default function MarketingEditor() {
         <label className="block text-sm font-semibold">Browser title<input value={title} onChange={event => setTitle(event.target.value)} className="mt-1 w-full rounded-lg border p-2.5" /></label>
         <label className="block text-sm font-semibold">Search description<input value={description} onChange={event => setDescription(event.target.value)} className="mt-1 w-full rounded-lg border p-2.5" /></label>
       </div>
+      {slug === "landing" && <label className="block text-sm font-semibold">{locale === "ar" ? "اسم رابط صفحة الهبوط بالعربية" : "Landing page URL name"}
+        <div className="mt-1 flex items-center rounded-lg border overflow-hidden" dir="ltr"><span className="bg-slate-50 px-3 py-2.5 text-slate-500 whitespace-nowrap">/{locale}/</span><input aria-label="Landing page URL name" value={content.publicSlug ?? "landing"} onChange={event => updateField("publicSlug", event.target.value)} className="w-full p-2.5 outline-none" /></div>
+        <span className="block mt-1 text-xs font-normal text-slate-500">{locale === "ar" ? "يمكن استخدام الأحرف العربية والمسافات. يبقى الرابط القديم /ar/landing فعالاً." : "Letters and spaces are allowed. The old /en/landing link stays active."}</span>
+      </label>}
       {locale === "ar" && <label className="flex gap-2 items-center text-sm font-semibold"><input type="checkbox" checked={published} onChange={event => setPublished(event.target.checked)} /> Published</label>}
       <div className="grid sm:grid-cols-2 gap-4">{fields.map(key => <label className="block text-sm font-semibold" key={key}>{fieldNames[key]}
         {(["description","aboutText","visionText","programsText","ctaText"].includes(key))

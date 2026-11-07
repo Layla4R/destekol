@@ -31,6 +31,7 @@ export default function AdminPagesPage() {
     const initialLang = searchParams.get("lang") || searchParams.get("locale") || "ar";
     const [pages, setPages] = useState<Page[]>([]);
     const [transMap, setTransMap] = useState<TransMap>({});
+    const [landingSlugs, setLandingSlugs] = useState<Record<string, string>>({});
     const [loading, setLoading] = useState(true);
     const [activeLocale, setActiveLocale] = useState(initialLang);
     const [selected, setSelected] = useState<Set<string>>(new Set());
@@ -66,6 +67,7 @@ export default function AdminPagesPage() {
             }
             setPages(d.pages || []);
             setTransMap(d.transMap || {});
+            setLandingSlugs(d.landingSlugs || {});
         }
         catch {
             setLoadError("Network error — could not load pages.");
@@ -332,10 +334,12 @@ export default function AdminPagesPage() {
                 const hasTranslation = activeLocale === "ar" ? true : !!transMap[page.id]?.[activeLocale];
                 const isLegal = LEGAL_SLUGS.includes(page.slug);
                 const blocksCount = page.sectionsCount ?? 0;
-                const editHref = activeLocale === "ar"
+                const editHref = page.slug === "landing" && ["ar", "en"].includes(activeLocale)
+                    ? `/admin/pages/marketing?locale=${activeLocale}` : activeLocale === "ar"
                     ? `/admin/pages/${page.id}`
                     : `/admin/pages/${page.id}?locale=${activeLocale}`;
-                const previewHref = page.slug === "home"
+                const previewHref = page.slug === "landing" && ["ar", "en"].includes(activeLocale)
+                    ? `/${activeLocale}/${encodeURIComponent(landingSlugs[activeLocale] || "landing")}` : page.slug === "home"
                     ? (activeLocale === "ar" ? "/" : `/${activeLocale}/`)
                     : (activeLocale === "ar" ? `/${page.slug}` : `/${activeLocale}/${page.slug}`);
                 const isDraggingOver = dragOver === page.id;
@@ -364,7 +368,7 @@ export default function AdminPagesPage() {
                     </td>
 
                     {/* Slug */}
-                    <td className="py-3 px-4 font-mono text-xs text-muted">/{page.slug}</td>
+                    <td className="py-3 px-4 font-mono text-xs text-muted">/{page.slug === "landing" && ["ar", "en"].includes(activeLocale) ? (landingSlugs[activeLocale] || "landing") : page.slug}</td>
 
                     {/* Blocks count */}
                     <td className="py-3 px-3">
