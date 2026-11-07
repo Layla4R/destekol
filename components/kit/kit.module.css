@@ -21,8 +21,8 @@
 .bannerImage { object-fit: cover; object-position: center 35%; z-index: -1; }
 
 .brand { padding: 16px 20px 18px; text-align: center; }
-.logoFrame { position: relative; overflow: hidden; width: min(100%, 380px); height: 94px; margin: 0 auto; }
-.logo { position: absolute; width: 100%; height: auto; top: 50%; inset-inline-start: 0; transform: translateY(-50%); }
+.logoFrame { position: relative; width: min(100%, 380px); aspect-ratio: 2 / 1; margin: 0 auto; }
+.logo { object-fit: contain; }
 .description { font-size: 14px; line-height: 1.5; color: #63718b; }
 .tagline { margin-top: 5px; color: #087d87; font-weight: 700; font-size: 20px; line-height: 1.5; }
 .pageTitle { margin: 14px 0 0; font-size: clamp(18px, 2.2vw, 26px); line-height: 1.4; font-weight: 800; }
@@ -73,7 +73,7 @@ a.resource:hover { border-color: #098494; background: #f3fafc; box-shadow: 0 2px
 }
 @media (max-width: 639px) {
     .brand { padding: 8px 16px 12px; }
-    .logoFrame { width: min(100%, 340px); height: 83px; }
+    .logoFrame { width: min(100%, 340px); }
     .description { font-size: 12px; }
     .tagline { font-size: 16px; }
     .languages { margin-bottom: 14px; }

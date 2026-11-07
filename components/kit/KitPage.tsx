@@ -64,7 +64,7 @@ export default function KitPage({ initialLocale, resources }: { initialLocale: K
                     </div>
                     <div className={styles.brand}>
                         <div className={styles.logoFrame}>
-                            <Image src="/brand/destekol-legal-logo-v5.png" alt="Destekol" width={1774} height={887} priority sizes="(max-width: 380px) 85vw, 340px" className={styles.logo} />
+                            <Image src="https://frfppicofkkeczdbndbi.supabase.co/storage/v1/object/public/media/destekol/uploads/1793703132925-rfgzex6uwj.png" alt="Destekol" fill priority sizes="(max-width: 380px) 85vw, 380px" className={styles.logo} />
                         </div>
                         <p className={styles.description}>{copy.organization}</p>
                         <h1 className={styles.pageTitle}>{copy.pageHeading}</h1>

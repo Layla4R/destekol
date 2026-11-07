@@ -58,10 +58,12 @@ export default function SiteHeader({ navItems, settings, locale, dict, transpare
         {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-7" aria-label={interfaceCopy(locale).mainNavigation}>
           <ul className="flex items-center gap-7">
-            {(navItems.filter(item => ["home", "about", "about-us", "projects"].includes(item.slug))).map((item) => {
+            {(navItems.filter(item => ["home", "about", "about-us", "projects", "programs"].includes(item.slug))).map((item) => {
             const navKey = `nav.${item.slug}`;
             const translatedTitle = dict[navKey] ||
-                (item.slug === "home"
+                (item.slug === "programs"
+                    ? t("nav.programs", "برامجنا", "Our Programs", "Nos programmes", "Programlarımız")
+                    : item.slug === "home"
                     ? t("nav.home", "الرئيسية", "Home", "Accueil", "Ana Sayfa")
                     : item.slug === "about" || item.slug === "about-us"
                         ? t("nav.about", "من نحن", "About Us", "À Propos", "Hakkımızda")
@@ -126,7 +128,7 @@ export default function SiteHeader({ navItems, settings, locale, dict, transpare
         </div>
       </div>
       {mobileOpen && <nav id="mobile-navigation" className="md:hidden border-t bg-white p-5 grid gap-4" aria-label={interfaceCopy(locale).mobileNavigation}>
-        {navItems.filter(item => item.slug !== "campaigns").map(item => <Link onClick={() => setMobileOpen(false)} key={item.slug} href={item.slug === "home" ? p + "/" : p + "/" + item.slug}>{dict["nav." + item.slug] || item.title}</Link>)}
+        {navItems.filter(item => item.slug !== "campaigns").map(item => <Link onClick={() => setMobileOpen(false)} key={item.slug} href={item.slug === "home" ? p + "/" : p + "/" + item.slug}>{item.slug === "programs" ? t("nav.programs", "برامجنا", "Our Programs", "Nos programmes", "Programlarımız") : dict["nav." + item.slug] || item.title}</Link>)}
         <Link href={p + "/campaigns"} onClick={() => setMobileOpen(false)}>{t("nav.campaigns", "الحملات", "Campaigns", "Campagnes", "Kampanyalar")}</Link>
         <Link href={p + "/news"} onClick={() => setMobileOpen(false)}>{t("nav.news", "الأخبار", "News", "Actualités", "Haberler")}</Link>
         <Link href={p + "/account"}>{t("nav.account", "حسابي", "My Account", "Mon Compte", "Hesabım")}</Link>

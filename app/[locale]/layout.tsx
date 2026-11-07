@@ -227,20 +227,21 @@ export default async function LocaleLayout({ children, params: { locale }, }: {
     const pixelId = settings?.facebookPixelId;
     // تحديد الاتجاه تلقائياً بناءً على اللغة
     const dir = locale === "ar" ? "rtl" : "ltr";
+    const isMarketingLanding = /^\/(ar|en)\/landing\/?$/.test(headers().get("x-admin-path") || "");
     return (<div className="flex min-h-screen flex-col" dir={dir} lang={locale}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(organizationSchema) }}/>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(websiteSchema) }}/>
 
-      <SiteHeader isDestekol={isDestekol} navItems={pages} settings={settings} locale={locale} dict={dict} transparent={false}/>
-      <CookieBanner isDestekol={isDestekol} locale={locale} pixelId={pixelId || undefined}/>
+      {!isMarketingLanding && <SiteHeader isDestekol={isDestekol} navItems={pages} settings={settings} locale={locale} dict={dict} transparent={false}/>}
+      {!isMarketingLanding && <CookieBanner isDestekol={isDestekol} locale={locale} pixelId={pixelId || undefined}/>}
 
-      <main className="flex-1 pt-20">
+      <main className={isMarketingLanding ? "flex-1" : "flex-1 pt-20"}>
         {children}
       </main>
 
-      <SiteFooter isDestekol={isDestekol} navItems={pages} settings={settings} locale={locale} dict={dict}/>
-      <WhatsAppButton phone={settings?.whatsappNumber} locale={locale}/>
+      {!isMarketingLanding && <SiteFooter isDestekol={isDestekol} navItems={pages} settings={settings} locale={locale} dict={dict}/>}
+      {!isMarketingLanding && <WhatsAppButton phone={settings?.whatsappNumber} locale={locale}/>}
 
-      <SocialSidebar locale={locale} whatsapp={settings?.whatsappNumber} facebook={settings?.facebookUrl} twitter={settings?.twitterUrl} instagram={settings?.instagramUrl} tiktok={settings?.tiktokUrl} youtube={settings?.youtubeUrl} linkedin={settings?.linkedinUrl} position={(settings?.socialPosition as "left" | "right") || "right"}/>
+      {!isMarketingLanding && <SocialSidebar locale={locale} whatsapp={settings?.whatsappNumber} facebook={settings?.facebookUrl} twitter={settings?.twitterUrl} instagram={settings?.instagramUrl} tiktok={settings?.tiktokUrl} youtube={settings?.youtubeUrl} linkedin={settings?.linkedinUrl} position={(settings?.socialPosition as "left" | "right") || "right"}/>}
     </div>);
 }
