@@ -173,7 +173,7 @@ Les demandes d’autorisation d’utilisation de la marque, du logo, des images 
 ## Notice d’information KVKK
 Information relative au site et aux canaux numériques au titre de la loi turque n° 6698 sur la protection des données personnelles
 ## 1. Responsable du traitement
-Destek Ol agit en qualité de responsable du traitement des données personnelles traitées par l’intermédiaire de destekol.org et des canaux numériques associés. Contact : info@destekol.org. Adresse : Taşdelen Mah. Buket Sokak, Dış Kapı No: 1-3, İç Kapı No: 38, Çekmeköy / İstanbul, Türkiye.
+Destek Ol agit en qualité de responsable du traitement des données personnelles traitées par l’intermédiaire de destekol.org et des canaux numériques associés. Contact : info@destekol.org. Adresse : Hırka-i Şerif Mah. Tuti Abdullatif Sokak, Dış Kapı No: 2/1, Şafak Apt İç Kapı No: 1, Fatih / İstanbul, Türkiye.
 ## 2. Données personnelles traitées
 Groupe de données	Contenu
 Identité/coordonnées	Nom et prénom, courriel, téléphone et coordonnées liées aux demandes.
@@ -224,7 +224,7 @@ Allégations relatives à la PSEA, à la protection de l’enfance, à la protec
 Réclamations relatives aux données personnelles, à la confidentialité ou à la sécurité de l’information.
 Erreur ou information trompeuse dans le contenu du site, ou demande de paiement non officielle.
 ## 3. Canaux de dépôt
-Les demandes générales peuvent être adressées à info@destekol.org ou à Taşdelen Mah. Buket Sokak, Dış Kapı No: 1-3, İç Kapı No: 38, Çekmeköy / İstanbul. Si une demande sensible concerne la personne qui gère la messagerie générale ou la direction, elle peut être envoyée à l’adresse postale sous enveloppe fermée portant la mention « À l’attention du conseil d’administration – CONFIDENTIEL » (« Yönetim Kurulu Dikkatine – GİZLİ »).
+Les demandes générales peuvent être adressées à info@destekol.org ou à Hırka-i Şerif Mah. Tuti Abdullatif Sokak, Dış Kapı No: 2/1, Şafak Apt İç Kapı No: 1, Fatih / İstanbul. Si une demande sensible concerne la personne qui gère la messagerie générale ou la direction, elle peut être envoyée à l’adresse postale sous enveloppe fermée portant la mention « À l’attention du conseil d’administration – CONFIDENTIEL » (« Yönetim Kurulu Dikkatine – GİZLİ »).
 ## 4. Informations à fournir
 Dans la mesure du possible, indiquez la nature de l’incident ou du problème, la date ou une date approximative, le projet ou la page concerné, la personne ou l’organisation concernée le cas échéant, ainsi qu’un moyen sûr de vous répondre. Il n’est pas nécessaire de fournir des preuves pour déposer une demande. Ne communiquez pas de mot de passe, de CVV, de copie inutile d’une pièce d’identité ou de données sensibles sans rapport avec l’incident.
 ## 5. Confidentialité et interdiction des représailles

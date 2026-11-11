@@ -173,7 +173,7 @@ Requests for permission to use the brand, logo, images or content may be sent to
 ## KVKK Privacy Notice
 Notice concerning the website and digital channels under Türkiye’s Personal Data Protection Law No. 6698
 ## 1. Data controller
-Destek Ol acts as the data controller for personal data processing through destekol.org and its associated digital channels. Contact: info@destekol.org. Address: Taşdelen Mah. Buket Sokak, Dış Kapı No: 1-3, İç Kapı No: 38, Çekmeköy / İstanbul, Türkiye.
+Destek Ol acts as the data controller for personal data processing through destekol.org and its associated digital channels. Contact: info@destekol.org. Address: Hırka-i Şerif Mah. Tuti Abdullatif Sokak, Dış Kapı No: 2/1, Şafak Apt İç Kapı No: 1, Fatih / İstanbul, Türkiye.
 ## 2. Personal data processed
 Data group	Content
 Identity/contact	Full name, email, telephone and application contact details.
@@ -224,7 +224,7 @@ Allegations involving PSEA, child protection, safeguarding, harassment, violence
 Complaints about personal data, privacy or information security.
 Errors or misleading information in site content, or unofficial payment requests.
 ## 3. Reporting channels
-General submissions may be sent to info@destekol.org or to Taşdelen Mah. Buket Sokak, Dış Kapı No: 1-3, İç Kapı No: 38, Çekmeköy / İstanbul. If a sensitive submission concerns the person managing the general email account or the management, it may be sent to the postal address in a sealed envelope marked “For the attention of the Board of Directors – CONFIDENTIAL” (“Yönetim Kurulu Dikkatine – GİZLİ”).
+General submissions may be sent to info@destekol.org or to Hırka-i Şerif Mah. Tuti Abdullatif Sokak, Dış Kapı No: 2/1, Şafak Apt İç Kapı No: 1, Fatih / İstanbul. If a sensitive submission concerns the person managing the general email account or the management, it may be sent to the postal address in a sealed envelope marked “For the attention of the Board of Directors – CONFIDENTIAL” (“Yönetim Kurulu Dikkatine – GİZLİ”).
 ## 4. Information to include
 Where possible, describe the incident or problem, the date or approximate date, the relevant project or page, any relevant person or organization, and a safe way to contact you. Providing evidence is not a condition for making a submission. Do not share passwords, CVVs, unnecessary copies of identity documents or sensitive data unrelated to the incident.
 ## 5. Confidentiality and prohibition of retaliation
