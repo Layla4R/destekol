@@ -2,19 +2,31 @@ import type { CookieConsent } from "@/lib/cookie-consent";
 import type { KitLinkId, KitLocale, KitResource } from "@/lib/kit-config";
 
 export const GA_MEASUREMENT_ID = "G-KREW1XWX0X";
-const UTM_KEYS = ["utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content", "utm_id"];
+export const GOOGLE_ADS_ID = "AW-18526660893";
+export const GOOGLE_ADS_PAGEVIEW_LABEL = "uHVuCPC3k7wdEJ3SmYJF";
+
+const UTM_KEYS = ["utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content", "utm_id", "gclid"];
 const KIT_ANALYTICS_NAMES: Record<KitLinkId, string> = {
     website: "official_website", brochure: "brochure", portfolio: "portfolio",
     sustainability: "sustainability_report", video: "promotional_video",
     partnerships: "partnership", contact: "contact",
 };
-// These saved admin records were repurposed without changing their persistent IDs.
-// Keep reporting names tied to record identity, independent of URLs, titles or order.
+
 const SAVED_KIT_ANALYTICS_NAMES: Record<string, string> = {
     brochure: "official_website",
     "custom-e52da41f-1a6a-4472-9227-d1389735cae0": "brochure",
 };
-type AnalyticsRuntime = { consent: CookieConsent | null; configured: boolean; granted: boolean; debug: boolean; lastRoute: string | null; previousLocation: string | null };
+
+type AnalyticsRuntime = {
+    consent: CookieConsent | null;
+    configured: boolean;
+    granted: boolean;
+    debug: boolean;
+    lastRoute: string | null;
+    previousLocation: string | null;
+    adsConversionFiredForRoute: string | null;
+};
+
 type AnalyticsWindow = Window & {
     dataLayer?: unknown[];
     gtag?: (command: string, ...parameters: unknown[]) => void;
@@ -31,20 +43,19 @@ export function isAnalyticsPage(pathname: string): boolean {
         && !/\/(?:contact\/track|donate\/(?:success|cancel))(?:\/|$)/.test(path);
 }
 
-/** Public pages send cookieless signals immediately; private pages stay excluded. */
+/** Public pages send signals immediately; private pages stay excluded. */
 export function analyticsEnabled(pathname: string): boolean {
     return isAnalyticsPage(pathname);
 }
 
 function analyticsStorageGranted(
-  pathname: string,
-  consent: CookieConsent | null
+    pathname: string,
+    consent: CookieConsent | null
 ): boolean {
-  return analyticsEnabled(pathname)
-    && consent?.analytics === true;
+    return analyticsEnabled(pathname) && (consent === null || consent?.analytics === true);
 }
 
-/** Keep campaign attribution, removing tokens, donor IDs, searches and fragments. */
+/** Keep campaign attribution (UTMs & gclid), removing tokens, donor IDs, searches and fragments. */
 export function analyticsLocation(raw: string): string | null {
     try {
         const url = new URL(raw);
@@ -70,8 +81,25 @@ export function analyticsLink(raw: string): string | null {
 function runtime(): { browser: AnalyticsWindow; state: AnalyticsRuntime } | null {
     if (typeof window === "undefined") return null;
     const browser = window as unknown as AnalyticsWindow;
-    browser.__destekolGA4 ||= { consent: null, configured: false, granted: false, debug: false, lastRoute: null, previousLocation: null };
+    browser.__destekolGA4 ||= {
+        consent: null,
+        configured: false,
+        granted: false,
+        debug: false,
+        lastRoute: null,
+        previousLocation: null,
+        adsConversionFiredForRoute: null,
+    };
     return { browser, state: browser.__destekolGA4 };
+}
+
+function ensureGtagScriptLoaded(browser: AnalyticsWindow) {
+    if (typeof document === "undefined") return;
+    if (document.querySelector(`script[src*="googletagmanager.com/gtag/js"]`)) return;
+    const script = document.createElement("script");
+    script.async = true;
+    script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;
+    document.head.appendChild(script);
 }
 
 export function syncAnalyticsConsent(consent: CookieConsent | null) {
@@ -82,13 +110,17 @@ export function syncAnalyticsConsent(consent: CookieConsent | null) {
     const enabled = analyticsEnabled(browser.location.pathname);
     const granted = analyticsStorageGranted(browser.location.pathname, consent);
     browser[`ga-disable-${GA_MEASUREMENT_ID}`] = !enabled;
-    // if (!granted) {
-    //     state.granted = false;
-    //     browser.gtag?.("consent", "update", { analytics_storage: "denied", ad_storage: "denied", ad_user_data: "denied", ad_personalization: "denied" });
-    // }
-    // if (!enabled) {
-    //     state.lastRoute = null;
-    // }
+    browser[`ga-disable-${GOOGLE_ADS_ID}`] = !enabled;
+
+    if (state.configured) {
+        browser.gtag?.("consent", "update", {
+            analytics_storage: granted ? "granted" : "denied",
+            ad_storage: granted ? "granted" : "denied",
+            ad_user_data: granted ? "granted" : "denied",
+            ad_personalization: "denied",
+        });
+        state.granted = granted;
+    }
 }
 
 export function initializeAnalytics(): boolean {
@@ -97,26 +129,75 @@ export function initializeAnalytics(): boolean {
     const { browser, state } = current;
     const granted = analyticsStorageGranted(browser.location.pathname, state.consent);
     browser[`ga-disable-${GA_MEASUREMENT_ID}`] = false;
+    browser[`ga-disable-${GOOGLE_ADS_ID}`] = false;
+
     if (state.configured) {
-        if (state.granted !== granted) browser.gtag?.("consent", "update", { analytics_storage:"granted", ad_storage: "denied", ad_user_data: "denied", ad_personalization: "denied" });
+        if (state.granted !== granted) {
+            browser.gtag?.("consent", "update", {
+                analytics_storage: granted ? "granted" : "denied",
+                ad_storage: granted ? "granted" : "denied",
+                ad_user_data: granted ? "granted" : "denied",
+                ad_personalization: "denied",
+            });
+        }
         state.granted = granted;
         return true;
     }
+
+    ensureGtagScriptLoaded(browser);
     browser.dataLayer ||= [];
     browser.gtag ||= function () { browser.dataLayer!.push(arguments); };
     state.debug = new URLSearchParams(browser.location.search).get("ga_debug") === "1";
-    browser.gtag("consent", "default", { analytics_storage: "granted", ad_storage: "denied", ad_user_data: "denied", ad_personalization: "denied" });
-    if (granted) browser.gtag("consent", "update", { analytics_storage: "granted", ad_storage: "denied", ad_user_data: "denied", ad_personalization: "denied" });
+
+    browser.gtag("consent", "default", {
+        analytics_storage: "granted",
+        ad_storage: "granted",
+        ad_user_data: "granted",
+        ad_personalization: "denied",
+    });
+
     browser.gtag("js", new Date());
+
+    // تهيئة Google Analytics 4
     browser.gtag("config", GA_MEASUREMENT_ID, {
-        send_page_view: false, allow_google_signals: false, allow_ad_personalization_signals: false,
+        send_page_view: false,
+        allow_google_signals: true,
+        allow_ad_personalization_signals: false,
         page_location: analyticsLocation(browser.location.href),
         page_referrer: analyticsLink(browser.document.referrer) || "",
         ...(state.debug ? { debug_mode: true } : {}),
     });
+
+    // تهيئة Google Ads لربط الزيارات بالحملة الإعلانية
+    browser.gtag("config", GOOGLE_ADS_ID, {
+        allow_enhanced_conversions: false,
+    });
+
     state.configured = true;
     state.granted = granted;
     return true;
+}
+
+/** إطلاق حدث التحويل الخاص بإعلانات جوجل عند فتح صفحة الهبوط */
+export function trackGoogleAdsPageViewConversion(routeKey: string) {
+    const current = runtime();
+    if (!current || !initializeAnalytics()) return;
+    const { browser, state } = current;
+
+    let decodedPath = "";
+    try { decodedPath = decodeURIComponent(browser.location.pathname); } catch { return; }
+
+    // التحقق من أن الزائر في صفحة الحملة الإعلانية المستهدفة
+    const isCampaignLandingPage = /\/Discover_Destek Ol\/?$/i.test(decodedPath);
+    if (!isCampaignLandingPage || state.adsConversionFiredForRoute === routeKey) return;
+
+    browser.gtag?.("event", "conversion", {
+        send_to: `${GOOGLE_ADS_ID}/${GOOGLE_ADS_PAGEVIEW_LABEL}`,
+        value: 1.0,
+        currency: "USD",
+    });
+
+    state.adsConversionFiredForRoute = routeKey;
 }
 
 export function trackAnalyticsEvent(name: string, parameters: Record<string, string | number | boolean>, onComplete?: () => void): boolean {
@@ -148,6 +229,10 @@ export function trackPageView(routeKey: string) {
     };
     current.browser.gtag?.("set", parameters);
     trackAnalyticsEvent("page_view", parameters);
+
+    // تسجيل تحويل Google Ads إذا كانت الصفحة هي صفحة الحملة
+    trackGoogleAdsPageViewConversion(routeKey);
+
     current.state.lastRoute = routeKey;
     current.state.previousLocation = analyticsLink(location);
 }
@@ -184,7 +269,6 @@ export function trackWebsiteLinkClick(href: string) {
 }
 
 export function trackKitResourceClick(resource: KitResource, href: string, locale: KitLocale, onComplete?: () => void): boolean {
-    // Ignore obsolete resources supplied by an old cached page after deployment.
     if ((resource.id as string) === "visits") return false;
     const linkUrl = analyticsLink(href);
     if (!linkUrl) return false;
@@ -199,4 +283,3 @@ export function trackKitResourceClick(resource: KitResource, href: string, local
     if (resource.id === "video") trackAnalyticsEvent("promotional_video_click", parameters);
     return queued;
 }
-
