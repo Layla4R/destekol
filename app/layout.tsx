@@ -152,14 +152,11 @@ export default async function RootLayout({ children, }: {
           gtag('config', 'AW-18526660893');
         ` }} />
         {isDiscoverDestekOlPage && <script dangerouslySetInnerHTML={{ __html: `
-          (function sendConversion() {
-            if (typeof gtag !== 'function') return setTimeout(sendConversion, 50);
-            gtag('event', 'conversion', {
-              'send_to': 'AW-18526660893/uHVuCPC3k7wdEJ3SmYJF',
-              'value': 1.0,
-              'currency': 'USD'
-            });
-          })();
+          gtag('event', 'conversion', {
+            'send_to': 'AW-18526660893/uHVuCPC3k7wdEJ3SmYJF',
+            'value': 1.0,
+            'currency': 'USD'
+          });
         ` }} />}
         <Script id="organization-schema" type="application/ld+json" strategy="beforeInteractive" dangerouslySetInnerHTML={{
             __html: JSON.stringify(structuredData).replace(/</g, "\\u003c"),
