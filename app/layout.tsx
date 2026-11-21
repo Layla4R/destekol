@@ -135,29 +135,18 @@ export default async function RootLayout({ children, }: {
     };
     const requestedLocale = headers().get("x-app-locale");
     const locale = requestedLocale && ["ar", "en", "fr", "tr"].includes(requestedLocale) ? requestedLocale : "tr";
-    const pathname = headers().get("x-admin-path");
-    const isDiscoverDestekOlPage = ["en", "ar"].some((pageLocale) =>
-        pathname === `/${pageLocale}/Discover_Destek%20Ol` || pathname === `/${pageLocale}/Discover_Destek Ol`);
     return (<html lang={locale} dir={locale === "ar" ? "rtl" : "ltr"} translate="no" suppressHydrationWarning className={`
         ${alexandria.variable}
         ${tajawal.variable}
         ${cairo.variable}
       `}>
-      <head>
-        <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18526660893" />
+     <head>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-KREW1XWX0X" />
         <script dangerouslySetInnerHTML={{ __html: `
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-          gtag('config', 'AW-18526660893');
+          window.gtag = gtag;
         ` }} />
-        {isDiscoverDestekOlPage && <script dangerouslySetInnerHTML={{ __html: `
-          gtag('event', 'conversion', {
-            'send_to': 'AW-18526660893/uHVuCPC3k7wdEJ3SmYJF',
-            'value': 1.0,
-            'currency': 'USD'
-          });
-        ` }} />}
         <Script id="organization-schema" type="application/ld+json" strategy="beforeInteractive" dangerouslySetInnerHTML={{
             __html: JSON.stringify(structuredData).replace(/</g, "\\u003c"),
         }}/>
