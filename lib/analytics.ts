@@ -88,10 +88,6 @@ export function syncAnalyticsConsent(consent: CookieConsent | null) {
     // }
     // if (!enabled) {
     //     state.lastRoute = null;
-        if (!enabled && browser.dataLayer) {
-            const kept = browser.dataLayer.filter(entry => (entry as ArrayLike<unknown>)?.[0] !== "event");
-            browser.dataLayer.splice(0, browser.dataLayer.length, ...kept);
-        }
     // }
 }
 
